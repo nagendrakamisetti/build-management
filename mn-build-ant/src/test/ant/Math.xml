@@ -1,0 +1,28 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="math" default="increment" basedir=".">
+
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+  <!--
+    - This is an example of how to increment a property.
+    -->
+  <target name="increment">
+    <property name="value" value="2"/>
+    <echo message="Initial value: ${value}"/>
+
+    <increment property="value"/>
+    <echo message="New value: ${value}"/>
+
+    <increment property="value"/>
+    <echo message="New value: ${value}"/>
+  </target>
+
+
+</project>

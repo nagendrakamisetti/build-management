@@ -1,0 +1,102 @@
+
+  <style type="text/css" title="Navigation Colors">
+    A:link                      { cursor: hand; font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: bold; color: #6881A4; text-decoration: none; }
+    A:visited                   { cursor: hand; font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: bold; color: #6881A4; text-decoration: none; }
+    A:hover                     { cursor: hand; font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: bold; color: #C1D2E4; text-decoration: none; }
+
+    A.tabselected:link          { cursor: hand; font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: bold; background: #FFFFFF; color: #000099; text-decoration: none; }
+    A.tabselected:visited       { cursor: hand; font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: bold; background: #FFFFFF; color: #000099; text-decoration: none; }
+    A.tabselected:hover         { cursor: hand; font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: bold; background: #FFFFFF; color: #9999FF; text-decoration: none; }
+
+    A.tabactive:link            { cursor: hand; font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: bold; background: #FFFFFF; color: #9999FF; text-decoration: none; }
+    A.tabactive:visited         { cursor: hand; font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: bold; background: #FFFFFF; color: #9999FF; text-decoration: none; }
+    A.tabactive:hover           { cursor: hand; font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: bold; background: #FFFFFF; color: #000099; text-decoration: none; }
+
+    A.tabinactive:link          { cursor: hand; font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: bold; background: #2B2A5B; color: #C1D2E4; text-decoration: none; }
+    A.tabinactive:visited       { cursor: hand; font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: bold; background: #2B2A5B; color: #C1D2E4; text-decoration: none; }
+    A.tabinactive:hover         { cursor: hand; font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: bold; background: #2B2A5B; color: #C1D2E4; text-decoration: none; }
+
+    INPUT                       { cursor: default; font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: normal; }
+    INPUT.disabled              { cursor: default; font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: normal; background: #CCCCCC; color: #666666; }
+    .disabled                   { cursor: default; font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: normal; background: #CCCCCC; color: #666666; }
+
+    .summaryheader              { cursor: default; font-family : Verdana, arial, sans-serif; font-size: 10px; font-weight: bold;   background: #9999FF; color: #000099; }
+    .summarycontent             { cursor: default; font-family : Verdana, arial, sans-serif; font-size: 10px; font-weight: normal; background: #CCCCFF; color: #9999FF; }
+    .summarycontentlabel        { cursor: default; font-family : Verdana, arial, sans-serif; font-size: 10px; font-weight: bold;   background: #CCCCFF; color: #9999FF; }
+    .summaryfooter              { cursor: default; font-family : Verdana, arial, sans-serif; font-size: 10px; font-weight: normal; background: #9999FF; color: #000099; }
+    .summaryinput               { cursor: default; font-family : Verdana, arial, sans-serif; font-size: 10px; font-weight: normal; }
+    .summarybtn                 { cursor: default; font-family : Verdana, arial, sans-serif; font-size: 10px; font-weight: normal; }
+
+    .tableheader                { cursor: default; font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: bold;   background: #CCCCFF; color: #000000; }
+    .tablecontent               { cursor: default; font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: normal; background: #EEEEEE; color: #000000; }
+    .tablecontentlabel          { cursor: default; font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: bold;   color: #000000; }
+    .tablefooter                { cursor: default; font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: normal; background: #CCEEDD; color: #000000; }
+
+    .bottomnav                  { cursor: default; font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: normal; color: #000000; }
+
+    .pagetitle                  { cursor: default; font-family : Verdana, arial, sans-serif; font-size: 18px; font-weight: bold;   color: #000000; }
+    .pagecontent                { cursor: default; font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: normal; color: #000000; }
+
+    .pagefooter                 { cursor: default; font-family : Verdana, arial, sans-serif; font-size: 10px; font-weight: normal; color: #000000; }
+    .adminfooter                { cursor: default; font-family : Verdana, arial, sans-serif; font-size: 12px; font-weight: normal; color: #000000; }
+
+    div.scroll                  { height: 400px; width: 800px; overflow: auto; padding: 0px; }
+
+    .required                   { font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: normal; background: #FE642E; }
+    .recommended                { font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: normal; background: #F7D358; }
+    .optional                   { font-family : Verdana, arial, sans-serif; font-size: 11px; font-weight: normal; background: #F2F5A9; }
+
+    .errorRow                   { background: #FFCCCC; }
+    .errorColumn                { background: #FF3333; }
+    .warningRow                 { background: #FFFFCC; }
+    .warningColumn              { background: #FFFF33; }
+    .timingRow                  { background: #CC99FF; }
+    .timingColumn               { background: #CC66FF; }
+
+    .metricNone                 { font-size: 8px; font-weight: normal; background: #AA66CC; }
+    .metricBuild                { font-size: 8px; font-weight: normal; background: #CC99FF; }
+    .metricJavadoc              { font-size: 8px; font-weight: normal; background: #AA99FF; }
+    .metricPopulate             { font-size: 8px; font-weight: normal; background: #CCCCFF; }
+    .metricPopulateSuite        { font-size: 8px; font-weight: normal; background: #AACCFF; }
+    .metricUnittest             { font-size: 8px; font-weight: normal; background: #9999FF; }
+    .metricMigrate              { font-size: 8px; font-weight: normal; background: #99AAFF; }
+    .metricDeploy               { font-size: 8px; font-weight: normal; background: #9966FF; }
+
+
+
+    table.spreadsheet {
+        border-collapse: separate;
+        border-spacing: 1px;
+        font-family : Verdana, arial, sans-serif;
+        font-size: 11px;
+    }
+
+    tr.spreadsheet-header { 
+        background: #BBBBBB;
+        font-weight: bold;   
+    }
+
+    tr.spreadsheet-subheader {
+        background: #AAAAAA;
+        font-weight: bold;
+    }
+
+    tr.spreadsheet-footer {
+        background: #AAAAAA;
+        font-weight: bold;
+    }
+
+    tr.spreadsheet-shaded:nth-child(even) { 
+        background: #DDDDDD;
+        font-weight: normal; 
+    }
+
+    tr.spreadsheet-shaded:nth-child(odd) { 
+        background: #FFFFFF;
+        font-weight: normal; 
+    }
+
+
+  </style>
+
+

@@ -1,0 +1,17 @@
+<Context>
+  <!-- Attribute documentation: http://commons.apache.org/dbcp/configuration.html -->
+  <Resource name="jdbc/BuildDB" 
+            auth="Container"
+            type="javax.sql.DataSource" 
+            username="mnbuild" 
+            password="modeln"
+            driverClassName="com.mysql.jdbc.Driver" 
+            url="jdbc:mysql://localhost:3306/mn_build"
+            maxActive="15" 
+            maxIdle="4"
+            maxWait="10000"
+            testOnBorrow="true"
+            validationQuery="Select 1"/>
+</Context>
+
+

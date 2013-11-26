@@ -1,0 +1,255 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.modeln.build</groupId>
+    <artifactId>mn-build</artifactId>
+    <version>1.0</version>
+  </parent>
+
+  <groupId>com.modeln.build.patch</groupId>
+  <artifactId>mn-build-patch</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0</version>
+  <name>Service Patch Utility</name>
+  <description>
+    Command-line utility for generating service patches.  A service patch
+    is a custom branch based on a released product branch but with issolated 
+    bug fixes.  The common use case is to deliver a customer-specific build 
+    containing critical production fixes.
+  </description>
+  <url>http://buildmanagement.modeln.com/mn-build-patch/</url>
+
+  <dependencies>
+    <!-- Model N Build modules -->
+    <dependency>
+      <groupId>com.modeln.build.core</groupId>
+      <artifactId>mn-build-core</artifactId>
+      <version>1.0</version>
+    </dependency>
+
+    <!-- External 3rd Party modules -->
+    <dependency>
+      <groupId>commons-cli</groupId>
+      <artifactId>commons-cli</artifactId>
+      <version>1.2</version>
+    </dependency>
+            
+  </dependencies>
+
+
+  <build>
+    <finalName>mn-build-patch</finalName>
+
+    <plugins>
+
+      <!-- ======================================================= -->
+      <!-- Jar Plug-in (creating a project jar)                    -->
+      <!-- ======================================================= -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <archive>
+            <addMavenDescriptor>false</addMavenDescriptor>
+            <manifest>
+              <mainClass>com.modeln.build.servicepatch.CMnPatchTool</mainClass>
+              <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+
+            <manifestSection>
+              <name>Project Information</name>
+              <manifestEntries>
+                <Implementation-URL>${project.url}</Implementation-URL>
+              </manifestEntries>
+            </manifestSection>
+
+            <manifestSection>
+              <name>Build Information</name>
+              <manifestEntries>
+                <Java-Version>${java.version}</Java-Version>
+                <Java-Vendor>${java.vendor}</Java-Vendor>
+
+<!--
+                <Build-Host>${build.host.name}</Build-Host>
+                <Build-OS>${os.name} / ${os.arch} / ${os.version}</Build-OS>
+                <Build-By>${build.user}</Build-By>
+
+                <Maven-Version>${build.maven.version}</Maven-Version>
+                <Implementation-SCM-Revision-Number>${build.scmRevision.id}</Implementation-SCM-Revision-Number>
+                <Implementation-SCM-Revision-Date>${build.scmRevision.date}</Implementation-SCM-Revision-Date>
+                <Implementation-Date>${build.date}</Implementation-Date>
+                <Implementation-Timestamp>${build.timestamp.millis}</Implementation-Timestamp>
+                <Implementation-DatePattern>${build.date.pattern}</Implementation-DatePattern>
+                <Implementation-Full-Version>${build.version.full}</Implementation-Full-Version>
+-->
+              </manifestEntries>
+            </manifestSection>
+
+          </archive>
+        </configuration>
+      </plugin>
+
+
+      <!-- ======================================================= -->
+      <!-- App Assembler Plug-in (launch script)                   -->
+      <!-- ======================================================= -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>appassembler-maven-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>assemble</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <!-- Project JAR must be first in classpath to pick up correct MANIFEST.MF -->
+          <projectArtifactFirstInClassPath>true</projectArtifactFirstInClassPath>
+
+          <!-- Application config files -->
+          <copyConfigurationDirectory>true</copyConfigurationDirectory>
+
+          <repositoryName>lib</repositoryName>
+          <repositoryLayout>flat</repositoryLayout>
+          <useAllProjectDependencies>true</useAllProjectDependencies>
+          <binFileExtensions>
+            <unix>.sh</unix>
+          </binFileExtensions>
+          <programs>
+            <program>
+              <mainClass>com.modeln.build.servicepatch.CMnPatchTool</mainClass>
+              <id>sp</id>
+            </program>
+          </programs>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+
+
+
+  <profiles>
+    <profile>
+      <!-- ======================================================= -->
+      <!-- RPM Profile                                             -->
+      <!-- ======================================================= -->
+      <id>rpm</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>rpm-maven-plugin</artifactId>
+            <version>2.1-alpha-3</version>
+            <extensions>true</extensions>
+
+            <executions>
+              <execution>
+                <id>attach-rpm</id>
+                <goals>
+                  <goal>attached-rpm</goal>
+                </goals>
+              </execution>
+            </executions>
+
+            <configuration>
+              <relocation>true</relocation>
+              <copyright>MIT</copyright>
+              <group>Development/Tools</group>
+
+              <mappings>
+                <!-- Include the appassembler artifacts in the RPM -->
+                <mapping>
+                  <directory>/opt/mn/servicepatch/lib</directory>
+                  <recurseDirectories>true</recurseDirectories>
+                  <username>root</username>
+                  <groupname>root</groupname>
+                  <filemode>644</filemode>
+                  <sources>
+                    <source>
+                      <location>target/appassembler/lib</location>
+                    </source>
+                  </sources>
+                </mapping>
+                <mapping>
+                  <directory>/opt/mn/servicepatch/etc</directory>
+                  <recurseDirectories>true</recurseDirectories>
+                  <username>root</username>
+                  <groupname>root</groupname>
+                  <filemode>644</filemode>
+                  <sources>
+                    <source>
+                      <location>target/appassembler/etc</location>
+                    </source>
+                  </sources>
+                </mapping>
+                <mapping>
+                  <directory>/opt/mn/servicepatch/bin</directory>
+                  <recurseDirectories>true</recurseDirectories>
+                  <username>root</username>
+                  <groupname>root</groupname>
+                  <filemode>755</filemode>
+                  <sources>
+                    <source>
+                      <location>target/appassembler/bin</location>
+                    </source>
+
+                  </sources>
+                </mapping>
+
+                <!-- Make sure the RPM destination directories are accessible -->
+                <mapping>
+                  <directory>/opt/mn/servicepatch/lib</directory>
+                  <username>root</username>
+                  <groupname>root</groupname>
+                  <filemode>755</filemode>
+                </mapping>
+                <mapping>
+                  <directory>/opt/mn/servicepatch/etc</directory>
+                  <username>root</username>
+                  <groupname>root</groupname>
+                  <filemode>755</filemode>
+                </mapping>
+                <mapping>
+                  <directory>/opt/mn/servicepatch/bin</directory>
+                  <username>root</username>
+                  <groupname>root</groupname>
+                  <filemode>755</filemode>
+                </mapping>
+
+                <!-- Create a symlink to the patch script -->
+                <mapping>
+                  <directory>/usr/local/bin</directory>
+                  <username>root</username>
+                  <groupname>root</groupname>
+                  <filemode>755</filemode>
+                  <sources>
+                    <softlinkSource>
+                      <destination>sp.sh</destination>
+                      <location>/opt/mn/servicepatch/bin/sp.sh</location>
+                    </softlinkSource>
+                  </sources>
+                </mapping>
+
+              </mappings>
+            </configuration>
+
+          </plugin>
+
+        </plugins>
+
+      </build>
+
+    </profile>
+  </profiles>
+
+
+</project>

@@ -1,0 +1,46 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="CheckAvailableResource" default="test" basedir=".">
+
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+  <path id="testpath">
+    <pathelement location="/var/tmp"/>
+  </path>
+
+  <!--
+    - This is an example of how to look up a system property. 
+    -->
+  <target name="test">
+    <echo message="Attempt to load a class from the JVM: java.lang.String"/>
+    <checkresource class="java.lang.String" property="test.class" executable="/opt/java/sun-jdk-1.5.0.6/bin/java"/>
+    <echo message="Resource found: ${test.class}"/>
+
+    <echo message="Attempt to load a class from the JVM: java.foo.Bar"/>
+    <checkresource class="java.foo.Bar" property="test.noclass" executable="/opt/java/sun-jdk-1.5.0.6/bin/java"/>
+    <echo message="Resource found: ${test.noclass}"/>
+
+    <echo message="Attempt to add a reference to a classpath"/>
+    <checkresource class="com.modeln.build.ant.CheckAvailableResource"
+                   property="test.pathref"
+                   classpathref="testpath"
+                   executable="/opt/java/sun-jdk-1.5.0.6/bin/java"/>
+    <echo message="Resource found: ${test.pathref}"/>
+
+    <mkdir dir="/var/tmp/resource.tmp"/>
+    <property name="filename" value="/var/tmp/resource.tmp/test.txt"/>
+    <touch file="${filename}"/>
+    <echo message="Attempt to load a file from the JVM: ${filename}"/>
+    <checkresource file="file:${filename}" property="test.file" executable="/opt/java/sun-jdk-1.5.0.6/bin/java"/>
+    <echo message="Resource found: ${test.file}"/>
+    <delete dir="/var/tmp/resource.tmp"/>
+
+  </target>
+
+</project>

@@ -1,0 +1,203 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="DiffReport" default="tools" basedir=".">
+
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+  <property name="disassembler" value="/opt/java/sun-jdk-1.4.2.7/bin/javap"/>
+  <property name="oldBuildDir"  value="/mn/builds/pdreleases/modeln5.0.8/sun/GA/meddev"/>
+  <property name="newBuildDir"  value="/mn/builds/pdreleases/modeln5.2/sun/GA/meddev"/>
+
+  <!--
+    - This is an example of how to diff the contents of two Ear files
+    -->
+  <target name="ear">
+    <property name="reportdir" value="/var/tmp/diffreport/ear"/>
+    <mkdir dir="${reportdir}"/>
+
+    <!-- Extract the War file from the Ear file -->
+    <property name="product" value="meddev"/>
+    <unjar src="${oldBuildDir}/${product}.ear" dest="${reportdir}/old" overwrite="true">
+      <patternset>
+        <include name="${product}.war"/>
+      </patternset>
+    </unjar>
+    <unjar src="${newBuildDir}/${product}.ear" dest="${reportdir}/new" overwrite="true">
+      <patternset>
+        <include name="${product}.war"/>
+      </patternset>
+    </unjar>
+
+    <!-- In order to analyze the class files, we have to split the War into two jars -->
+    <mkdir dir="${reportdir}/old/war"/>
+    <unjar src="${reportdir}/old/${product}.war" dest="${reportdir}/old/war" overwrite="true"/>
+    <jar destfile="${reportdir}/old/classes.jar" basedir="${reportdir}/old/war/WEB-INF/classes"/>
+    <jar destfile="${reportdir}/old/docroot.jar" basedir="${reportdir}/old/war" excludes="WEB-INF/classes/**/*"/>
+
+    <mkdir dir="${reportdir}/new/war"/>
+    <unjar src="${reportdir}/new/${product}.war" dest="${reportdir}/new/war" overwrite="true"/>
+    <jar destfile="${reportdir}/new/classes.jar" basedir="${reportdir}/new/war/WEB-INF/classes"/>
+    <jar destfile="${reportdir}/new/docroot.jar" basedir="${reportdir}/new/war" excludes="WEB-INF/classes/**/*"/>
+
+    <!-- Generate a report for files in the docroot -->
+    <mkdir dir="${reportdir}/docroot"/>
+    <diffreport old="${reportdir}/old/docroot.jar"
+                new="${reportdir}/new/docroot.jar"
+                verbose="true"
+                saveModified="true"
+                showBytecode="false"
+                reportdir="${reportdir}/docroot"
+                disassembler="${disassembler}">
+      <patternset>
+        <include name="**/*.jsp"/>
+      </patternset>
+    </diffreport>
+
+    <!-- Generate a report for files in the WEB-INF/classes directory -->
+    <mkdir dir="${reportdir}/classes"/>
+    <diffreport old="${reportdir}/old/classes.jar"
+                new="${reportdir}/new/classes.jar"
+                verbose="true"
+                saveModified="true"
+                showBytecode="false"
+                reportdir="${reportdir}/classes"
+                disassembler="${disassembler}">
+      <patternset>
+        <include name="**/*.class"/>
+        <include name="**/*.properties"/>
+        <include name="**/*.xml"/>
+      </patternset>
+    </diffreport>
+
+    <delete dir="${reportdir}/old"/>
+    <delete dir="${reportdir}/new"/>
+  </target>
+
+  <!--
+    - This is an example of how to diff the contents of two Jar files 
+    -->
+  <target name="tools">
+    <property name="reportdir" value="/var/tmp/diffreport/tools"/>
+    <mkdir dir="${reportdir}"/>
+    <diffreport old="${oldBuildDir}/tools.jar" 
+                new="${oldBuildDir}/tools.jar" 
+                verbose="true"
+                showBytecode="true"
+                reportdir="${reportdir}" 
+                disassembler="${disassembler}"/>
+  </target>
+
+  <!--
+    - This is an example of how to diff the contents of all product jars 
+    -->
+  <target name="alljars">
+    <property name="reportdir" value="/var/tmp/diffreport/jars"/>
+    <mkdir dir="${reportdir}"/>
+
+    <fileset id="newproductjars" dir="${newBuildDir}/modeln">
+      <include name="*.jar"/>
+      <include name="*-content.jar"/>
+      <include name="*-docroot.jar"/>
+      <include name="*-jsp.jar"/>
+      <include name="*-props.jar"/>
+      <exclude name="*-src.jar"/>
+      <exclude name="*-unittest.jar"/>
+    </fileset>
+
+    <pathconvert property="newjarlist" refid="newproductjars"/>
+
+    <!-- Generate a master index page -->
+    <delete file="${reportdir}/index.html"/>
+    <echo file="${reportdir}/index.html" append="true" message="&lt;html&gt;"/>
+    <echo file="${reportdir}/index.html" append="true" message="&lt;body&gt;"/>
+    <foreach list="${newjarlist}"
+             delimiter="${path.separator}"
+             target="masterlist"
+             param="jarfile"
+             inheritall="true"
+             inheritrefs="true"
+             trim="true"/>
+    <echo file="${reportdir}/index.html" append="true" message="&lt;/body&gt;"/>
+    <echo file="${reportdir}/index.html" append="true" message="&lt;/html&gt;"/>
+
+    <!-- Iterate through each jar file and perform the diff -->
+    <foreach list="${newjarlist}"
+             delimiter="${path.separator}"
+             target="singlejar"
+             param="jarfile"
+             inheritall="true"
+             inheritrefs="true"
+             trim="true"/>
+
+  </target>
+
+  <!-- 
+    - This is an example of how to diff a single jar
+    -->
+  <target name="singlejar">
+    <fail unless="jarfile"   message="Missing parameter: jarfile"/>
+    <fail unless="reportdir" message="Missing parameter: reportdir"/>
+
+    <basename property="jarname" file="${jarfile}" suffix=".jar"/>
+    <property name="oldjar" value="${oldBuildDir}/modeln/${jarname}.jar"/>
+    <property name="newjar" value="${newBuildDir}/modeln/${jarname}.jar"/>
+    <property name="dir"    value="${reportdir}/${jarname}"/>
+
+    <if>
+      <and>
+        <available file="${oldjar}"/>
+        <available file="${newjar}"/>
+      </and>
+      <then>
+        <mkdir dir="${dir}"/>
+
+        <!-- Perform the diff of the Jar files -->
+        <diffreport old="${oldjar}"
+                    new="${newjar}"
+                    verbose="true"
+                    saveAdded="false"
+                    saveDeleted="true"
+                    saveModified="true"
+                    showBytecode="true"
+                    reportdir="${dir}"
+                    disassembler="${disassembler}">
+          <patternset>
+            <include name="**/*.class"/>
+            <include name="**/*.properties"/>
+            <include name="**/*.xml"/>
+            <exclude name="**/test/**/*"/>
+            <exclude name="sample/**/*"/>
+          </patternset>
+        </diffreport>
+
+      </then>
+      <else>
+        <echo message="Skipping ${jarfile} since either the old or the new version does not exist."/>
+        <echo message="   old: ${oldjar}"/>
+        <echo message="   new: ${newjar}"/>
+      </else>
+    </if>
+  </target>
+
+
+  <!--
+    - This is an example of how to create an index page that links to individual reports. 
+    -->
+  <target name="masterlist">
+    <fail unless="reportdir" message="Missing parameter: reportdir"/>
+    <fail unless="jarfile"   message="Missing parameter: jarfile"/>
+
+    <basename property="jarname" file="${jarfile}" suffix=".jar"/>
+    <property name="dir" value="${reportdir}/${jarname}"/>
+
+    <echo file="${reportdir}/index.html" append="true" message="&lt;a href='${jarname}/index.html'&gt;${jarname}&lt;/a&gt;&lt;br&gt;"/>
+  </target>
+
+</project>

@@ -1,0 +1,173 @@
+
+  <script language="JavaScript" type="text/javascript">
+    if (document.images) {
+        error01         = new Image(12, 12);
+        error02         = new Image(12, 12);
+        error03         = new Image(12, 12);
+        error04         = new Image(12, 12);
+        error05         = new Image(12, 12);
+        error06         = new Image(12, 12);
+        error07         = new Image(12, 12);
+        error08         = new Image(12, 12);
+        error09         = new Image(12, 12);
+
+        error01src      = "/images/callouts/error_01.gif";
+        error02src      = "/images/callouts/error_02.gif";
+        error03src      = "/images/callouts/error_03.gif";
+        error04src      = "/images/callouts/error_04.gif";
+        error05src      = "/images/callouts/error_05.gif";
+        error06src      = "/images/callouts/error_06.gif";
+        error07src      = "/images/callouts/error_07.gif";
+        error08src      = "/images/callouts/error_08.gif";
+        error09src      = "/images/callouts/error_09.gif";
+
+    }
+
+    // Load the new image file
+    function rollover(name, img) {
+        if (document.images) {
+            document[name].src = eval(img + "src");
+        }
+    }
+
+    // Places the focus on the specified form element
+    function setFocus(formName, element) {
+        fieldObj = eval("document." + formName + "." + element);
+        fieldObj.focus();
+    }
+
+    // This method performs a form submission, updating the specified form
+    // field, and disabling the submit button and any specified form elements
+    //
+    // Param[0]: Name of the form to be evaluated
+    // Param[1]: Name of the field to be updated
+    // Param[2]: Value of the field to be updated
+    // Param[3]: Name of the button to be updated
+    // Param[n]: Any additional form elements to be disabled upon submission
+    warnUser = false;
+    function submitOnce() {
+        var params     = submitOnce.arguments;
+        var paramCount = params.length;
+        var formName   = params[0];       // Name of the form to be evaluated
+        var fieldName  = params[1];       // Name of the field to be updated
+        var value      = params[2];       // Value of the field to be updated
+        var btnName    = params[3];       // Name of the button to be updated
+
+        if (warnUser) {
+            alert('Please wait while your request is being processed...');
+        } else {
+            // Update the text of the first button
+            fieldObj = eval("document." + formName + "." + fieldName);
+            fieldObj.value = value;
+            
+            // Disable the selected button if specified
+            if (paramCount > 3) {
+                fieldObj = eval("document." + formName + "." + params[3]);
+                fieldObj.value = 'Please wait...';
+                fieldObj.disabled = true;
+            }
+
+            // Disable any additional specified form elements (only supported in IE)
+            for (i = 4; i < paramCount; i++) { 
+                fieldObj = eval("document." + formName + "." + params[i]);
+                fieldObj.disabled = true;
+            } 
+
+        }
+
+        // Submit the form
+        formObj = eval("document." + formName);
+        formObj.submit();
+    }
+
+    /**
+     * Toggle the visibility of the element using the stylesheet 
+     * visibility attribute.
+     *
+     * @param   elementId     Unique id of an HTML element
+     */
+    function toggleElement(elementId) {
+        if (isVisible(elementId)) {
+            hide(elementId);
+        } else {
+            show(elementId);
+        }
+    }
+
+
+    /**
+     * Display the HTML element to the user
+     *
+     * @param   elementId     Unique id of an HTML element
+     */
+    function show(elementId) {
+        getStyleReference(elementId).display="block";
+    }
+
+    /**
+     * Hide the HTML element from the user
+     *
+     * @param   elementId     Unique id of an HTML element
+     */
+    function hide(elementId) {
+        getStyleReference(elementId).display="none";
+    }
+
+
+    /**
+     * Return a browser-independent reference to the HTML element.
+     *
+     * @param    elementId     Unique id of an HTML element
+     * @return   A document reference to the element
+     */
+    function getElementReference(elementId) {
+        var value=false;
+
+        if(document.layers) {
+            value=document.layers[elementId];
+        } else {
+            if(document.all) {
+                value = document.all[elementId];
+            } else if(document.getElementById) {
+                value = document.getElementById(elementId);
+            }
+        }
+
+        return value;
+    }
+
+    /**
+     * Return a browser-independent reference to the HTML element.
+     *
+     * @param    elementId     Unique id of an HTML element
+     * @return   A document reference to the element
+     */
+    function getStyleReference(elementId) {
+        var value=false;
+
+        if(getElementReference(elementId)) {
+            value=getElementReference(elementId);
+            if(!document.layers) {
+                value=value.style;
+            }
+        }
+
+        return value;
+    }
+
+    /**
+     * Return the stylesheet visibility value of the element.
+     *
+     * @param    elementId     Unique id of an HTML element
+     * @return   The visibility value of the element
+     */
+    function isVisible(elementId) {
+        var vis = getStyleReference(elementId).display;
+
+        return !(vis == "none");
+    }
+
+
+
+  </script>
+

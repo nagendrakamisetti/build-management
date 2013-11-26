@@ -1,0 +1,36 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="Count" default="sample_01" basedir=".">
+
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+
+  <!--
+    - This is an example of how to count the number of files in a fileset.
+    -->
+  <target name="sample_01">
+
+    <filecount property="source.count">
+      <fileset dir="report">
+        <include name="*.java"/>
+      </fileset>
+    </filecount>
+    <echo message="${source.count} Java files found."/>
+
+    <filecount property="text.count">
+      <fileset dir="report">
+        <include name="*.txt"/>
+      </fileset>
+    </filecount>
+    <echo message="${text.count} text files found."/>
+
+  </target>
+
+
+</project>

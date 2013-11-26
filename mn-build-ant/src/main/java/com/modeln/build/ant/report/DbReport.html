@@ -1,0 +1,212 @@
+<html>
+
+<head>
+  <meta http-equiv="Content-Language" content="en-us">
+  <link rel="stylesheet" type="text/css" href="../index.css">
+  <title>DbReport Task</title>
+</head>
+
+<body>
+
+<h2><a name="DbReport">DbReport</a></h2>
+
+<h3>Description</h3>
+<p>
+  Parses the Ant logging events and inserts lines into a build database
+  indicating where the errors have occurred. 
+</p>
+
+
+<h3>Parameters</h3>
+<table border="1" cellpadding="2" cellspacing="0" width="100%">
+  <tr>
+    <td valign="top" width="15%"><b>Attribute</b></td>
+    <td valign="top" width="80%"><b>Description</b></td>
+    <td align="center" valign="top" width="5%"><b>Required</b></td>
+  </tr>
+
+  <tr>
+    <td valign="top">driver</td>
+    <td valign="top">JDBC driver class used to insert data into the build database</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+
+  <tr>
+    <td valign="top">url</td>
+    <td valign="top">JDBC URL used to connect to the build databse</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+
+  <tr>
+    <td valign="top">username</td>
+    <td valign="top">Build database username</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+
+  <tr>
+    <td valign="top">password</td>
+    <td valign="top">Build database password</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+
+  <tr>
+    <td valign="top">eventTable</td>
+    <td valign="top">Alternate database table for events.  Defaults to the <tt>build_event</tt> table.</td>
+    <td valign="top" align="center">No</td>
+  </tr>
+
+  <tr>
+    <td valign="top">criteriaTable</td>
+    <td valign="top">Alternate database table for event criteria.  Defaults to the <tt>event_criteria</tt> table.</td>
+    <td valign="top" align="center">No</td>
+  </tr>
+
+  <tr>
+    <td valign="top">pollingEnabled</td>
+    <td valign="top">Enables a keep-alive thread to keep the build database connection open</td>
+    <td valign="top" align="center">No</td>
+  </tr>
+
+  <tr>
+    <td valign="top">pollingInterval</td>
+    <td valign="top">Number of seconds between build database keep-alive queries</td>
+    <td valign="top" align="center">No</td>
+  </tr>
+
+  <tr>
+    <td valign="top">eventlevel</td>
+    <td valign="top">Default event level used when inserting unmatched lines into the build database</td>
+    <td valign="top" align="center">No</td>
+  </tr>
+
+  <tr>
+    <td valign="top">failureCriteriaLevel</td>
+    <td valign="top">
+      Criteria level which will trigger a build failure if a match is found.
+      Valid levels include: <tt>debug</tt>, <tt>verbose</tt>, <tt>information</tt>,
+      <tt>warning</tt>, and <tt>error</tt>.
+    </td>
+    <td valign="top" align="center">No</td>
+  </tr>
+
+</table>
+
+
+<h3>Parameters specified as nested elements</h3>
+
+<h4>parse</h4>
+Indicates a group of string parsing criteria used to examine and categorize
+the build output.  A parse group consists of a collection of <tt>find</tt>
+elements which indicate the regular expressions to search for when parsing
+each line of output.  As matches are found they will be flagged with the
+appropriate priority and inserted into the build database. 
+
+<h5><tt>parse</tt> Parameters</h5>
+<table border="1" cellpadding="2" cellspacing="0" width="100%">
+  <tr>
+    <td valign="top" width="15%"><b>Attribute</b></td>
+    <td valign="top" width="80%"><b>Description</b></td>
+    <td align="center" valign="top" width="5%"><b>Required</b></td>
+  </tr>
+
+  <tr>
+    <td valign="top">group</td>
+    <td valign="top">Name used to refer to events within this parse group</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+
+  <tr>
+    <td valign="top">target</td>
+    <td valign="top">Ant target where listener will look for messages</td>
+    <td valign="top" align="center">No</td>
+  </tr>
+
+  <tr>
+    <td valign="top">excludeTarget</td>
+    <td valign="top">The ant target where listener will exclude under "target" when looking for messages. </td>
+    <td valign="top" align="center">No</td>
+  </tr>
+
+</table>
+
+<h5><tt>find</tt> Parameters</h5>
+<table border="1" cellpadding="2" cellspacing="0" width="100%">
+  <tr>
+    <td valign="top" width="15%"><b>Attribute</b></td>
+    <td valign="top" width="80%"><b>Description</b></td>
+    <td align="center" valign="top" width="5%"><b>Required</b></td>
+  </tr>
+
+  <tr>
+    <td valign="top">type</td>
+    <td valign="top">
+      Criteria level to associate with any lines which match the text pattern.
+      Valid levels include: <tt>debug</tt>, <tt>verbose</tt>, <tt>information</tt>, 
+      <tt>warning</tt>, and <tt>error</tt>.
+    </td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+
+  <tr>
+    <td valign="top">text</td>
+    <td valign="top">Regular expression used to evaluate each line of output</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+
+</table>
+
+
+<pre>
+&lt;dbreport ... &gt; 
+  &lt;parse group="Test" target="dbreport"&gt;
+    &lt;find type="warning" text="WARNING"/&gt;
+    &lt;find type="debug"   text="DEBUG"/&gt;
+  &lt;/parse&gt;
+&lt;/dbreport&gt;
+</pre>
+
+
+<h3>Examples</h3>
+
+<p><b>Register a logging listener</b></p>
+<pre>
+&lt;dbreport driver="com.mysql.jdbc.Driver"
+          eventlevel="information"
+          url="jdbc:mysql://hdqinfra1.modeln.com/mn_build_test"
+          username="mndist"
+          password="mndist"
+          pollingEnabled="true"
+          pollingInterval="1"&gt;
+  &lt;parse group="Test" target="dbreport"&gt;
+    &lt;find type="warning" text="WARNING"/&gt;
+    &lt;find type="debug"   text="DEBUG"/&gt;
+  &lt;/parse&gt;
+&lt;/dbreport&gt;
+
+&lt;echo message="Writing a default message..."/&gt;
+&lt;echo level="error"   message="Writing an ERROR message..."/&gt;
+&lt;echo level="warning" message="Writing a WARNING message..."/&gt;
+&lt;echo level="info"    message="Writing an INFO message..."/&gt;
+&lt;echo level="verbose" message="Writing a VERBOSE message..."/&gt;
+&lt;echo level="debug"   message="Writing a debug message..."/&gt;
+</pre>
+
+<pre>
+&lt;dbreport driver="com.mysql.jdbc.Driver"
+          eventlevel="information"
+          url="jdbc:mysql://hdqinfra1.modeln.com/mn_build_test"
+          username="mndist"
+          password="mndist"
+          pollingEnabled="true"
+          pollingInterval="1"&gt;
+  &lt;parse group="Database" target="all" excludeTargets="migrate"&gt;
+    &lt;find type="error" text="ORA-[0-9]+:"/&gt;
+  &lt;/parse&gt;
+&lt;/dbreport&gt;
+</pre>
+
+
+</body>
+</html>
+
+

@@ -1,0 +1,53 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="Progress Test" default="dbprogress" basedir=".">
+  <description>
+    This is an Ant build file which exercises the reporting targets
+    to determine if the build is working correctly.
+  </description>
+
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+
+  <!--
+    - Log the progress entries to the build database.
+    -->
+  <target name="dbprogress">
+    <dirname property="dirname" file="${ant.file}"/>
+
+    <!-- Register the Ant listener -->
+    <dbprogress driver="com.mysql.jdbc.Driver"
+                url="jdbc:mysql://hdqpdbuildmgt2.modeln.com/mn_build"
+                username="mndist"
+                password="mndist"
+                grouptable="deploy_progress_group"
+                progresstable="deploy_progress"
+                buildid="TEST-1.0-20070101.012383"
+                pollingEnabled="true"
+                pollingInterval="1">
+      <target displayname="Message Display" target="echo" file="${dirname}${file.separator}DbProgress2.xml"/>
+    </dbprogress>
+
+    <!-- Call some ant targets -->
+    <antcall target="echo"/>
+    <ant target="echo" antfile="DbProgress2.xml"/>
+  </target>
+
+  <target name="echo">
+    <echo message="Writing a default message..."/>
+    <echo level="debug"   message="Writing a debug message..."/>
+    <echo level="error"   message="Writing an ERROR message..."/>
+    <echo level="warning" message="Writing a WARNING message..."/>
+    <echo level="info"    message="Writing an INFO message..."/>
+    <echo level="verbose" message="Writing a VERBOSE message..."/>
+    <echo level="info"    message="Writing a DEBUG message..."/>
+  </target>
+
+
+</project>

@@ -1,0 +1,112 @@
+# General application error message range: 100 - 199
+#
+# Application errors denote problems which occur within the core 
+# application framework.  This may be things such as null pointers,
+# internal program errors, etc.
+
+ERROR_101=Unknown Error::An unexpected error has occurred and cannot be diagnosed further.
+ERROR_102=Internal Error::An internal application error has occurred.
+ERROR_103=Invalid Application::The requested application does not exist.
+ERROR_104=Invalid Command::The requested command does not exist.
+ERROR_105=Application Unavailable::The requested application is temporarily unavailable.  Please try again later.
+ERROR_106=Command Unavailable::The requested command is temporarily unavailable.  Please try again later.
+ERROR_107=Invalid Application Operation::The requested operation is invalid and cannot be performed.
+ERROR_108=Server Redirection Failed::The server has failed to locate the correct web page associated with your request.
+ERROR_109=Missing Configuration Entry::The application appears to be misconfigured.  Please report the error to customer support.
+ERROR_110=Invalid Configuration Entry::The application appears to be misconfigured.  Please report the error to customer support.
+ERROR_111=Missing Error String::The application appears to be misconfigured.  Please report the error to customer support.
+ERROR_112=Invalid Error String::The application appears to be misconfigured.  Please report the error to customer support.
+ERROR_113=Missing Text String::The application appears to be misconfigured.  Please report the error to customer support.
+ERROR_114=Invalid Text String::The application appears to be misconfigured.  Please report the error to customer support.
+ERROR_115=Application Display Failure::The server is unable to display an appropriate response to your request.
+
+# General database error message range: 200 - 299
+#
+# Repository errors are generic to all repositories, and include cases
+# where connection problems occur.
+
+ERROR_201=Database Unavailable::A connection to the database cannot be established.  Please try again later.
+ERROR_202=No Database Data Returned::The database failed to return the requested information.
+ERROR_203=Invalid Database Response::The database returned an invalid or incorrectly formatted response.  Please contact customer support for further assistance.
+ERROR_204=Invalid Database Data::The database returned invalid or incorrectly formatted data.  Please contact customer support for further assistance.
+ERROR_205=Invalid Database Request::The application has submitted an invalid database request.  Please contact customer support for further assistance.
+ERROR_206=Unknown Database Error::An unexpected database error has occurred.  Please contact customer support for further assistance.
+ERROR_207=Data Inconsistency::The application and the database contain inconsistent data.  Please contact customer support for further assistance.
+ERROR_208=Database Transaction Failure::The database failed to complete the requested transaction.  Please try again later.
+ERROR_209=Partial Transaction Failure::The database failed to complete the requested transaction in its entirety.  Please review the resulting data to verify that it is correct.  Please contact customer support if you require further assistance.
+ERROR_221=Database Offline::The database is currently unavailable.  Please try again later.
+     
+
+# Account related error message range: 300 - 399
+#
+# Account related errors include login errors, username and password
+# errors, and common account-level errors.
+
+ERROR_301=Unknown User::The specified username does not exist on the system.
+ERROR_302=Incorrect Password::The password you have specified is incorrect.
+ERROR_303=Not Logged On::You are not currently logged in.  Please provide your username and password to proceed.
+ERROR_304=Not Group Admin::The requested resource can only be accessed by the group administrator.    
+ERROR_305=Disabled Account::The requested account has been disabled.
+ERROR_306=Expired Ticket::Your session has timed-out.  Please provide your username and password to proceed.
+ERROR_307=Invalid Ticket::The system is unable to access your session information.  Please provide your username and password to establish a new session.
+ERROR_308=Invalid Account Hierarchy::The requested account appears to have an inconsistent group hierarchy.  Please contact customer support if you require additional assistance in correcting this error.
+ERROR_309=Excessive Login Attempts::The maximum number of invalid login attempts has been reached.  The account will be locked to prevent further attempts.
+
+# Service related error messages range: 400 - 499
+#
+# Service related errors describe errors related to the services provided
+# to applications.  Such errors include services which are not offered
+# to that user, quota exceeded for a service, etc.
+
+ERROR_401=Service Not Offered::The requested service is not available to the current account.
+ERROR_402=Service Unavailable::The requested service is temporarily unavailable.  Please try again later.
+ERROR_403=Service Permission Denied::The current account does not have permission to access the requested service.
+ERROR_404=Service Quota Exceeded::The current account has exceeded the maximum quota for this service.
+ERROR_405=Service Already Enabled::The requested service is already enabled.
+ERROR_406=Service Already Disabled::The requested service is aleady disabled.
+
+# E-mail related error messages range: 500 - 599
+#
+# E-mail related errors describe errors related to generating or sending
+# an e-mail message from within the application.
+
+ERROR_101=Failed to send message::The e-mail message could not be sent.
+
+# USERNAME/LOGIN related error message range: 1100 - 1199
+
+ERROR_1101=Login Exists::The requested username already exists.
+ERROR_1102=Login Exists For Same User::The requested username is already associated with your account.
+ERROR_1103=Login Exists For Another User::The requested username is already in use by another user.
+ERROR_1104=Login Invalid::The username you have provided does not conform to the rules defined for usernames.
+ERROR_1105=Login Too Short::The username you have provided is shorter than the minimum required length.
+ERROR_1106=Login Too Long::The username you have provided is longer than the maximum allowable length.
+ERROR_1107=Invalid Login Character::The usesrname you have provided contains invalid characters.
+ERROR_1108=Reserved Login Substring::The requested username is reserved and cannot by selected by users.
+
+# PASSWORD related error message range: 1200 - 1299
+
+ERROR_1201=Passwords Do Not Match::The password and confirmation password do not match.  Please try again.
+ERROR_1202=Password Too Short::The password you have provided is shorter than the minimum required length.
+ERROR_1203=Password Too Long::The password you have provided is longer than the maximum allowable length.
+ERROR_1204=Password Invalid::The password you have provided does not conform to the requirements for a valid password.
+ERROR_1205=Password Contains Name::The password you have provided is invalid because it contains part of your name.
+ERROR_1206=Password Username Circular::The password you have provided is invalid because it contains a circular combination of your username.
+ERROR_1207=Invalid Password Character::The password you have provided contains invalid characters.
+ERROR_1208=Password Already Exists::The new password cannot be the same as your old password.  Please try again.
+    
+# FIRSTNAME/LASTNAME related error message range: 1300 - 1399
+
+ERROR_1301=Invalid First Name::The specified first name does not conform to the rules defined for first names.
+ERROR_1302=Non-ASCII First Name::The specified first name is invalid because it contains special characters.
+ERROR_1303=First Name Too Short::The specified first name is shorter than the minimum required length.
+ERROR_1304=First Name Too Long::The specified first name is longer than the maximum allowable length.
+ERROR_1305=Invalid First Name Character::The specified first name contains invalid characters.
+ERROR_1301=Invalid Last Name::The specified last name does not conform to the rules defined for last names.
+ERROR_1302=Non-ASCII Last Name::The specified last name is invalid because it contains special characters.
+ERROR_1303=Last Name Too Short::The specified last name is shorter than the minimum required length.
+ERROR_1304=Last Name Too Long::The specified last name is longer than the maximum allowable length.
+ERROR_1305=Invalid Last Name Character::The specified last name contains invalid characters.
+
+# Build related error messages: 2000 - 2999
+ERROR_2000=Invalid Build ID::The specified build ID is invalid or does not exist.
+

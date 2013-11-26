@@ -1,0 +1,19 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="PDFMetadata" default="test" basedir=".">
+
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+  <!--
+    - This is an example of how to convert a property to lower case. 
+    -->
+  <target name="test">
+    <pdfmetadata file="test.pdf"/>
+  </target>
+</project>

@@ -1,0 +1,19 @@
+<project name="junit" default="run">
+
+  <target name="run">
+    <junit>
+      <classpath>
+        <pathelement path="/home/sstafford/dev/modeln_build/build/ant/classes"/>
+      </classpath>
+
+      <sysproperty key="reporting.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+      <sysproperty key="reporting.jdbc.url" value="jdbc:mysql://localhost/mn_build?user=mndist&amp;password=mndist"/>
+      <sysproperty key="modeln.version" value="sstafford-pharma-55-20100818.134605"/>
+      <test name="com.modeln.build.ant.test.AntTestSuite">
+        <formatter classname="com.modeln.build.ant.report.DbJUnitFormatter" extension=".txt"/>
+      </test> 
+    </junit>
+  </target>
+
+</project>
+

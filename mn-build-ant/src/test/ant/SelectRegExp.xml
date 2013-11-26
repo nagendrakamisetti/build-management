@@ -1,0 +1,27 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="RegExp" default="sample_01" basedir=".">
+
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+
+
+  <!--
+    - This is an example of how to copy matching lines to a new file.
+    -->
+  <target name="sample_01">
+    <selectregexp file="SelectRegExp.txt" output="SelectRegExp_Matches.txt">
+      <regexp pattern="Executing test suite: \W*"/>
+      <regexp pattern="Tests run: [0-9]*,  Failures: [0-9]*,  Errors: [0-9]*"/>
+    </selectregexp>
+  </target>
+
+
+
+</project>

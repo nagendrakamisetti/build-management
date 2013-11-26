@@ -1,0 +1,20 @@
+<project name="echo">
+
+  <!--
+    - Echo a message, sleep for a specified number of seconds, and then print
+    - a second message.
+    -
+    - @param   id     String to identify the message
+    - @param   dealy  Number of seconds to sleep between messages
+    -->
+  <target name="sleep">
+    <fail unless="id"    message="Missing parameter: id"/>
+    <fail unless="delay" message="Missing parameter: delay"/>
+
+    <echo message="${id} Going to sleep for ${delay} second(s)."/>
+    <sleep seconds="${delay}"/>
+    <echo message="${id} Waking up after ${delay} second(s)."/>
+  </target>
+
+</project>
+

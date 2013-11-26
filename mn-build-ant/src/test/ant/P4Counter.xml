@@ -1,0 +1,39 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="Perforce Test" default="counter" basedir=".">
+  <description>
+    This is an Ant build file which exercises the perforce targets
+    to determine if the build is working correctly.
+  </description>
+
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+
+  <!--
+    - Test the normal perforce changelist functionality.
+    -->
+  <target name="counter">
+
+    <!-- Set a counter -->
+    <p4mncounter name="test" value="12345"/>
+
+    <!-- Print the counter value out to stdout -->
+    <p4mncounter name="test"/>
+
+    <!-- Retrieve the counter value and store it in a property -->
+    <p4mncounter name="test" property="counter"/>
+    <echo message="Counter tested and returned: ${counter}"/>
+
+    <!-- Test error cases that should not be allowed -->
+    <p4mncounter name="test" value="12345" property="counter"/>
+
+  </target>
+
+
+</project>

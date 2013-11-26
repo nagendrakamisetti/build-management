@@ -1,0 +1,44 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!--
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="CreateConfig" default="test" basedir=".">
+
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+  <!--
+    - This is an example of how to generate a Flex compiler config file 
+    -->
+  <target name="test">
+    <property name="FLEX_HOME" value="/opt/flex/adobe-flex-sdk-3"/>
+    <flexconf file="/var/tmp/flex-config.xml" 
+              basefile="${FLEX_HOME}/frameworks/flex-config.xml"
+              useAbsolutePath="true">
+
+      <externallibrarypath dir="${FLEX_HOME}/frameworks">
+        <include name="libs/player/playerglobal.swc"/>
+      </externallibrarypath>
+
+      <librarypath dir="${FLEX_HOME}/frameworks">
+        <include name="libs"/>
+        <include name="libs/player"/>
+        <include name="locale/*"/>
+      </librarypath>
+
+      <runtimelibrarypath dir="${FLEX_HOME}/frameworks">
+        <include name="libs/framework.swc"/>
+      </runtimelibrarypath>
+
+      <resourcebundles dir="/home/sstafford/dev/modeln_build/src/com/modeln/build/ant">
+        <include name="**/*.properties"/>
+      </resourcebundles>
+    </flexconf>
+  </target>
+
+</project>
+

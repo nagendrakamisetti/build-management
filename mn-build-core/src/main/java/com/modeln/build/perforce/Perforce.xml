@@ -1,0 +1,32 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="Perforce Test" default="changelist" basedir=".">
+  <description>
+    This is an Ant build file which exercises the perforce targets
+    to determine if the build is working correctly.
+  </description>
+
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+
+  <!--
+    - Test the normal perforce changelist functionality.
+    -->
+  <target name="changelist">
+    <java classname="com.modeln.build.perforce.Changelist"/>
+  </target>
+
+  <!--
+    - Test the normal perforce clientspec functionality.
+    -->
+  <target name="clientspec">
+    <java classname="com.modeln.build.perforce.Client"/>
+  </target>
+
+</project>

@@ -1,0 +1,147 @@
+<html>
+
+<head>
+  <meta http-equiv="Content-Language" content="en-us">
+  <link rel="stylesheet" type="text/css" href="../index.css">
+  <title>DbProgress Task</title>
+</head>
+
+<body>
+
+<h2><a name="DbProgress">DbProgress</a></h2>
+
+<h3>Description</h3>
+<p>
+  Parses the Ant logging events and inserts database rows as output lines
+  are found to match progress targets.  This listener is used to track
+  build progress by locating known markers within the build output.
+</p>
+
+
+<h3>Parameters</h3>
+<table border="1" cellpadding="2" cellspacing="0" width="100%">
+  <tr>
+    <td valign="top" width="15%"><b>Attribute</b></td>
+    <td valign="top" width="80%"><b>Description</b></td>
+    <td align="center" valign="top" width="5%"><b>Required</b></td>
+  </tr>
+
+  <tr>
+    <td valign="top">driver</td>
+    <td valign="top">JDBC driver class used to insert data into the build database</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+
+  <tr>
+    <td valign="top">url</td>
+    <td valign="top">JDBC URL used to connect to the build databse</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+
+  <tr>
+    <td valign="top">username</td>
+    <td valign="top">Build database username</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+
+  <tr>
+    <td valign="top">password</td>
+    <td valign="top">Build database password</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+
+  <tr>
+    <td valign="top">groupTable</td>
+    <td valign="top">Alternate database table for progress group entries.  Defaults to the <tt>build_progress_group</tt> table.</td>
+    <td valign="top" align="center">No</td>
+  </tr>
+
+  <tr>
+    <td valign="top">progressTable</td>
+    <td valign="top">Alternate database table for progress entries.  Defaults to the <tt>build_progress</tt> table.</td>
+    <td valign="top" align="center">No</td>
+  </tr>
+
+  <tr>
+    <td valign="top">buildId</td>
+    <td valign="top">Foreign key linking progress entries to an entry in the <tt>build</tt> table.</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+
+  <tr>
+    <td valign="top">pollingEnabled</td>
+    <td valign="top">Enables a keep-alive thread to keep the build database connection open</td>
+    <td valign="top" align="center">No</td>
+  </tr>
+
+  <tr>
+    <td valign="top">pollingInterval</td>
+    <td valign="top">Number of seconds between build database keep-alive queries</td>
+    <td valign="top" align="center">No</td>
+  </tr>
+
+</table>
+
+
+<h3>Parameters specified as nested elements</h3>
+
+<h4>target</h4>
+Indicates a string parsing criteria used to examine and categorize
+the build output.  As matches are found they will be inserted into
+the build database as progress indicators. 
+
+<h5><tt>target</tt> Parameters</h5>
+<table border="1" cellpadding="2" cellspacing="0" width="100%">
+  <tr>
+    <td valign="top" width="15%"><b>Attribute</b></td>
+    <td valign="top" width="80%"><b>Description</b></td>
+    <td align="center" valign="top" width="5%"><b>Required</b></td>
+  </tr>
+
+  <tr>
+    <td valign="top">displayName</td>
+    <td valign="top">Name used to refer to the progress item</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+
+  <tr>
+    <td valign="top">target</td>
+    <td valign="top">Ant target where listener will look for messages</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+
+  <tr>
+    <td valign="top">file</td>
+    <td valign="top">Ant file containing the specified target</td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+
+</table>
+
+
+
+<h3>Examples</h3>
+
+<p><b>Register a logging listener</b></p>
+<pre>
+&lt;dirname property="dirname" file="${ant.file}"/&gt;
+&lt;dbprogress driver="com.mysql.jdbc.Driver"
+            url="jdbc:mysql://hdqpdbuildmgt2.modeln.com/mn_build"
+            username="mndist"
+            password="mndist"
+            grouptable="deploy_progress_group"
+            progresstable="deploy_progress"
+            buildid="TEST-1.0-20070101.012383"
+            pollingEnabled="true"
+            pollingInterval="1"&gt;
+  &lt;target displayname="Message Display" 
+             target="echo" 
+             file="${dirname}${file.separator}DbProgress2.xml"/&gt;
+&lt;dbprogress&gt;
+</pre>
+
+
+</body>
+</html>
+
+

@@ -1,0 +1,86 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="Lock" default="sample_01" basedir=".">
+
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+
+
+  <!--
+    - This is an example of how to acquire a lock and then release the lock.
+    -->
+  <target name="sample_01">
+    <tstamp>
+      <format property="key" pattern="yyyyMMddHHmmSSSS"/>
+    </tstamp>
+
+    <!-- Forcibly remove an existing lock regardless of its state -->
+    <lock action="clear"   lockfile="test.lock"/>
+
+    <!-- Create a lock file -->
+    <lock action="acquire" lockfile="test.lock" key="${key}"/>
+
+    <!-- Display the locking information stored in the lock file -->
+    <lock action="display" lockfile="test.lock"/>
+
+    <!-- Release the lock if the key matches -->
+    <lock action="release" lockfile="test.lock" key="${key}"/>
+  </target>
+
+
+  <!--
+    - This target acquires a lock but never releases it.  The Lock class
+    - should automatically release the lock file once the build completes.
+    -->
+  <target name="sample_02">
+    <tstamp>
+      <format property="key" pattern="yyyyMMddHHmmSSSS"/>
+    </tstamp>
+    <lock action="clear"   lockfile="test.lock"/>
+    <lock action="acquire" lockfile="test.lock" key="${key}"/>
+    <lock action="display" lockfile="test.lock"/>
+    <waitfor maxwait="30" maxwaitunit="second">
+      <available file="errors.log"/>
+    </waitfor>
+    <echo message="Exiting build.  Make sure the lock file has been removed."/>
+  </target>
+
+  <!--
+    - This example tests the scenario in which the build fails before the
+    - lock can be released.  In this case, the lock event listener should
+    - attempt to release the lock automatically when the build exits.
+    -->
+  <target name="sample_03">
+    <tstamp>
+      <format property="key" pattern="yyyyMMddHHmmSSSS"/>
+    </tstamp>
+    <lock action="clear"   lockfile="test.lock"/>
+    <lock action="acquire" lockfile="test.lock" key="${key}"/>
+
+    <fail message="Build failing.  Make sure the lock file has been removed."/>
+
+    <lock action="display" lockfile="test.lock"/>
+    <lock action="release" lockfile="test.lock" key="${key}"/>
+  </target>
+
+  <!--
+    - This example tests the scenario in which locking mechanism has been
+    - disabled by a property flag.
+    -->
+  <target name="sample_04">
+    <property name="lockEnabled" value="false"/>
+    <tstamp>
+      <format property="key" pattern="yyyyMMddHHmmSSSS"/>
+    </tstamp>
+    <lock action="acquire" lockfile="test.lock" key="${key}" enabled="${lockEnabled}"/>
+    <echo message="If the lock request was successfully disabled, the following task will fail."/>
+    <lock action="display" lockfile="test.lock"/>
+  </target>
+
+</project>

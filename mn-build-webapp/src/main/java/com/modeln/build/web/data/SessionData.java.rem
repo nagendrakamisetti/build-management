@@ -1,0 +1,125 @@
+/*
+ * SessionData.java
+ *
+ * Copyright 2002 by Shawn Stafford (sstafford@modeln.com)
+ * All rights reserved.
+ */
+package com.modeln.build.web.data;
+
+import java.util.Vector;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import com.modeln.build.common.data.account.*;
+
+/**
+ * The SessionData class provides standard methods for accessing
+ * information from an HttpServlet session.
+ *
+ * @version            $Revision: 1.1.1.1 $
+ * @author             Shawn Stafford
+ * Date                4/15/2002
+ *
+ */
+public class SessionData {
+
+    /** String which identifies the UserData login object in the session */
+    public static final String LOGIN_KEY = "UserData";
+
+    /** String which identifies a list of GroupTree object in the session */
+    public static final String GROUPS_KEY = "GroupTree";
+
+    /**
+     * Returns the login object from the session.
+     *
+     */
+    public static UserData getLogin(HttpServletRequest request) {
+        return (UserData) request.getSession().getAttribute(LOGIN_KEY);
+    }
+
+    /**
+     * Returns the login object from the session.
+     *
+     */
+    public static void setLogin(UserData data, HttpServletRequest request) {
+        request.getSession().setAttribute(LOGIN_KEY, data);
+    }
+
+    /**
+     * Returns the login object from the session.
+     *
+     */
+    public static UserData getLogin(HttpSession session) {
+        return (UserData) session.getAttribute(LOGIN_KEY);
+    }
+
+    /**
+     * Returns the login object from the session.
+     *
+     */
+    public static void setLogin(UserData data, HttpSession session) {
+        session.setAttribute(LOGIN_KEY, data);
+    }
+
+
+    /**
+     * Returns a list of known groups from the session.  The list of
+     * groups does not necessarily correspond to the list of groups
+     * to which the current user belongs, it merely represents a list
+     * of GroupTree objects representing know group hierarchies.
+     *
+     */
+    public static Vector getGroups(HttpServletRequest request) {
+        return (Vector) request.getSession().getAttribute(GROUPS_KEY);
+    }
+
+    /**
+     * Sets a list of known groups in the session.  The list of
+     * groups does not necessarily correspond to the list of groups
+     * to which the current user belongs, it merely represents a list
+     * of GroupTree objects representing know group hierarchies.
+     *
+     */
+    public static void setGroups(Vector groups, HttpServletRequest request) {
+        request.getSession().setAttribute(GROUPS_KEY, groups);
+    }
+
+    /**
+     * Returns a list of known groups from the session.  The list of
+     * groups does not necessarily correspond to the list of groups
+     * to which the current user belongs, it merely represents a list
+     * of GroupTree objects representing know group hierarchies.
+     *
+     */
+    public static Vector getGroups(HttpSession session) {
+        return (Vector) session.getAttribute(GROUPS_KEY);
+    }
+
+    /**
+     * Sets a list of known groups in the session.  The list of
+     * groups does not necessarily correspond to the list of groups
+     * to which the current user belongs, it merely represents a list
+     * of GroupTree objects representing know group hierarchies.
+     *
+     */
+    public static void setLogin(Vector groups, HttpSession session) {
+        session.setAttribute(GROUPS_KEY, groups);
+    }
+
+    /**
+     * Disposes of the session object and logs the user out of the system.
+     *
+     */
+    public static void logout(HttpServletRequest request) {
+        request.getSession().invalidate();
+    }
+
+    /**
+     * Disposes of the session object and logs the user out of the system.
+     *
+     */
+    public static void logout(HttpSession session) {
+        session.invalidate();
+    }
+
+}

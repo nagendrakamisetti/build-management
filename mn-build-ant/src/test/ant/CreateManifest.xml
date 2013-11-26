@@ -1,0 +1,26 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!--
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="CreateManifest" default="test" basedir=".">
+
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+  <!--
+    - This is an example of how to diff the contents of two Ear files
+    -->
+  <target name="test">
+    <flexmf manifest="/var/tmp/manifest.txt" extensions="xml">
+      <fileset dir="/home/sstafford/dev/modeln_build/src/com/modeln/build/ant">
+        <include name="**/*.xml"/>
+      </fileset>
+    </flexmf>
+  </target>
+
+</project>
+

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
+
+  <properties>
+    <title>FileInfo Task</title>
+    <author email="sstafford@modeln.com">Shawn Stafford</author>
+  </properties>
+
+  <body>
+    <section name="FileInfo">
+      <p>
+        Obtains file information about a specific file and stores the
+        information in Ant properties.  The following properties will
+        be set when this Ant task is invoked:
+        <blockquote>
+        <tt>file.size</tt><br/>
+        <tt>file.lastmodified</tt><br/>
+        </blockquote>
+      </p>
+
+      <subsection name="Parameters">
+<table border="1" cellpadding="2" cellspacing="0" width="100%">
+  <tr>
+    <td valign="top" width="15%"><b>Attribute</b></td>
+    <td valign="top" width="80%"><b>Description</b></td>
+    <td align="center" valign="top" width="5%"><b>Required</b></td>
+  </tr>
+
+  <tr>
+    <td valign="top">file</td>
+    <td valign="top">
+      Set the file that will be examined. 
+    </td>
+    <td valign="top" align="center">Yes</td>
+  </tr>
+  <tr>
+    <td valign="top">echo</td>
+    <td valign="top">Print the file information to stdout</td>
+    <td valign="top" align="center">No</td>
+  </tr>
+  <tr>
+    <td valign="top">property</td>
+    <td valign="top">
+      Prefix used for file information properties.  
+      If no value is specified a default of "file" will be used.
+      For example, if a prefix of
+      "file1" is specified, the Ant task will use the following property names:
+      <blockquote>
+        file1.size<br/>
+        file1.lastmodified<br/>
+      </blockquote>
+    </td>
+    <td valign="top" align="center">No</td>
+  </tr>
+  <tr>
+    <td valign="top">dateformat</td>
+    <td valign="top">
+      Format pattern used for any date information such as the last 
+      modified date.  Use the SimpleDateFormat pattern to specify date
+      patterns.  If no format pattern is specified the date will be 
+      returned in raw (long) numerical format representing the number
+      of milliseconds since "the epoch" (January 1, 1970, 00:00:00 GMT).
+    </td>
+    <td valign="top" align="center">No</td>
+  </tr>
+
+
+</table>
+
+      </subsection>
+
+      <subsection name="Examples">
+        <b>Obtain the file information and store the value in Ant properties:</b>
+        <source>
+&lt;fileinfo file="/var/tmp/foo"/&gt;
+&lt;echo message="Size: ${file.size}"/&gt;
+&lt;echo message="Last Modified: ${file.lastmodified}"/&gt;
+        </source>
+      </subsection>
+
+    </section>
+
+  </body>
+
+</document>
+

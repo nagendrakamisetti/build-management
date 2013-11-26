@@ -1,0 +1,36 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="Repeat" default="repeat" basedir=".">
+
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+  <target name="repeat">
+    <property name="count" value="0"/>
+    <delete>
+      <fileset dir="/var/tmp">
+        <include name="echo*"/>
+      </fileset>
+    </delete>
+    <repeat maxwait="10" maxwaitunit="second">
+      <condition>
+        <available property="isavailable" file="/var/tmp/echo5"/>
+      </condition>
+      <increment property="count"/> 
+      <antcall target="createfile"/>
+    </repeat>
+  </target>
+
+  <target name="createfile">
+    <fail unless="count" message="Missing parameter: count"/>
+    <echo message="Generating /var/tmp/echo${count}"/>
+    <echo file="/var/tmp/echo${count}" message="I'm done."/>
+  </target>
+
+</project>
+

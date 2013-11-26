@@ -1,0 +1,26 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="FileInfo" default="sample_01" basedir=".">
+
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+
+
+  <!--
+    - This is an example of how to obtain network information.
+    -->
+  <target name="sample_01">
+    <echo file="/var/tmp/test.txt" message="This is a test."/>
+    <fileinfo file="/var/tmp/test.txt" echo="false"/>
+    <echo message="File size: ${file.size} bytes"/>
+    <echo message="Last Modified: ${file.lastmodified}"/>
+    <delete file="/var/tmp/test.txt"/>
+  </target>
+
+</project>

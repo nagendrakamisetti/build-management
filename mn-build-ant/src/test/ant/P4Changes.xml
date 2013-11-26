@@ -1,0 +1,40 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="Perforce Test" default="changelist" basedir=".">
+  <description>
+    This is an Ant build file which exercises the perforce targets
+    to determine if the build is working correctly.
+  </description>
+
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+
+  <!--
+    - Test the normal perforce changelist functionality.
+    -->
+  <target name="changelist">
+
+    <p4changes path="//modeln/..."/>
+    <echo message="Changelist num:  ${p4.changelist}"/>
+    <echo message="Changelist date: ${p4.date}"/>
+    <echo message="Changelist desc: ${p4.description}"/>
+    <echo message="Changelist user: ${p4.user}"/>
+    <echo message="Changelist client: ${p4.client}"/>
+
+    <p4changes path="//modeln/..." uselocal="true"/>
+    <echo message="Local changelist num:  ${p4.changelist}"/>
+    <echo message="Local changelist date: ${p4.date}"/>
+    <echo message="Local changelist desc: ${p4.description}"/>
+    <echo message="Local changelist user: ${p4.user}"/>
+    <echo message="Local changelist client: ${p4.client}"/>
+
+  </target>
+
+
+</project>

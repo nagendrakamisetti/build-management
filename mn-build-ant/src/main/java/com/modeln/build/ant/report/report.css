@@ -1,0 +1,222 @@
+
+/**
+ * This stylesheet defines the look and feel for the entire collection
+ * of Denali documentation.  Every publishable HTML document should link
+ * to this stylesheet for primary formatting.  Local formatting can be
+ * placed in additional stylesheets.
+ *
+ * @author		Shawn Stafford (sstafford@modeln.com)
+ * @version		Denali
+ * @visibility	external
+ */
+
+
+body { 
+	cursor: default; 
+	font-family : Verdana, arial, sans-serif; 
+	font-size: 11px; 
+	font-weight: normal; 
+	color: #000000;
+}
+
+a {
+	text-decoration: none;
+	font-family : Verdana, arial, sans-serif; 
+}
+
+hr {
+	background: #BDD7C2;
+	color: #BDD7C2;
+}
+
+li {
+  padding: 0px 0px 6px 0px; /* top right bottom left */
+}
+
+.pageCategoryTitle { 
+	text-decoration: none;
+	font-family : Verdana, arial, sans-serif; 
+	font-size: 11px; 
+	font-weight: bold; 
+	color: #000000;
+}
+
+.pageMainTitle { 
+	text-decoration: none;
+	font-family : Verdana, arial, sans-serif; 
+	font-size: 14px; 
+	font-weight: bold; 
+	color: #4B5A6D;
+}
+
+.pageContentHeader {
+	text-decoration: none;
+	font-family : Verdana, arial, sans-serif; 
+	font-size: 12px; 
+	font-weight: bold; 
+	color: #4B5A6D;
+}
+
+.pageContentSubHeader {
+	text-decoration: none;
+	font-family : Verdana, arial, sans-serif; 
+	font-size: 11px; 
+	font-weight: bold; 
+	color: #4B5A6D;
+}
+
+.pageHeader {
+	text-decoration: none;
+	font-family : Verdana, arial, sans-serif; 
+	font-size: 11px; 
+	font-weight: normal; 
+	color: #4B5A6D;
+}
+
+.pageContent {
+	text-decoration: none;
+	font-family : Verdana, arial, sans-serif; 
+	font-size: 12px; 
+	font-weight: normal; 
+	color: #000000;
+}
+
+.pageFooter {
+	text-decoration: none;
+	font-family : Verdana, arial, sans-serif; 
+	font-size: 11px; 
+	font-weight: normal; 
+	color: #000000;
+}
+
+
+.tableContentHeader { 
+	text-decoration: none;
+	font-family : Verdana, arial, sans-serif; 
+	font-size: 11px; 
+	font-weight: bold; 
+	background: #BDD7C2;
+	color: #000000;
+}
+
+.tableContentBody { 
+	text-decoration: none;
+	font-family : Verdana, arial, sans-serif; 
+	font-size: 11px; 
+	font-weight: normal; 
+	background: #FFFFFF;
+	color: #000000;
+}
+
+.tableContentOddRow { 
+	text-decoration: none;
+	font-family : Verdana, arial, sans-serif; 
+	font-size: 11px; 
+	font-weight: normal; 
+	background: #FFFFCC;
+	color: #000000;
+}
+
+.tableContentEvenRow { 
+	text-decoration: none;
+	font-family : Verdana, arial, sans-serif; 
+	font-size: 11px; 
+	font-weight: normal; 
+	background: #FFFFEE;
+	color: #000000;
+}
+
+table {
+	text-decoration: none;
+	font-family : Verdana, arial, sans-serif; 
+	font-size: 11px; 
+	font-weight: normal; 
+}
+
+th {
+	text-decoration: none;
+	font-family : Verdana, arial, sans-serif; 
+	font-size: 12px; 
+	font-weight: bold; 
+}
+
+td {
+	text-decoration: none;
+	font-family : Verdana, arial, sans-serif; 
+	font-size: 11px; 
+	font-weight: normal; 
+}
+
+
+table.standard {
+	color: #000000;
+}
+
+th.standard {
+	background: #0080C0;
+	color: #FFFFFF;
+}
+
+td.standard {
+	background: #FFFFFF;
+	color: #000000;
+}
+
+th.bordered {
+	background: #000000;
+}
+
+td.bordered {
+	background: #000000;
+}
+
+
+/**
+ * Project priority levels 
+ */
+.error {
+	background: #FF9999;
+	color: #000000;
+}
+
+.warning {
+	background: #FFFFCC;
+	color: #000000;
+}
+
+.information {
+	background: #FFFFFF;
+	color: #000000;
+}
+
+.success {
+	background: #BBFFDD;
+	color: #000000;
+}
+
+/**
+ * Target status levels
+ */
+.Pending {
+	background: #FFFFFF;
+	color: #000000;
+}
+
+.Complete {
+	background: #BBFFDD;
+	color: #000000;
+}
+
+.Running {
+	background: #FF9999;
+	color: #000000;
+}
+
+
+/**
+ * Perforce changelist entries
+ */
+.p4change {
+	background: #FFFFDD;
+	color: #000000;
+}

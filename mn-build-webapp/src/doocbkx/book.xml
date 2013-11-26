@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<!--
+  - Use thse stylesheet references if you want to allow the browser
+  - to render DocBook XML files directly.
+
+<?xml-stylesheet href="../xsl/xinclude.xsl"?>
+<?xml-stylesheet href="../css/docbook-css-0.4/driver.css" type="text/css"?>
+
+-->
+
+<book xmlns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0">
+  <title>Build Management Application</title>
+  <para>
+    This is the content.
+  </para>
+</book>
+

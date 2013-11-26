@@ -1,0 +1,10 @@
+    [echo] DataFlowGroup: FullPopulate completed with 77 errors in 1823.0 s
+    [java] DataFlowGroup: FullPopulate completed successfully in 236.0 s
+
+    [echo] Executing test suite: UtPlatformSuite, propfile=deploy_unittest
+    [echo] OK (908 tests)
+
+
+    [echo] FAILURES!!!
+    [echo] Tests run: 435,  Failures: 1,  Errors: 0
+

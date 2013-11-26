@@ -1,0 +1,35 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="dependencies" default="print" basedir=".">
+
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+  <path id="ant.classpath">
+    <fileset dir="../../../../../../ant/lib">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+
+
+  <!--
+    - This is an example of printing a list of dependencies.
+    -->
+  <target name="print">
+    <listdeps classpathref="ant.classpath" reportformat="html" reportfile="report.html">
+      <include name="com.modeln.*"/>
+      <include name="org.apache.*"/>
+      <exclude name="java.*"/>
+      <fileset dir="..">
+        <include name="**/*.java"/>
+      </fileset>
+    </listdeps>
+  </target>
+
+
+</project>

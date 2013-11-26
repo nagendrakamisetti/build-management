@@ -1,0 +1,62 @@
+<html>
+
+<head>
+  <meta http-equiv="Content-Language" content="en-us">
+  <link rel="stylesheet" type="text/css" href="index.css">
+  <title>Hostname Task</title>
+</head>
+
+<body>
+
+<h2><a name="Hostname">Hostname</a></h2>
+
+<h3>Description</h3>
+<p>
+  Obtains network information about a specific host and stores the
+  information in Ant properties.  The following properties will
+  be set when this Ant task is invoked:
+  <blockquote>
+  <tt>host.name</tt><br/>
+  <tt>host.address</tt><br/>
+  </blockquote>
+
+</p>
+
+
+<h3>Parameters</h3>
+<table border="1" cellpadding="2" cellspacing="0" width="100%">
+  <tr>
+    <td valign="top" width="15%"><b>Attribute</b></td>
+    <td valign="top" width="80%"><b>Description</b></td>
+    <td align="center" valign="top" width="5%"><b>Required</b></td>
+  </tr>
+
+  <tr>
+    <td valign="top">host</td>
+    <td valign="top">
+      Set the hostname used when obtaining network information.
+      If no hostname is specified, the localhost information will be obtained.
+    </td>
+    <td valign="top" align="center">No</td>
+  </tr>
+  <tr>
+    <td valign="top">echo</td>
+    <td valign="top">Print the host information to stdout</td>
+    <td valign="top" align="center">No</td>
+  </tr>
+</table>
+
+
+<h3>Examples</h3>
+<p><b>Obtain the hostname and store the value in Ant properties:</b></p>
+<pre>
+  &lt;hostname/&gt;
+  &lt;echo message="Hostname: ${host.name}"/&gt;
+  &lt;echo message="IP Address: ${host.address}"/&gt;
+</pre>
+
+
+</body>
+</html>
+
+

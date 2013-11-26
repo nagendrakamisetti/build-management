@@ -1,0 +1,19 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="Progress Test" default="echo" basedir=".">
+
+  <target name="echo">
+    <echo message="Writing a test message..."/>
+    <echo message="Sleeping for 20 seconds..."/>
+    <sleep seconds="20"/>
+    <echo message="Finished 'echo' target."/>
+  </target>
+
+
+</project>

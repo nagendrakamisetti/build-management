@@ -1,0 +1,126 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="Report Test" default="test" basedir=".">
+  <description>
+    This is an Ant build file which exercises the reporting targets
+    to determine if the build is working correctly.
+  </description>
+
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+  <property name="depot" value="//modeln_build/src/com/modeln/build/ant/..."/>
+
+
+  <!--
+    - Test the normal ant mail functionality.
+    -->
+  <target name="mail">
+    <mail mailhost="mail.modeln.com" mailport="25" subject="Ant Test Mail">
+      <from address="sstafford@modeln.com"/>
+      <to address="sstafford@modeln.com"/>
+      <message>This is the body of the test message.</message>
+    </mail>
+  </target>
+
+  <target name="success" depends="test">
+    <echo level="verbose" message="Everything is fine..."/>
+    <echo level="info" message="Everything is good..."/>
+    <echo level="info" message="Almost done..."/>
+    <echo level="info" message="Done."/>
+  </target>
+
+  <target name="disable" depends="test">
+    <echo level="info" message="Almost done..."/>
+    <echo level="info" message="Disable listener so it doesn't increment counter."/>
+    <property name="blameEnabled" value="false"/>
+    <echo level="info" message="Done."/>
+  </target>
+
+  <target name="fail" depends="test">
+    <echo level="verbose" message="Everything is fine..."/>
+    <echo level="info" message="Everything is good..."/>
+    <echo level="warning" message="Things are getting worse..."/>
+    <echo level="error" message="Things are getting bad..."/>
+    <fail message="You broke the build."/>
+  </target>
+
+  <target name="failWithBCC" depends="testBCC">
+    <echo level="verbose" message="Everything is fine..."/>
+    <echo level="info" message="Everything is good..."/>
+    <echo level="warning" message="Things are getting worse..."/>
+    <echo level="error" message="Things are getting bad..."/>
+    <fail message="You broke the build."/>
+  </target>
+  
+  <target name="test">
+    <tstamp>
+      <format property="timestamp" pattern="yyyyMMddHHmmss"/>
+    </tstamp>
+
+    <p4blamereport format="html" 
+                   loglevel="info" 
+                   reportfile="P4BlameReport.html"
+                   toggleProperty="blameEnabled" 
+                   counter="test" 
+                   depot="${depot}" 
+                   defaultto="sstafford@modeln.com">
+      <emailmessage subject="P4 Blame Report" mailhost="mail.modeln.com" mailport="25" encoding="mime" charset="UTF-8">
+        <from address="sstafford@modeln.com" name="Shawn Stafford"/>
+      </emailmessage>
+    </p4blamereport>
+
+  </target>
+
+  <!-- Determine if the BCC field can accept multiple recipients -->
+  <target name="testBCC">
+    <p4blamereport 
+        format="html" 
+        loglevel="info" 
+        reportfile="P4BlameReport.html"
+        toggleProperty="blameEnabled"
+        counter="test" 
+        depot="${depot}" 
+        defaultto="mn-pd-build-release@modeln.com">
+      <emailmessage subject="P4 Blame Task: TEST" 
+          mailhost="mail.modeln.com" 
+          mailport="25" 
+          encoding="mime" 
+          charset="UTF-8"
+          from="sstafford@modeln.com"
+          bcclist="sstafford@modeln.com,pdbugs@modeln.com">
+      </emailmessage>
+    </p4blamereport>
+  </target>
+  
+  <!-- Test the deletion of the listener -->
+  <target name="register">
+    <p4blamereport id="testreport" 
+                   format="html"
+                   reportfile="P4BlameReport.html"
+                   loglevel="info"
+                   toggleProperty="blameEnabled"
+                   counter="test"
+                   depot="${depot}"
+                   defaultto="sstafford@modeln.com">
+      <emailmessage subject="P4 Blame Report" mailhost="mail.modeln.com" mailport="25" encoding="mime" charset="UTF-8">
+        <from address="sstafford@modeln.com" name="Shawn Stafford"/>
+      </emailmessage>
+    </p4blamereport>
+  </target>
+  <target name="delete" depends="register">
+    <!-- <p4blamedelete refid="testreport"/> -->
+    <antcall target="delete.nested"/>
+    <fail message="Testing the blame deletion..."/>
+  </target>
+  <target name="delete.nested">
+    <p4blamedelete/>
+  </target>
+
+  
+</project>

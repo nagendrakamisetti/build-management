@@ -1,0 +1,30 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="Count" default="stdout" basedir=".">
+
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+  <property name="infile" value="/var/tmp/cat.txt"/>
+
+  <target name="stdout">
+    <echo message="Generating file: ${infile}"/>
+    <echo file="${infile}">
+This file contains a bunch of text.
+This is the second line.
+This is the thrid line.
+...etc...
+    </echo>
+
+    <cat file="${infile}"/>
+
+    <echo message="Deleting file: ${infile}"/>
+    <delete file="${infile}"/>
+  </target>
+
+</project>

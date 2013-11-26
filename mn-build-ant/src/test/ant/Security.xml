@@ -1,0 +1,60 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="test" default="keygen" basedir=".">
+
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+  <!--
+    - Generate a public and private key pair.
+    -->
+  <target name="keygen">
+    <keypairgen property="test" keysize="1024"/>
+    <echo message="Public key: ${test.public}"/>
+    <echo message="Private key: ${test.private}"/>
+  </target>
+
+  <!--
+    - Encrypt a sample message.
+    -->
+  <target name="encrypt">
+    <keygen property="test" keysize="56"/>
+    <echo message="Secret key: ${test}"/>
+
+    <encrypt property="encrypted" message="This is a test." key="${test}"/>
+    <echo message="Encrypted message: ${encrypted}"/>
+
+    <decrypt property="decrypted" message="${encrypted}" key="${test}" keyParams="${encrypted.params}"/>
+    <echo message="Decrypted message: ${decrypted}"/>
+  </target>
+
+  <!--
+    - Verify a sample message.
+    -->
+  <target name="verify">
+    <property name="testmsg" value="This is a test."/>
+
+    <keypairgen property="test" keysize="1024"/>
+    <echo message="Public key: ${test.public}"/>
+    <echo message="Private key: ${test.private}"/>
+
+    <!-- Generate a message signature for the message we wish to verify -->
+    <verifykey property="signature" key="${test.private}" message="${testmsg}"/>
+    <echo message="Message signature: ${signature}"/>
+    
+    <!-- Use the signature to determine if the message has been changed -->
+    <verifykey property="result" key="${test.public}" message="${testmsg}" signature="${signature}"/>
+    <echo message="Signature matches good: ${result}"/>
+
+    <!-- Make sure the signature can be used to identify modified messages -->
+    <verifykey property="badresult" key="${test.public}" message="x${testmsg}x" signature="${signature}"/>
+    <echo message="Signature matches bad: ${badresult}"/>
+  </target>
+
+</project>
+

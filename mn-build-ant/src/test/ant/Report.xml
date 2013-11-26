@@ -1,0 +1,312 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="Report Test" default="report" basedir=".">
+  <description>
+    This is an Ant build file which exercises the reporting targets
+    to determine if the build is working correctly.
+  </description>
+
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+
+  <!--
+    - Test the normal ant mail functionality.
+    -->
+  <target name="mail">
+    <mail mailhost="mail.modeln.com" mailport="25" subject="Ant Test Mail">
+      <from address="sstafford@modeln.com"/>
+      <to address="sstafford@modeln.com"/>
+      <message>This is the body of the test message.</message>
+    </mail>
+  </target>
+
+
+  <target name="test">
+    <tstamp>
+      <format property="timestamp" pattern="yyyyMMddHHmmss"/>
+    </tstamp>
+
+    <livereport format="html" file="Report.html" lastbuild="${timestamp}">
+      <reportsummary type="email" if="complete"
+          mailhost="mail.modeln.com"
+          mailport="25"
+          subject="Build Report">
+        <from address="sstafford@modeln.com" name="Shawn Stafford"/>
+        <to   address="sstafford@modeln.com" name="Shawn Stafford"/>
+        <message>This is a test.</message>
+      </reportsummary>
+    </livereport>
+
+  </target>
+
+
+  <!--
+    - This is an example of how to acquire a lock and then release the lock.
+    -->
+  <target name="lock">
+    <tstamp>
+      <format property="key" pattern="yyyyMMddHHmmSSSS"/>
+    </tstamp>
+
+    <!-- Forcibly remove an existing lock regardless of its state -->
+    <lock action="clear"   lockfile="test.lock"/>
+
+    <!-- Create a lock file -->
+    <lock action="acquire" lockfile="test.lock" key="${key}"/>
+
+    <!-- Display the locking information stored in the lock file -->
+    <lock action="display" lockfile="test.lock"/>
+
+    <echo message="Sleeping for 30 seconds.  Check to see if a partial report is available..."/>
+    <sleep seconds="30"/>
+
+    <!-- Release the lock if the key matches -->
+    <lock action="release" lockfile="test.lock" key="${key}"/>
+
+  </target>
+
+
+
+  <!--
+    - This target is used to simulate a new task event so that the progress
+    - of the build report can be verified by the user.
+    -->
+  <target name="sleepy">
+    <echo message="Sleeping for 15 seconds.  Check to see if a partial report is available..."/>
+    <sleep seconds="15"/>
+    <antcall target="tiny"/>
+    <antcall target="tiny"/>
+    <antcall target="tiny"/>
+    <antcall target="tiny"/>
+    <antcall target="tiny"/>
+    <antcall target="tiny"/>
+    <antcall target="tiny"/>
+  </target>
+
+  <!-- 
+    - This target is used to simulate a tiny task.
+    -->
+  <target name="tiny">
+    <echo message="Sleeping for 5 seconds.  Check to see if a partial report is available..."/>
+    <sleep seconds="5"/>
+  </target>
+
+  <!-- 
+    - This target just writes out some information.
+    -->
+  <target name="jabber">
+    <echo message="I like to jabber."/>
+    <antcall target="tiny"/>
+  </target>
+
+  <!--
+    - This target just prints some messages using different logging levels.
+    -
+    - @param  id   String used to identify the current execution of the target
+    - @param  fail (Optional) Boolean to indicate whether a FAIL message should be printed
+    -              If not set, the echo message will not be printed.
+    -              Logging listeners may be using this to trigger a build failure
+    -->
+  <target name="echolevels">
+    <fail unless="id" message="Missing parameter: id"/>
+
+    <echo message="${id} Writing a default message..."/>
+    <echo level="debug"   message="${id} Writing a debug message..."/>
+    <echo level="error"   message="${id} Writing an ERROR message..."/>
+    <echo level="warning" message="${id} Writing a WARNING message..."/>
+    <echo level="info"    message="${id} Writing an INFO message..."/>
+    <antcall target="echofailure"/>
+    <echo level="verbose" message="${id} Writing a VERBOSE message..."/>
+    <echo level="info"    message="${id} Writing a DEBUG message..."/>
+
+  </target>
+
+  <!--
+    - Conditionally prints a FAIL message if the "fail" property is set.
+    -->
+  <target name="echofailure" if="fail">
+    <echo level="error" message="${id} Listeners should FAIL when they see this message..."/>
+  </target>
+
+  <!--
+    - This is an example of how to configure a report to parse the lock task
+    - shown above.
+    -->
+  <target name="report">
+
+    <!-- Set up the live report -->
+    <property name="P4_PATH" value="//modeln_build/..."/>
+    <property name="perforce.enabled" value="true"/>
+    <livereport format="html" file="report_live.html" lastbuild="20030830120000">      
+      <reportsummary type="email" if="complete" 
+          mailhost="mail.modeln.com" 
+          mailport="25"
+          subject="Build Report"
+          messagefile="Report.xml">
+        <from address="sstafford@modeln.com" name="Shawn Stafford"/>
+        <to   address="sstafford@modeln.com" name="Shawn Stafford"/>
+      </reportsummary>
+
+      <parse target="lock">
+        <find type="error"        text="released"/>
+        <find type="warning"      text="acquired"/>
+        <find type="information"  text="lock"/>
+      </parse>
+      <parse target="sleepy">
+        <find type="warning"  text="partial"/>
+      </parse>
+      <parse target="tiny">
+        <find type="error"  text="gibberish"/>
+      </parse>
+    </livereport>
+
+
+    <!-- execute a task -->
+    <antcall target="lock"/>
+    <antcall target="sleepy"/>
+
+
+
+
+
+  </target>
+
+
+
+  <!--
+    - Parse the log files and generate a report 
+    -->
+  <target name="parse">
+
+    <!-- Generate a report using the log files as input -->
+    <logreport format="html" file="report_log.html">
+      <reportsummary type="email" if="complete" 
+          mailhost="mail.modeln.com" 
+          mailport="25"
+          subject="Build Report"
+          messagefile="Report.xml">
+        <from address="sstafford@modeln.com" name="Shawn Stafford"/>
+        <to   address="sstafford@modeln.com" name="Shawn Stafford"/>
+      </reportsummary>
+
+      <!-- Specify the report files that should be parsed -->
+
+      <parse target="lock" logfile="report2.log">
+        <find type="error"        text="released"/>
+        <find type="warning"      text="acquired"/>
+        <find type="information"  text="lock"/>
+      </parse>
+
+      <parse target="sleepy" logfile="report.log">
+        <find type="warning"  text="partial"/>
+      </parse>
+
+      <parse target="tiny" logfile="report2.log">
+        <find type="error"  text="gibberish"/>
+      </parse>
+
+    </logreport>
+
+  
+  </target>
+
+
+  <!--
+    - Log the report entries to the build database.
+    -->
+  <target name="dbreport">
+    <dbreport driver="com.mysql.jdbc.Driver"
+              eventlevel="information"
+              failureCriteriaLevel="error"
+              url="jdbc:mysql://hdqpdbuildmgt2.modeln.com/mn_build"
+              username="mndist"
+              password="mndist"
+              eventtable="deploy_event"
+              criteriatable="deploy_event_criteria"
+              pollingEnabled="true"
+              pollingInterval="1">
+      <parse group="Test" target="dbreport">
+        <find type="warning" text="WARNING"/>
+        <find type="error"   text="FAIL"/>
+      </parse>
+    </dbreport>
+
+    <antcall target="echolevels">
+      <param name="id" value="TEST"/>
+    </antcall>
+
+  </target>
+
+
+
+  <!--
+    - Forks off multiple concurrent threads in order to test the 
+    - DbReportListener under parallel task execution. 
+    -->
+  <target name="dbreport.parallel">
+    <dbreport driver="com.mysql.jdbc.Driver"
+              eventlevel="information"
+              failureCriteriaLevel="error"
+              url="jdbc:mysql://hdqpdbuildmgt2.modeln.com/mn_build"
+              username="mndist"
+              password="mndist"
+              eventtable="deploy_event"
+              criteriatable="deploy_event_criteria"
+              pollingEnabled="true"
+              pollingInterval="1">
+      <parse group="Test" target="dbreport">
+        <find type="warning" text="WARNING"/>
+        <find type="error"   text="FAIL"/>
+      </parse>
+    </dbreport>
+
+    <parallel threadcount="5">
+      <ant antfile="Echo.xml" target="sleep">
+        <property name="id" value="THREAD1"/>
+        <property name="delay" value="2"/>
+      </ant>
+      <antcall target="echolevels">
+        <param name="id" value="THREADR2"/>
+      </antcall>
+      <ant antfile="Echo.xml" target="sleep">
+        <property name="id" value="THREAD3"/>
+        <property name="delay" value="1"/>
+      </ant>
+      <antcall target="echolevels">
+        <param name="id" value="THREAD4"/>
+      </antcall>
+    </parallel>
+
+  </target>
+
+
+
+  <!--
+    - Log the report entries.
+    -->
+  <target name="htmlreport">
+    <!-- Generate a report using the log files as input -->
+    <dbreport format="html" file="report_log.html">
+      <reportsummary type="email" if="complete"
+          mailhost="mail.modeln.com"
+          mailport="25"
+          subject="Build Report"
+          messagefile="Report.xml">
+        <from address="sstafford@modeln.com" name="Shawn Stafford"/>
+        <to   address="sstafford@modeln.com" name="Shawn Stafford"/>
+      </reportsummary>
+    </dbreport>
+
+    <antcall target="jabber"/>
+    <antcall target="jabber"/>
+
+  </target>
+
+
+</project>

@@ -1,0 +1,40 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="SystemProperty" default="test" basedir=".">
+
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+  <!--
+    - This is an example of how to look up a system property. 
+    -->
+  <target name="test">
+    <echo message="Obtain the property from the current JVM..."/>
+    <sysprop name="java.home" property="test.sysprop.local"/>
+    <echo message="System property value: ${test.sysprop.local}"/>
+
+    <echo message="Obtain the property from a forked JVM..."/>
+    <sysprop name="java.home" 
+             property="test.sysprop.forked"
+             fork="true"
+             executable="/opt/java/sun-jdk-1.5.0.6/bin/java"/>
+    <echo message="System property value: ${test.sysprop.forked}"/>
+
+    <echo message="Make sure it works when the property value doesn't exist..."/>
+    <sysprop name="java.test" property="test.sysprop.empty"/>
+    <echo message="System property value: ${test.sysprop.empty}"/>
+
+    <echo message="Check to make sure it fails when a property isn't specified..."/>
+    <sysprop name=""/>
+
+    <echo message="Checking to make sure it fails correctly..."/>
+    <sysprop name="java.test" fork="true"/>
+
+  </target>
+
+</project>

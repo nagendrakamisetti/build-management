@@ -1,0 +1,55 @@
+<!-- ============================================================== -->
+<!-- Model N Build Infrastructure Targets                           -->
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 
+  - This ant build file is used to test the Model N Ant tasks that
+  - have been added to the Ant library.
+  -->
+<!-- ============================================================== -->
+<project name="test" default="timeout" basedir=".">
+
+  <taskdef resource="com/modeln/build/ant/taskdef.properties"/>
+
+
+  <!--
+    - Test the normal ant mail functionality.
+    -->
+  <target name="mail">
+    <mail mailhost="mail.modeln.com" mailport="25" subject="Ant Test Mail">
+      <from address="sstafford@modeln.com"/>
+      <to address="sstafford@modeln.com"/>
+      <message>This is the body of the test message.</message>
+    </mail>
+  </target>
+
+
+
+  <!--
+    - This is an example of how to configure a report to parse the lock task
+    - shown above.
+    -->
+  <target name="timeout">
+
+    <!-- Set up the report -->
+    <timeout wait="5" gracefulexit="true" exitontimeout="true">
+      <notification type="email" 
+          mailhost="mail.modeln.com" 
+          mailport="25"
+          subject="Build Report">
+        <from address="sstafford@modeln.com" name="Shawn Stafford"/>
+        <to   address="sstafford@modeln.com" name="Shawn Stafford"/>
+        <message>The build seems to be idle.</message>
+      </notification>
+    </timeout>
+
+    <!-- Sleep for a period longer than the timeout to simulate a hang -->
+    <sleep seconds="60"/>
+    <echo message="Build is still going..."/>
+    <input message="Waiting for user input: "/>
+    <echo message="Build has completed as scheduled."/>
+
+  </target>
+
+
+
+</project>
