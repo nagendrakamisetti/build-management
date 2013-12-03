@@ -6,11 +6,8 @@ package com.modeln.build.ctrl;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-
-import oracle.jdbc.driver.OracleDriver;
 
 import com.modeln.build.web.errors.ApplicationException;
 import com.modeln.build.common.logging.SecureLog;
@@ -55,13 +52,6 @@ public class CMnControlApp extends WebApplication {
         bugRepository = appSettings.getProperty("bug.repository");
         commonLog.logEntry(this, SecureLog.INFO, "Adding bug repository: " + bugRepository);
         addRepository(bugRepository);
-
-        // Load any JDBC drivers not provided by the base web app architecture
-        try {
-            DriverManager.registerDriver(new OracleDriver());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
     }
 
     /**

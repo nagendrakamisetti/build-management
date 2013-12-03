@@ -11,10 +11,11 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.Driver;
+import java.sql.DriverManager;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.DriverManager;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -82,7 +83,8 @@ public class RepositoryManager {
         // Create a pool of connections to the repository if possible
         try {
             if (repository instanceof DatabaseRepository) {
-                Class.forName(((DatabaseRepository)repository).getDriver());
+                Class driver = Class.forName(((DatabaseRepository)repository).getDriver());
+                DriverManager.registerDriver((Driver) driver.newInstance());
                 repositoryList.put(repositoryName, repository);
                 log("Adding repository to the list: " + repository.getDescription());
             } else if (repository instanceof JndiRepository) {
@@ -93,9 +95,9 @@ public class RepositoryManager {
             } else {
                 log("Unable to add repository of unknown type.");
             }
-        } catch (ClassNotFoundException nfe) {
+        } catch (Exception ex) {
             log("Unable to add repository: " + repositoryName);
-            nfe.printStackTrace();
+            ex.printStackTrace();
         }
 
     }
