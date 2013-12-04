@@ -209,10 +209,10 @@ public class CMnPatchReportTable extends CMnTable {
         sql.append(" AND " + CMnPatchTable.REQUEST_TABLE + "." + CMnPatchTable.REQUEST_ID + " = " + CMnPatchTable.FIX_TABLE + "." + CMnPatchTable.REQUEST_ID);
 
         if (start != null) {
-            sql.append("  AND  " + CMnPatchTable.REQUEST_DATE + " > '" + DATETIME.format(start) + "'");
+            sql.append("  AND  " + CMnPatchTable.REQUEST_TABLE + "." + CMnPatchTable.REQUEST_DATE + " > '" + DATETIME.format(start) + "'");
         }
         if (end != null) {
-            sql.append("  AND  " + CMnPatchTable.REQUEST_DATE + " < '" + DATETIME.format(end) + "'");
+            sql.append("  AND  " + CMnPatchTable.REQUEST_TABLE + "." + CMnPatchTable.REQUEST_DATE + " < '" + DATETIME.format(end) + "'");
         }
         sql.append(" GROUP BY " + CMnCustomerTable.ACCOUNT_ID);
 
@@ -260,10 +260,10 @@ public class CMnPatchReportTable extends CMnTable {
         sql.append(" FROM " + CMnBuildTable.BUILD_TABLE + ", " + CMnPatchTable.REQUEST_TABLE + ", " + CMnPatchTable.FIX_TABLE);
         sql.append(" WHERE " + CMnPatchTable.REQUEST_TABLE + "." + CMnPatchTable.REQUEST_ID + " = " + CMnPatchTable.FIX_TABLE + "." + CMnPatchTable.REQUEST_ID); 
         if (start != null) {
-            sql.append("  AND  " + CMnPatchTable.REQUEST_DATE + " > '" + DATETIME.format(start) + "'");
+            sql.append("  AND  " + CMnPatchTable.REQUEST_TABLE + "." + CMnPatchTable.REQUEST_DATE + " > '" + DATETIME.format(start) + "'");
         }
         if (end != null) {
-            sql.append("  AND  " + CMnPatchTable.REQUEST_DATE + " < '" + DATETIME.format(end) + "'");
+            sql.append("  AND  " + CMnPatchTable.REQUEST_TABLE + "." + CMnPatchTable.REQUEST_DATE + " < '" + DATETIME.format(end) + "'");
         }
 
 
