@@ -175,6 +175,26 @@ public class CMnPatchStatusForm extends CMnBaseForm implements IMnPatchForm {
                     btn01 = btnEdit;
                     btn03 = btnRunning;
                     break;
+                case BRANCHING:
+                    imgEdit = "success.png";
+                    imgApproval = "success.png";
+                    imgRunning = "merge.png";
+                    break;
+                case BRANCHED:
+                    imgEdit = "success.png";
+                    imgApproval = "success.png";
+                    imgRunning = "merge.png";
+                    break;
+                case BUILDING:
+                    imgEdit = "success.png";
+                    imgApproval = "success.png";
+                    imgRunning = "merge.png";
+                    break;
+                case BUILT:
+                    imgEdit = "success.png";
+                    imgApproval = "success.png";
+                    imgRunning = "merge.png";
+                    break;
                 case RUNNING:
                     imgEdit = "success.png";
                     imgApproval = "success.png";
