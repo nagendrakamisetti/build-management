@@ -433,6 +433,7 @@ public class CMnBugTable extends CMnOracleTable {
         String inner = "SELECT DISTINCT " + TABLE_SDR + "." + COLUMN_BUG_ID +
                        " FROM " + TABLE_SDR + ", " + CMnFixTable.TABLE_NAME + 
                        " WHERE " + TABLE_SDR + "." + COLUMN_BUG_ID + " = " + CMnFixTable.TABLE_NAME + "." + CMnFixTable.COLUMN_BUG_ID +
+                       "  AND " + TABLE_SDR + "." + COLUMN_STATUS + " IN ('closed', 'verified')" +
                        "  AND " + TABLE_SDR + "." + COLUMN_RESOLVED_DATE + " > " + format(start) +
                        "  AND " + TABLE_SDR + "." + COLUMN_RELEASE + " LIKE '" + release + "%'"; 
 
