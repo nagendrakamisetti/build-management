@@ -18,7 +18,8 @@
         patchId = Integer.toString(patch.getId());
     }
 
-    String pageTitle = "Patch Status";
+    String statusTitle = "Patch Status";
+    String statusValue = "";
 
     //
     // Construct the request form and populate it with data
@@ -28,6 +29,9 @@
     patchForm.setAdminMode(admin);
     patchForm.setInputMode(false);
     if (patch != null) {
+        if (patch.getStatus() != null) {
+            statusValue = patch.getStatus().toString();
+        }
         patchForm.setEnvironments(patch.getCustomer().getEnvironments());
         patchForm.setValues(patch);
     }
@@ -52,7 +56,7 @@
 %>
 <html>
 <head>
-  <title><%= pageTitle %></title>
+  <title><%= statusTitle %></title>
   <%@ include file="../stylesheet.html" %>
   <%@ include file="../javascript.html" %>
 </head>
@@ -67,7 +71,7 @@
 
     <tr>
       <td align="left">
-      <h3><%= pageTitle %></h3><br>
+      <h3><%= statusTitle %></h3><br>
 
       <!-- =============================================================== -->
       <!-- Patch information and status                                    -->
@@ -80,7 +84,7 @@
         </tr>
         <tr>
           <td>
-<%= statusForm.getTitledBorder("Patch Status", statusForm.toString(), true) %>
+<%= statusForm.getTitledBorder(statusTitle + ": " + statusValue, statusForm.toString(), true) %>
           </td>
         </tr>
         <tr>

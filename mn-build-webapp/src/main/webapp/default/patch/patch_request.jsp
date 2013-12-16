@@ -35,6 +35,14 @@
     Hashtable users = (Hashtable) request.getAttribute(CMnPatchOwnerForm.USER_LIST);
     Vector reviews = (Vector) request.getAttribute(IMnBuildForm.AREA_REVIEW_DATA);
     Vector areas = (Vector) request.getAttribute(IMnBuildForm.PRODUCT_AREA_DATA);
+
+    String statusTitle = "Patch Status";
+    String statusValue = "";
+    String statusFormTitle = statusTitle;
+    if ((patch != null) && (patch.getStatus() != null)) {
+        statusValue = patch.getStatus().toString();
+        statusFormTitle = statusTitle + ": " + statusValue;
+    }
     
 
     //
@@ -187,9 +195,9 @@
     if (patch != null) {
         out.println("<p>");
         if (admin) {
-            out.println(statusForm.getTitledBorderLink("Patch Status", statusForm.toString(), statusUpdateUrl, "Update"));
+            out.println(statusForm.getTitledBorderLink(statusFormTitle, statusForm.toString(), statusUpdateUrl, "Update"));
         } else {
-            out.println(statusForm.getTitledBorder("Patch Status", statusForm.toString(), true));
+            out.println(statusForm.getTitledBorder(statusFormTitle, statusForm.toString(), true));
         }
         out.println("</p>");
     }
