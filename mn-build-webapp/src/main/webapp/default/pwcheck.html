@@ -1,0 +1,91 @@
+  <script language="JavaScript" type="text/javascript">
+function scorePassword(pass) {
+    var score = 0;
+    if (!pass)
+        return score;
+
+    // award every unique letter until 5 repetitions
+    var letters = new Object();
+    for (var i=0; i<pass.length; i++) {
+        letters[pass[i]] = (letters[pass[i]] || 0) + 1;
+        score += 5.0 / letters[pass[i]];
+    }
+
+    // bonus points for mixing it up
+    var variations = {
+        digits: /\d/.test(pass),
+        lower: /[a-z]/.test(pass),
+        upper: /[A-Z]/.test(pass),
+        nonWords: /\W/.test(pass),
+    }
+
+    variationCount = 0;
+    for (var check in variations) {
+        variationCount += (variations[check] == true) ? 1 : 0;
+    }
+    score += (variationCount - 1) * 10;
+
+    return parseInt(score);
+}
+
+function getLabel(score) {
+    if (score > 80)
+        return "strong";
+    if (score > 60)
+        return "good";
+    if (score >= 30)
+        return "weak";
+
+    return "poor";
+}
+
+function getStyle(score) {
+    if (score > 80)
+        return "pwStrengthStrong";
+    if (score > 60)
+        return "pwStrengthGood";
+    if (score >= 30)
+        return "pwStrengthWeak";
+
+    return "pwStrengthPoor";
+}
+
+function isEmpty(str) {
+    return (!str || 0 === str.length);
+}
+
+function showStrength(id, pass) {
+    var score = scorePassword(pass);
+    if (score > 0) {
+        var label = getLabel(score);
+        var style = getStyle(score);
+        document.getElementById(id).textContent = label;
+        document.getElementById(id).className = style;
+    } else {
+        document.getElementById(id).textContent = "";
+        document.getElementById(id).className = "";
+    }
+}
+
+function showMatch(id, value1, value2) {
+    if (isEmpty(value1) || isEmpty(value2)) {
+        document.getElementById(id).textContent = "";
+        document.getElementById(id).className = "";
+    } else if (value1 == value2) {
+        document.getElementById(id).textContent = "match";
+        document.getElementById(id).className = "pwMatchTrue";
+    } else {
+        document.getElementById(id).textContent = "no match";
+        document.getElementById(id).className = "pwMatchFalse";
+    }
+}
+
+function verifyPass(field1, output1, field2, output2) {
+    var value1 = document.getElementById(field1).value;
+    var value2 = document.getElementById(field2).value;
+    showStrength(output1, value1);
+    showMatch(output2, value1, value2);
+}
+
+  </script>
+

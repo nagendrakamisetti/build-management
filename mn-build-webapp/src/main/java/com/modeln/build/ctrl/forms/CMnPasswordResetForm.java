@@ -105,6 +105,11 @@ public class CMnPasswordResetForm implements IMnUserForm {
         String uname = getUsername(req);
         String pwold = getPassword(req);
 
+        String verifyPass = "verifyPass('" + NEW_PASSWORD_1 + "', 'pwstrength', '" + NEW_PASSWORD_2 + "', 'pwmatch')";
+        String jsVerifyPass = "onkeypress=\"" + verifyPass + "\" " +
+                              "onkeyup=\"" + verifyPass + "\" " +
+                              "onkeydown=\"" + verifyPass + "\" ";
+
         StringBuffer html = new StringBuffer();
         html.append("<table border='0' cellspacing='2' cellpadding='2' align='center'>\n");
         html.append("  <tr>\n");
@@ -130,13 +135,25 @@ public class CMnPasswordResetForm implements IMnUserForm {
             html.append("  </tr>\n");
             html.append("  <tr>\n");
             html.append("    <td align='right'>New Password:</td>\n");
-            html.append("    <td align='left'><input tabindex='3' name='" + NEW_PASSWORD_1 + "' type='password'></td>\n");
-            html.append("    <td></td>\n");
+            html.append("    <td align='left'>");
+            html.append("<input tabindex='3' " +
+                                "id='" + NEW_PASSWORD_1 + "' " +
+                                "name='" + NEW_PASSWORD_1 + "' " +
+                                "type='password' " + 
+                                jsVerifyPass +
+                                "></td>\n");
+            html.append("    <td><div id='pwstrength'></div></td>\n");
             html.append("  </tr>\n");
             html.append("  <tr>\n");
             html.append("    <td align='right'>Confirm Password:</td>\n");
-            html.append("    <td align='left'><input tabindex='4' name='" + NEW_PASSWORD_2 + "' type='password'></td>\n");
-            html.append("    <td></td>\n");
+            html.append("    <td align='left'>");
+            html.append("<input tabindex='3' " +
+                                "id='" + NEW_PASSWORD_2 + "' " +
+                                "name='" + NEW_PASSWORD_2 + "' " +
+                                "type='password' " + 
+                                jsVerifyPass +
+                                "></td>\n");
+            html.append("    <td><div id='pwmatch'></div></td>\n");
             html.append("  </tr>\n");
         }
         html.append("</table>\n");

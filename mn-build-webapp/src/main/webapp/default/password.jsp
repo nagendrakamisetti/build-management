@@ -7,6 +7,7 @@
 <head>
   <title>Password Reset</title>
   <%@ include file="stylesheet.html" %>
+  <%@ include file="pwcheck.html" %>
 </head>
 
 <body>
