@@ -906,6 +906,14 @@ public class WebApplication extends HttpServlet {
                 Date failedLogin = account.getFailedLogin();
                 Date successfulLogin = account.getSuccessfulLogin();
                 if (accountOk && passwordOk) {
+                    // Ensure that the encrypted password is updated
+                    // and stored in the desired format
+                    if (!lt.hasDefaultPasswordType(account)) {
+                        commonLog.logEntry(this, SecureLog.INFO, "Updating user password to use default encryption format.");
+                        account.setPassword(password, UserData.UNENCRYPTED_PASSWORD);
+                        lt.updateUser(conn, account);
+                    }
+
                     // Reset the failed login attempts
                     failureCount = 0;
                     account.setSuccessfulLogin(new Date());

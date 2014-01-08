@@ -42,6 +42,7 @@ public class UserData {
     public static final int UNENCRYPTED_PASSWORD = 0;
     public static final int CRYPT_PASSWORD = 1;
     public static final int MD5_PASSWORD = 2;
+    public static final int PBKDF2_PASSWORD = 3;
 
     // Account status values
     public static final int ACCOUNT_ACTIVE = 0;
@@ -154,6 +155,9 @@ public class UserData {
                 break;
             case MD5_PASSWORD:
                 match = Password.matchesMD5(unencrypted, password);
+                break;
+            case PBKDF2_PASSWORD:
+                match = Password.matchesPBKDF2(unencrypted, password);
                 break;
         }
 

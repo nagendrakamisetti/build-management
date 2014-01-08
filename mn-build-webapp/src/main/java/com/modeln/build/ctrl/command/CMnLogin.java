@@ -64,7 +64,7 @@ public class CMnLogin extends UnprotectedCommand {
                             app.debug("Authentication failure: " + error.getErrorCode());
                             result.setError(error);
                             result.setDestination(app.getLoginPage());
-                        } if (app.getLandingPage(req) != null) {
+                        } else if (app.getLandingPage(req) != null) {
                             app.debug("Login successful.  Forwarding user to landing page: " + app.getLandingPage(req));
                             result.setDestination(app.getLandingPage(req));
                         } else {

@@ -47,14 +47,15 @@ public class LoginTable extends CMnTable {
     public static final String STATUS_DELETED   = "deleted";
     public static final String STATUS_ABUSE     = "abuse";
 
-    public static final String PASSWORD_TYPE_CRYPT = "crypt";
-    public static final String PASSWORD_TYPE_MD5   = "md5";
+    public static final String PASSWORD_TYPE_CRYPT  = "crypt";
+    public static final String PASSWORD_TYPE_MD5    = "md5";
+    public static final String PASSWORD_TYPE_PBKDF2 = "pbkdf2";
 
     public static final String TITLE_MR  = "Mr";
     public static final String TITLE_MS  = "Ms";
     public static final String TITLE_MRS = "Mrs"; 
 
-    public static final String[] PASSWORD_TYPE_VALUES = { PASSWORD_TYPE_CRYPT, PASSWORD_TYPE_MD5 };
+    public static final String[] PASSWORD_TYPE_VALUES = { PASSWORD_TYPE_CRYPT, PASSWORD_TYPE_MD5, PASSWORD_TYPE_PBKDF2 };
     public static final String[] STATUS_VALUES  = { STATUS_ACTIVE, STATUS_INACTIVE, STATUS_DELETED, STATUS_ABUSE }; 
     public static final String[] TITLE_VALUES   = { TITLE_MR, TITLE_MS, TITLE_MRS };
 
@@ -318,6 +319,8 @@ public class LoginTable extends CMnTable {
             user.setPassword(password, UserData.CRYPT_PASSWORD);
         } else if (passType.equalsIgnoreCase(PASSWORD_TYPE_MD5)) {
             user.setPassword(password, UserData.MD5_PASSWORD);
+        } else if (passType.equalsIgnoreCase(PASSWORD_TYPE_PBKDF2)) {
+            user.setPassword(password, UserData.PBKDF2_PASSWORD);
         } else {
             user.setPassword(password, UserData.UNENCRYPTED_PASSWORD);
         }
@@ -372,6 +375,17 @@ public class LoginTable extends CMnTable {
     }
 
 
+    /**
+     * Return the default password entryption type used to store
+     * unencrypted passwords in the database.  If an unencrypted
+     * password is found in a UserData object, it will be encrypted
+     * using this format before storing it in the database.
+     *
+     * @return  Password encryption format (as defined in UserData)
+     */
+    public static boolean hasDefaultPasswordType(UserData user) {
+        return (user.getPasswordEncryption() == UserData.PBKDF2_PASSWORD);
+    } 
 
     /**
      * Return the SQL syntax for setting user fields. 
@@ -396,17 +410,17 @@ public class LoginTable extends CMnTable {
 
         if (user.getPassword() != null) {
             switch(user.getPasswordEncryption()) {
-                case UserData.CRYPT_PASSWORD:
-                    sql.append(", " + PASSWORD + "='" + user.getPassword() + "'");
-                    sql.append(", " + PASSWORD_TYPE + "='" + getEncryptionType(user) + "'");
-                    break;
-                case UserData.MD5_PASSWORD:
-                    sql.append(", " + PASSWORD + "='" + user.getPassword() + "'");
-                    sql.append(", " + PASSWORD_TYPE + "='" + getEncryptionType(user) + "'");
+                case UserData.UNENCRYPTED_PASSWORD:
+                    //sql.append(", " + PASSWORD + "=ENCRYPT('" + user.getPassword() + "')");
+                    //sql.append(", " + PASSWORD_TYPE + "='" + PASSWORD_TYPE_CRYPT + "'");
+                    // Encrypt the password and store the encrypted value in the database
+                    sql.append(", " + PASSWORD + "='" + Password.getPBKDF2(user.getPassword()) + "'");
+                    sql.append(", " + PASSWORD_TYPE + "='" + PASSWORD_TYPE_PBKDF2 + "'");
                     break;
                 default:
-                    sql.append(", " + PASSWORD + "=ENCRYPT('" + user.getPassword() + "')");
-                    sql.append(", " + PASSWORD_TYPE + "='" + PASSWORD_TYPE_CRYPT + "'");
+                    sql.append(", " + PASSWORD + "='" + user.getPassword() + "'");
+                    sql.append(", " + PASSWORD_TYPE + "='" + getEncryptionType(user) + "'");
+                    break;
             }
         }
 
@@ -776,6 +790,8 @@ public class LoginTable extends CMnTable {
                 return PASSWORD_TYPE_CRYPT;
             case UserData.MD5_PASSWORD:
                 return PASSWORD_TYPE_MD5;
+            case UserData.PBKDF2_PASSWORD:
+                return PASSWORD_TYPE_PBKDF2;
             default:
                 return null;
         }
@@ -796,6 +812,8 @@ public class LoginTable extends CMnTable {
                 typeAsInt = UserData.CRYPT_PASSWORD;
             } else if (type.equalsIgnoreCase(PASSWORD_TYPE_MD5)) {
                 typeAsInt = UserData.MD5_PASSWORD;
+            } else if (type.equalsIgnoreCase(PASSWORD_TYPE_PBKDF2)) {
+                typeAsInt = UserData.PBKDF2_PASSWORD;
             }
         }
         return typeAsInt;

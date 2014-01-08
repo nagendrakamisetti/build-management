@@ -6,8 +6,17 @@
  */
 package com.modeln.build.common.data.account;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.security.*;
+import java.security.spec.*;
+
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+
+import org.apache.commons.codec.binary.Base64;
+
 
 /**
  * The Password class provides password encryption and comparision
@@ -22,6 +31,8 @@ import java.security.*;
 
 public class Password {  
     private static final String MD5 = "MD5";
+
+    private static final String SALT_DELIMITER = "@@";
 
     /**
      * Class constructor for password objects.
@@ -54,6 +65,71 @@ public class Password {
             return digest(password, MD5);
         } catch (NoSuchAlgorithmException nsa) {
             //throw new Exception("No such message digest algorithm: " + MD5);
+            return "";
+        }
+    }
+
+    /**
+     * Encrypt a password for the first time using the PBKDF2 algorithm.
+     * Since a PBKDF2 encrypted password is composed of both a salt and
+     * the encrypted password, the method will return a concatenated 
+     * string containing both the salt and the encrypted password.
+     * The method returns a Base64 encoded string which contains the
+     * salt value, a delimiter string, and the encrypted password. 
+     * Base64 encoding is used so that the encrypted password can be
+     * easily stored in a database or text file. 
+     *
+     * @param   password    Unencrypted password
+     * @return  Base64 encoded string containing both the salt and encrypted password
+     */
+    public static String getPBKDF2(String password) {
+        try {
+            // VERY important to use SecureRandom instead of just Random
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+
+            // Generate a 8 byte (64 bit) salt as recommended by RSA PKCS5
+            byte[] salt = new byte[8];
+            random.nextBytes(salt);
+
+            return getPBKDF2(salt, password);
+        } catch (NoSuchAlgorithmException nsa) {
+            //throw new Exception("No such message digest algorithm: " + PBKDF2);
+            return "";
+        }
+    }
+
+    /**
+     * Encrypt a password using the PBKDF2 algorithm and the salt value.
+     *
+     * @param   salt        Salt used to encrypt the password
+     * @param   password    Unencrypted password
+     * @return  Base64 encoded string containing both the salt and encrypted password
+     */
+    public static String getPBKDF2(byte[] salt, String password) {
+        try {
+            // PBKDF2 with SHA-1 as the hashing algorithm. Note that the NIST
+            // specifically names SHA-1 as an acceptable hashing algorithm for PBKDF2
+            String algorithm = "PBKDF2WithHmacSHA1";
+
+            // SHA-1 generates 160 bit hashes, so that's what makes sense here
+            int derivedKeyLength = 160;
+
+            // Define the number of iterations used to encrypt the password.
+            // The NIST recommends at least 1,000 iterations:
+            // http://csrc.nist.gov/publications/nistpubs/800-132/nist-sp800-132.pdf
+            int iterations = 50000;
+            KeySpec spec = new PBEKeySpec(password.toCharArray(), salt, iterations, derivedKeyLength);
+            SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(algorithm);
+            byte[] encrypted = keyFactory.generateSecret(spec).getEncoded();
+
+            // Encode the binary data using Base64 to make it easier to manage
+            byte[] base64salt = Base64.encodeBase64(salt);
+            byte[] base64pass = Base64.encodeBase64(encrypted);
+
+            String strSalt = new String(base64salt);
+            String strPass = new String(base64pass);
+            return strSalt + SALT_DELIMITER + strPass;
+        } catch (Exception ex) {
             return "";
         }
     }
@@ -98,6 +174,53 @@ public class Password {
             return false;
         }
     }
+
+    /**
+     * Compare the encrypted and unencrypted string using the
+     * PBKDF2 algorithm.  The first 8 characters of the encrypted
+     * password string are expected to be the salt value, followed
+     * by 160 characters of the encrypted password.
+     *
+     * @param   unencrypted     Unencrypted password string
+     * @param   encrypted       PBKDF2 encrypted password string
+     * @return  TRUE if the strings match, FALSE otherwise
+     */
+    public static boolean matchesPBKDF2(String unencrypted, String encrypted) {
+        boolean match = false;
+
+        try {
+            // Locate the position of the salt delimiter within the string
+            int delimiter = encrypted.indexOf(SALT_DELIMITER);
+
+            // Locate the position of the encrypted password within the string
+            int idxPass = delimiter + SALT_DELIMITER.length();
+
+            if ((delimiter > 0) && (idxPass < encrypted.length())) {
+                // Split the string at the delimeter between the salt and
+                // encrypted password
+                String strSalt = encrypted.substring(0, delimiter);
+                String strPass = encrypted.substring(idxPass);
+
+                // Compare the encrypted strings 
+                if (Base64.isBase64(strSalt) && Base64.isBase64(strPass)) {
+                    // Remove the Base64 encoding to get the salt value
+                    byte[] salt = Base64.decodeBase64(strSalt);
+                    byte[] pass = Base64.decodeBase64(strPass);
+
+                    // Encrypt the unencrypted password so it can be compared
+                    String password = getPBKDF2(salt, unencrypted);
+
+                    // Compare the two password values
+                    return password.equals(encrypted);
+                }
+            }
+        } catch (Exception ex) {
+            return false;
+        }
+
+        return match;
+    }
+
 
     /**
      * Uses the java.security.MessageDigest class to encrypt the
