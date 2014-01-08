@@ -91,17 +91,43 @@ public class CMnCmdLineTool {
     }
 
     /**
-     * Display the elapsed time spent performing an action.
+     * Terminate the program with an error message.
+     */
+    public static void fail(String msg) {
+        display(msg);
+        System.exit(1);
+    }
+
+    /**
+     * Display a message to the user.
      *
-     * @param   logger    Log output
+     * @param   msg       Text to be displayed
+     */
+    public static void display(String msg) {
+        System.out.println(msg);
+    }
+
+    /**
+     * Display an error to the user.
+     *
+     * @param   ex        Exception to display
+     */
+    public static void displayException(Exception ex) {
+        ex.printStackTrace();
+    }
+
+    /**
+     * Write the elapsed time to a logger.
+     *
      * @param   start     Starting date
      * @param   end       Ending date
      * @param   msg       Message to display
      */
-    public static void showElapsedTime(Logger logger, Date start, Date end, String msg) {
+    public static void logElapsedTime(Logger logger, Date start, Date end, String msg) {
         String elapsedTime = getElapsedTime(start, end);
         logger.fine(msg + elapsedTime);
     }
+
 
     /**
      * Display the elapsed time spent performing an action.
@@ -110,9 +136,9 @@ public class CMnCmdLineTool {
      * @param   end       Ending date
      * @param   msg       Message to display
      */
-    public static void showElapsedTime(Date start, Date end, String msg) {
+    public static void displayElapsedTime(Date start, Date end, String msg) {
         String elapsedTime = getElapsedTime(start, end);
-        System.out.println(msg + elapsedTime);
+        display(msg + elapsedTime);
     }
 
 
@@ -157,7 +183,7 @@ public class CMnCmdLineTool {
 
         // Display the elapsed time for this operation
         if (profile) {
-            showElapsedTime(startDate, new Date(), "Execution complete: ");
+            displayElapsedTime(startDate, new Date(), "Execution complete: ");
         }
 
         return result;
@@ -187,7 +213,6 @@ public class CMnCmdLineTool {
             t.start();
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             while (!validResponse) {
-                //System.out.print(prompt);
                 cp.showPrompt();
                 answer = br.readLine().trim();
                 validResponse = ( answer.equalsIgnoreCase(yes) || answer.equalsIgnoreCase(no) );
@@ -214,15 +239,15 @@ public class CMnCmdLineTool {
             cl = argParser.parse(cmdOptions, args);
         } catch (AlreadySelectedException dupex) {
             displayHelp();
-            System.out.println("\nDuplicate option: " + dupex.getMessage());
+            display("\nDuplicate option: " + dupex.getMessage());
         } catch (MissingOptionException opex) {
             displayHelp();
-            System.out.println("\nMissing command line option: " + opex.getMessage());
+            display("\nMissing command line option: " + opex.getMessage());
         } catch (UnrecognizedOptionException uex) {
             displayHelp();
-            System.out.println(uex.getMessage());
+            display(uex.getMessage());
         } catch (ParseException pe) {
-            System.out.println("Unable to parse the command line arguments: " + pe);
+            display("Unable to parse the command line arguments: " + pe);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

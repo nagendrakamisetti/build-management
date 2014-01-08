@@ -131,9 +131,6 @@ public class CMnPatchTool extends CMnCmdLineTool {
     /** Define the index order for the patch command-line argument */
     public static final int ARG_PATCH = 2;
 
-    /** Create a logger for capturing service patch tool output */
-    protected static Logger logger = Logger.getLogger(CMnPatchTool.class.getName());
-
     /** List of required command-line arguments */
     private static String[] REQUIRED_ARGS = {"customer", "build", "patch"};
 
@@ -244,7 +241,7 @@ public class CMnPatchTool extends CMnCmdLineTool {
         }
 
 
-        logger.info(header.toString());
+        display(header.toString());
     }
 
     /**
@@ -257,7 +254,7 @@ public class CMnPatchTool extends CMnCmdLineTool {
             Iterator clIter = cl.iterator();
             while (clIter.hasNext()) {
                 CMnCheckIn current = (CMnCheckIn) clIter.next();
-                logger.info("Check-in: " + current.getId() + " " + current.getDate());
+                display("Check-in: " + current.getId() + " " + current.getDate());
             }
         }
     }
@@ -274,7 +271,7 @@ public class CMnPatchTool extends CMnCmdLineTool {
             while (keyIter.hasNext()) {
                 CMnCheckIn checkin = (CMnCheckIn) keyIter.next();
                 Float value = (Float) cl.get(checkin);
-                logger.info("   Related Check-in: " + checkin.getFormattedId() + 
+                display("   Related Check-in: " + checkin.getFormattedId() + 
                             "   (Score: " + String.format("%.2f", value) + ")");
             }
         }
@@ -312,8 +309,8 @@ public class CMnPatchTool extends CMnCmdLineTool {
             String header = StringUtility.getFixedString(c1.getFormattedId(), 10, ' ') + " " +
                             StringUtility.getFixedString(c2.getFormattedId(), 10, ' ') + " " +
                             "Score";
-            logger.info(header);
-            logger.info("---------- ---------- -----");
+            display(header);
+            display("---------- ---------- -----");
         }
 
         // Display information about each file
@@ -340,7 +337,7 @@ public class CMnPatchTool extends CMnCmdLineTool {
             if (diffEquality < 1.0f) {
                 score = " " + String.format("%.2f", diffEquality);
             }
-            logger.info(op1 + " " + op2 + " " + score + " " + filename);
+            display(op1 + " " + op2 + " " + score + " " + filename);
         }
 
     }
@@ -352,8 +349,8 @@ public class CMnPatchTool extends CMnCmdLineTool {
      * @param  checkin    Check-in information
      */
     private static void printDetail(CMnCheckIn checkin) {
-        logger.info("  ID: " + checkin.getId());
-        logger.info("Desc: " + checkin.getDescription(50));
+        display("  ID: " + checkin.getId());
+        display("Desc: " + checkin.getDescription(50));
 
         printRelatedCheckIns(checkin.getRelatedCheckins());
     } 
@@ -377,7 +374,7 @@ public class CMnPatchTool extends CMnCmdLineTool {
                 shortVendor = "sun";
             }
         } else {
-            logger.severe("Unable to determine JDK vendor.");
+            display("Unable to determine JDK vendor.");
         }
 
         return shortVendor;
@@ -406,7 +403,7 @@ public class CMnPatchTool extends CMnCmdLineTool {
                 sb.append(version);
             }
         } else {
-            logger.severe("Unable to determine JDK version.");
+            display("Unable to determine JDK version.");
             sb.append(version);
         }
 
@@ -509,17 +506,17 @@ public class CMnPatchTool extends CMnCmdLineTool {
             }
 
         } catch (SQLException sqlex) {
-            logger.severe("Failed to obtain account information from the build database: " + dbUrl);
-            sqlex.printStackTrace();
+            display("Failed to obtain account information from the build database: " + dbUrl);
+            displayException(sqlex);
         } catch (ClassNotFoundException nfex) {
-            logger.severe("Failed to load the JDBC drivers for the build database: " + dbDriver);
-            nfex.printStackTrace();
+            display("Failed to load the JDBC drivers for the build database: " + dbDriver);
+            displayException(nfex);
         } catch (InstantiationException iex) {
-            logger.severe("Failed to instantiate the JDBC driver for the build database: " + dbDriver);
-            iex.printStackTrace();
+            display("Failed to instantiate the JDBC driver for the build database: " + dbDriver);
+            displayException(iex);
         } catch (IllegalAccessException aex) {
-            logger.severe("Unable to access the JDBC driver for the build database: " + dbDriver);
-            aex.printStackTrace();
+            display("Unable to access the JDBC driver for the build database: " + dbDriver);
+            displayException(aex);
         }
 
         return acct;
@@ -551,17 +548,17 @@ public class CMnPatchTool extends CMnCmdLineTool {
             }
 
         } catch (SQLException sqlex) {
-            logger.severe("Failed to obtain customer environment information from the build database: " + dbUrl);
-            sqlex.printStackTrace();
+            display("Failed to obtain customer environment information from the build database: " + dbUrl);
+            displayException(sqlex);
         } catch (ClassNotFoundException nfex) {
-            logger.severe("Failed to load the JDBC drivers for the build database: " + dbDriver);
-            nfex.printStackTrace();
+            display("Failed to load the JDBC drivers for the build database: " + dbDriver);
+            displayException(nfex);
         } catch (InstantiationException iex) {
-            logger.severe("Failed to instantiate the JDBC driver for the build database: " + dbDriver);
-            iex.printStackTrace();
+            display("Failed to instantiate the JDBC driver for the build database: " + dbDriver);
+            displayException(iex);
         } catch (IllegalAccessException aex) {
-            logger.severe("Unable to access the JDBC driver for the build database: " + dbDriver);
-            aex.printStackTrace();
+            display("Unable to access the JDBC driver for the build database: " + dbDriver);
+            displayException(aex);
         }
 
         return env;
@@ -595,24 +592,24 @@ public class CMnPatchTool extends CMnCmdLineTool {
                     CMnDbBuildData dbData = (CMnDbBuildData) buildList.firstElement();
                     build = convertBuildData(dbData);
                 } else if (buildList.size() > 1) {
-                    logger.severe("Multiple builds found matching version string: " + buildVer);
+                    display("Multiple builds found matching version string: " + buildVer);
                 } else {
-                    logger.severe("Unable to locate build data matching version string: " + buildVer);
+                    display("Unable to locate build data matching version string: " + buildVer);
                 }
             }
 
         } catch (SQLException sqlex) {
-            logger.severe("Failed to obtain build information from the build database: " + dbUrl);
-            sqlex.printStackTrace();
+            display("Failed to obtain build information from the build database: " + dbUrl);
+            displayException(sqlex);
         } catch (ClassNotFoundException nfex) {
-            logger.severe("Failed to load the JDBC drivers for the build database: " + dbDriver);
-            nfex.printStackTrace();
+            display("Failed to load the JDBC drivers for the build database: " + dbDriver);
+            displayException(nfex);
         } catch (InstantiationException iex) {
-            logger.severe("Failed to instantiate the JDBC driver for the build database: " + dbDriver);
-            iex.printStackTrace();
+            display("Failed to instantiate the JDBC driver for the build database: " + dbDriver);
+            displayException(iex);
         } catch (IllegalAccessException aex) {
-            logger.severe("Unable to access the JDBC driver for the build database: " + dbDriver);
-            aex.printStackTrace();
+            display("Unable to access the JDBC driver for the build database: " + dbDriver);
+            displayException(aex);
         }
 
         //CMnBuildData build = new CMnBuildData();
@@ -634,7 +631,7 @@ public class CMnPatchTool extends CMnCmdLineTool {
         String opt = ARG_BUGFIXES.getOpt();
         if (cl.hasOption(opt) && (cl.getOptionValue(opt) != null)) {
             String bugStr = cl.getOptionValue(opt);
-            logger.info("Parsing bug list: " + bugStr);
+            display("Parsing bug list: " + bugStr);
             // Iterate through each bug in the list
             StringTokenizer st = new StringTokenizer( bugStr, "," );
             while (st.hasMoreTokens()) {
@@ -648,17 +645,17 @@ public class CMnPatchTool extends CMnCmdLineTool {
                         ids.add(id);
                     }
                 } catch (NumberFormatException e) {
-                    logger.severe("NumberFormatException parsing the bug-fix changelist: " + numberVal);
-                    e.printStackTrace();
+                    display("NumberFormatException parsing the bug-fix changelist: " + numberVal);
+                    displayException(e);
                 } catch (Exception e) {
-                    logger.severe("Other Exeptions parsing the bug-fix changelist: " + numberVal);
-                    e.printStackTrace();
+                    display("Other Exeptions parsing the bug-fix changelist: " + numberVal);
+                    displayException(e);
                 }
             }
         } else if (cl.hasOption(opt)) {
-            logger.severe("Bug option specified without a list of bugs.");
+            display("Bug option specified without a list of bugs.");
         } else {
-            logger.warning("No bugs specified.");
+            display("No bugs specified.");
         }
 
         return ids;
@@ -704,8 +701,8 @@ public class CMnPatchTool extends CMnCmdLineTool {
                 }
             }
         } catch (Exception ex) {
-            logger.severe("Failed to obtain bug list from source control: branch=" + branch + ", id=" + id);
-            ex.printStackTrace();
+            display("Failed to obtain bug list from source control: branch=" + branch + ", id=" + id);
+            displayException(ex);
         }
 
         return bugs;
@@ -745,17 +742,17 @@ public class CMnPatchTool extends CMnCmdLineTool {
             }
 
         } catch (SQLException sqlex) {
-            logger.severe("Failed to obtain bug information from the bug database: " + dbUrl);
-            sqlex.printStackTrace();
+            display("Failed to obtain bug information from the bug database: " + dbUrl);
+            displayException(sqlex);
         } catch (ClassNotFoundException nfex) {
-            logger.severe("Failed to load the JDBC drivers for the bug database: " + dbDriver);
-            nfex.printStackTrace();
+            display("Failed to load the JDBC drivers for the bug database: " + dbDriver);
+            displayException(nfex);
         } catch (InstantiationException iex) {
-            logger.severe("Failed to instantiate the JDBC driver for the bug database: " + dbDriver);
-            iex.printStackTrace();
+            display("Failed to instantiate the JDBC driver for the bug database: " + dbDriver);
+            displayException(iex);
         } catch (IllegalAccessException aex) {
-            logger.severe("Unable to access the JDBC driver for the bug database: " + dbDriver);
-            aex.printStackTrace();
+            display("Unable to access the JDBC driver for the bug database: " + dbDriver);
+            displayException(aex);
         }
 
         return bugs;
@@ -806,7 +803,7 @@ public class CMnPatchTool extends CMnCmdLineTool {
                     result = scm.getCheckIn(checkin.getId());
                 }
             } catch (Exception ex) {
-                logger.severe("Unable to locate check-in: " + checkin.getId());
+                display("Unable to locate check-in: " + checkin.getId());
             }
         }
 
@@ -868,7 +865,7 @@ public class CMnPatchTool extends CMnCmdLineTool {
                                 // Query the source control system for the check-in information
                                 scmCheckIn = getCheckIn(scm, currentCheckIn);
                                 if (scmCheckIn == null) {
-                                    logger.severe("Failed to find check-in: " + currentCheckIn.getId());
+                                    display("Failed to find check-in: " + currentCheckIn.getId());
                                     scmCheckIn = currentCheckIn;
                                     scmCheckIn.setCurrentState(CMnCheckIn.State.INVALID);
                                     checkins.add(scmCheckIn);
@@ -877,8 +874,8 @@ public class CMnPatchTool extends CMnCmdLineTool {
                                     checkins.add(scmCheckIn);
                                 }
                             } catch (Exception ex) {
-                                logger.severe("Failed to parse check-in: " + currentCheckIn.getId());
-                                ex.printStackTrace();
+                                display("Failed to parse check-in: " + currentCheckIn.getId());
+                                displayException(ex);
                             }
                         }
                     }
@@ -978,7 +975,7 @@ public class CMnPatchTool extends CMnCmdLineTool {
             is.close();
         } catch (IOException ioex) {
             System.out.println("Failed to load version information from " + manifest);
-            ioex.printStackTrace();
+            displayException(ioex);
         }
     } 
 
@@ -1001,7 +998,7 @@ public class CMnPatchTool extends CMnCmdLineTool {
             if (extraArgs.size() != REQUIRED_ARGS.length) {
                 Iterator iter = extraArgs.iterator();
                 int idx = 0;
-                logger.info("Command Arguments: ");
+                display("Command Arguments: ");
                 String argName = null;
                 String argValue = null;
                 while (iter.hasNext()) {
@@ -1011,10 +1008,10 @@ public class CMnPatchTool extends CMnCmdLineTool {
                     } else {
                         argName = "?";
                     }
-                    logger.info("Argument:  " + argName + " = " + argValue);
+                    display("Argument:  " + argName + " = " + argValue);
                     idx++;
                 }
-                logger.severe("Command requires " + REQUIRED_ARGS.length + " arguments to build a service patch:");
+                display("Command requires " + REQUIRED_ARGS.length + " arguments to build a service patch:");
                 return false;
             }
         }
@@ -1042,19 +1039,19 @@ public class CMnPatchTool extends CMnCmdLineTool {
 
         // Ensure that the check-in provided contains a list of modified files
         if (checkin.getFileCount() == 0) {
-            logger.severe("No files found in commit: " + checkin.getId());
+            display("No files found in commit: " + checkin.getId());
             return safe;
         }
 
         // Determine if the check-in is safe to integrate
         if ((start.getDate() == null) && (end.getDate() == null)) {
-            logger.severe("Invalid branch start and end date.");
+            display("Invalid branch start and end date.");
         } else if (start.getDate() == null) {
-            logger.severe("Invalid branch start date.");
+            display("Invalid branch start date.");
         } else if (end.getDate() == null) {
-            logger.severe("Invalid branch end date.");
+            display("Invalid branch end date.");
         } else if (start.getDate().after(end.getDate())) {
-            logger.severe("Branch start date occurs after branch end date.");
+            display("Branch start date occurs after branch end date.");
         } else {
             if (checkin.getDate().after(end.getDate())) {
                 // Safe if it occurs later than the last branch check-in
@@ -1073,11 +1070,11 @@ public class CMnPatchTool extends CMnCmdLineTool {
                             if (current != null) {
                                 List<String> common = current.getCommonFiles(checkin);
                                 if (common != null) {
-                                    logger.info("New commit " + checkin.getFormattedId() + " (" + checkin.getDate() + ") and existing commit " + current.getFormattedId() + " (" + current.getDate() + ")"); 
+                                    display("New commit " + checkin.getFormattedId() + " (" + checkin.getDate() + ") and existing commit " + current.getFormattedId() + " (" + current.getDate() + ")"); 
                                     // Check-in touches files that have already been modified
-                                    logger.info("Found the following files in common:");
+                                    display("Found the following files in common:");
                                     for (String file : common) {
-                                        logger.info("   " + file); 
+                                        display("   " + file); 
                                     }
                                     return false;
                                 }
@@ -1087,11 +1084,11 @@ public class CMnPatchTool extends CMnCmdLineTool {
                         // Safe if none of the later check-ins touch these files
                         safe = true;
                     } else {
-                        logger.severe("Unable to get a list of files modified by subsequent check-ins.");
+                        display("Unable to get a list of files modified by subsequent check-ins.");
                     }
                 } catch (Exception ex) {
-                    ex.printStackTrace();
-                    logger.severe("Unable to get the list of branch check-ins.");
+                    displayException(ex);
+                    display("Unable to get the list of branch check-ins.");
                 }
             }
         }
@@ -1128,7 +1125,7 @@ public class CMnPatchTool extends CMnCmdLineTool {
             boolean useUnknown = true;
             if (interactive && (currentState == CMnCheckIn.State.UNKNOWN)) {
                 // Desplay information to the user about the uncertain check-in
-                logger.info("Unable to determine merge status of check-in: ");
+                display("Unable to determine merge status of check-in: ");
                 printDetail(currentCheckIn);
 
                 // Display information about related check-ins
@@ -1140,7 +1137,7 @@ public class CMnPatchTool extends CMnCmdLineTool {
                     while (keyIter.hasNext()) {
                         relatedCount++;
                         CMnCheckIn rc = (CMnCheckIn) keyIter.next();
-                        logger.info("File comparison for related commit " + 
+                        display("File comparison for related commit " + 
                             relatedCount + " of " + related.size() + ": " + rc.getId());
                         printFileDiff(currentCheckIn, rc); 
                     }
@@ -1163,45 +1160,38 @@ public class CMnPatchTool extends CMnCmdLineTool {
 
                 // Perform the isSafe check on the current fix
                 if (!safe) {
-                    logger.severe("Fix " + fixCountText + " is not safe to merge: " + id);
+                    display("Fix " + fixCountText + " is not safe to merge: " + id);
                     if (interactive) {
                         boolean abort = doContinue("Would you like to abort the service patch process?");
                         if (abort) {
-                            logger.info("Aborting service patch process as requested.");
-                            System.exit(1);
+                            fail("Aborting service patch process as requested.");
                         }
                     } else {
-                        logger.severe("Terminating serivce patch process due to potentially unsafe merge sequence.");
-                        logger.severe("Use the interactive mode of this tool to override this behavior.");
-                        System.exit(1);
+                        fail("Terminating serivce patch process in non-interactive mode due to potentially unsafe merge sequence.");
                     }
                 }
 
                 // Merge the current check-in into the destination branch
                 try {
                     printSeparator("-", fixCountText);
-                    logger.info("Merging check-in " + id + " from " + srcBranch + " to " + destBranch);
+                    display("Merging check-in " + id + " from " + srcBranch + " to " + destBranch);
                     IMnServer.MergeResult mergeResult = scm.merge(srcBranch, destBranch, id);
                     if (mergeResult == IMnServer.MergeResult.FAILURE) {
-                        logger.severe("Failed to merge check-in: " + id);
-                        System.exit(1);
+                        fail("Failed to merge check-in: " + id);
                     } else if (mergeResult == IMnServer.MergeResult.CONFLICT) {
-                        logger.severe("Merge contains conflicts that require manual resolution: " + id);
-                        System.exit(1);
+                        fail("Merge contains conflicts that require manual resolution: " + id);
                     } else if (mergeResult == IMnServer.MergeResult.SUCCESS) {
-                        //logger.info("Successfully merged check-in: " + id);
+                        //display("Successfully merged check-in: " + id);
                     } else {
-                        logger.severe("Unknown merge result: " + mergeResult + ", SHA: " + id);
-                        System.exit(1);
+                        fail("Unknown merge result: " + mergeResult + ", SHA: " + id);
                     }
                     printSeparator("-", null);
                 } catch (Exception ex) {
-                    logger.severe("Failed to integrate check-in: " + id);
-                    ex.printStackTrace();
-                    System.exit(1);
+                    displayException(ex);
+                    fail("Failed to integrate check-in: " + id);
                 }
             } else {
-                logger.info("Skipping fix " + fixCount + " of " + checkins.size() + ": " + id + " (" + currentState + ")");
+                display("Skipping fix " + fixCount + " of " + checkins.size() + ": " + id + " (" + currentState + ")");
             }
         }
 
@@ -1242,13 +1232,13 @@ public class CMnPatchTool extends CMnCmdLineTool {
             try {
                 ((CMnGitServer) scm).getMergeNotes(notesref);
             } catch (Exception ex) {
-                logger.severe("Failed to fetch notes: " + notesref);
+                display("Failed to fetch notes: " + notesref);
             }
         }
 
         // Use an existing branch or create a new one
         if (scm.branchExists(spBranch)) {
-            logger.info("Using existing service patch branch: " + spBranch);
+            display("Using existing service patch branch: " + spBranch);
 
             //TODO See if we can determine how to branch from an existing branch
             /*
@@ -1258,7 +1248,7 @@ public class CMnPatchTool extends CMnCmdLineTool {
                 printCheckIns(existingList);
                 scm.merge(spBranch, spBranch + "_new", checkins, existingList);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                displayException(ex);
             }
             System.exit(1);
             */
@@ -1273,16 +1263,16 @@ public class CMnPatchTool extends CMnCmdLineTool {
                     prevBranch = spBranchPrefix + CMnPatchUtil.getPatchName(prevNumber);
                 }
             } catch (Exception nex) {
-                logger.severe("Failed to determine the previous service patch number for: " + patch.getName());
+                display("Failed to determine the previous service patch number for: " + patch.getName());
             }
 
             // Create a new service patch branch
             try {
-                logger.info("Attempting to create service patch branch " + spBranch + " off of " + scmBranch + " at check-in " + scmId);
+                display("Attempting to create service patch branch " + spBranch + " off of " + scmBranch + " at check-in " + scmId);
                 scm.createBranch(scmBranch, spBranch, scmId);
             } catch (Exception ex) {
-                logger.severe("Failed to create service patch branch: " + spBranch);
-                ex.printStackTrace();
+                display("Failed to create service patch branch: " + spBranch);
+                displayException(ex);
             }
         }
 
@@ -1303,8 +1293,8 @@ public class CMnPatchTool extends CMnCmdLineTool {
                     matches = scm.isMerged(scmBranch, spBranch, id);
                     currentCheckIn.setRelatedCheckins(matches);
                 } catch (Exception mex) {
-                    logger.severe("Failed to detmine the merge status of SHA " + id);
-                    mex.printStackTrace();
+                    display("Failed to detmine the merge status of SHA " + id);
+                    displayException(mex);
                 }
 
                 // Update the check-in with the merge status
@@ -1312,12 +1302,13 @@ public class CMnPatchTool extends CMnCmdLineTool {
                     currentCheckIn.setCurrentState(CMnCheckIn.State.PENDING);
                 } else if (currentCheckIn.hasRelatedCheckin(IMnServer.RELATIVE_CERTAINTY_HIGH)) {
                     currentCheckIn.setCurrentState(CMnCheckIn.State.SUBMITTED);
+                    //scm.setMerged(currentCheckIn);
                 } else {
                     currentCheckIn.setCurrentState(CMnCheckIn.State.UNKNOWN);
                 }
             }
 
-            logger.info("Merge status " + (idx+1) + " of " + checkinCount + ": " + 
+            display("Merge status " + (idx+1) + " of " + checkinCount + ": " + 
                 id + " " + currentCheckIn.getCurrentState());
         }
 
@@ -1326,9 +1317,8 @@ public class CMnPatchTool extends CMnCmdLineTool {
         try {
             firstCommit = scm.getCheckIn(scmId);
         } catch (Exception ex) {
-            ex.printStackTrace();
-            logger.severe("Unable to locate the start of the branch: " + scmId);
-            System.exit(1);
+            displayException(ex);
+            fail("Unable to locate the start of the branch: " + scmId);
         }
 
         // Determine the last checkin on the patch branch
@@ -1336,20 +1326,18 @@ public class CMnPatchTool extends CMnCmdLineTool {
         try {
             lastCommit = scm.getHead(spBranch);
         } catch (Exception ex) {
-            ex.printStackTrace();
-            logger.severe("Unable to locate HEAD of branch: " + spBranch);
-            System.exit(1);
+            displayException(ex);
+            fail("Unable to locate HEAD of branch: " + spBranch);
         }
 
         // Merge all of the pending check-ins into the service patch branch
         // Any check-ins that do not have a pending status will be skipped
         if ((firstCommit != null) && (lastCommit != null)) {
-            logger.info("Merging check-ins from " + scmBranch + " to " + spBranch);
-            logger.info("Identified the service patch as commits " + firstCommit.getId() + " to " + lastCommit.getId());
+            display("Merging check-ins from " + scmBranch + " to " + spBranch);
+            display("Identified the service patch as commits " + firstCommit.getId() + " to " + lastCommit.getId());
             integrate(scm, checkins, scmBranch, spBranch, firstCommit, lastCommit);
         } else {
-            logger.severe("Unable to deterine the service patch branch boundaries.");
-            System.exit(1);
+            fail("Unable to deterine the service patch branch boundaries.");
         }
     }
 
@@ -1441,12 +1429,12 @@ public class CMnPatchTool extends CMnCmdLineTool {
                 File destfile = new File(destdir.getAbsolutePath() + File.separator + filename);
                 try {
                     // Replace any variables in the file with build values
-                    logger.info("Copying template file from " + srcfile + " to " + destfile);
+                    display("Copying template file from " + srcfile + " to " + destfile);
                     replaceVariables(srcfile, destfile, variables);
                 } catch (FileNotFoundException nfex) {
-                    logger.severe("Unable to locate file: " + srcfile.getName());
+                    display("Unable to locate file: " + srcfile.getName());
                 } catch (IOException ioex) {
-                    logger.severe("Unable to copy file: " + destfile.getName());
+                    display("Unable to copy file: " + destfile.getName());
                 }
 
                 // Make sure any script files are executable
@@ -1454,12 +1442,12 @@ public class CMnPatchTool extends CMnCmdLineTool {
                     try {
                         destfile.setExecutable(true);
                     } catch (java.lang.SecurityException sex) {
-                        logger.severe("Unable to make build script executable: " + destfile.getAbsolutePath());
+                        display("Unable to make build script executable: " + destfile.getAbsolutePath());
                     }
                 }
             }
         } else {
-            logger.severe("Unable to copy template files: src=" + templatedir + ", dest=" + destdir);
+            display("Unable to copy template files: src=" + templatedir + ", dest=" + destdir);
         }
     }
 
@@ -1563,17 +1551,15 @@ public class CMnPatchTool extends CMnCmdLineTool {
             try {
                 config = cmd.loadConfig(propFile);
             } catch (IOException ioex) {
-                logger.severe("Failed to load configuration file: " + propFile.getAbsolutePath());
-                ioex.printStackTrace();
-                System.exit(1);
+                displayException(ioex);
+                fail("Failed to load configuration file: " + propFile.getAbsolutePath());
             }
         } else {
-            logger.severe("Unable to load configuration values from file: " + propFile.getAbsolutePath());
-            System.exit(1);
+            fail("Unable to load configuration values from file: " + propFile.getAbsolutePath());
         }
 
 
-        logger.info("Starting service patch tool...");
+        display("Starting service patch tool...");
 
         // Get the source control user information
         String remote = null;
@@ -1620,7 +1606,7 @@ public class CMnPatchTool extends CMnCmdLineTool {
         String buildDbUsername = (String) config.get(CONFIG_BUILD_DB_USERNAME);
         String buildDbPassword = (String) config.get(CONFIG_BUILD_DB_PASSWORD);
         CMnQueryData buildDb = new CMnQueryData(buildDbUrl);
-        logger.info("Build DB URL: " + buildDb.getName());
+        display("Build DB URL: " + buildDb.getName());
         buildDb.setUsername(buildDbUsername);
         buildDb.setPassword(buildDbPassword);
 
@@ -1629,7 +1615,7 @@ public class CMnPatchTool extends CMnCmdLineTool {
         String bugDbUsername = (String) config.get(CONFIG_BUG_DB_USERNAME);
         String bugDbPassword = (String) config.get(CONFIG_BUG_DB_PASSWORD);
         CMnQueryData bugDb = new CMnQueryData(bugDbUrl);
-        logger.info("Bug DB URL: " + bugDb.getName());
+        display("Bug DB URL: " + bugDb.getName());
         bugDb.setUsername(bugDbUsername);
         bugDb.setPassword(bugDbPassword);
 
@@ -1638,16 +1624,14 @@ public class CMnPatchTool extends CMnCmdLineTool {
         if (cl.hasOption(ARG_ENVIRONMENT.getOpt())) {
             env = cmd.getEnvironment(cl, buildDb);
             if (env == null) {
-                logger.severe("Unable to locate customer environment by ID in the build database.");
-                System.exit(1);
+                fail("Unable to locate customer environment by ID in the build database.");
             }
         }
 
         // Get information about the customer
         CMnAccount customer = cmd.getCustomer(cl, buildDb);
         if (customer == null) {
-            logger.severe("Unable to locate customer by name in the build database.");
-            System.exit(1);
+            fail("Unable to locate customer by name in the build database.");
         }
 
         // Create a service patch name that identifies the customer, 
@@ -1678,14 +1662,13 @@ public class CMnPatchTool extends CMnCmdLineTool {
             CMnDbBuildData prodBuild = convertBuildData(build);
             patch.setBuild(prodBuild);
 
-            logger.info("Creating a " + scmType + " source control repository for " + scmRoot); 
+            display("Creating a " + scmType + " source control repository for " + scmRoot); 
             if (scmType.equalsIgnoreCase("git")) {
                 String[] scmInfo = CMnPatchUtil.getRepositoryInfo(patch);
                 scmRoot = scmInfo[1];
                 scmBranch = scmInfo[2];
                 if (scmBranch == null) {
-                    logger.severe("Invalid git information.  Field does not contain branch information.");
-                    System.exit(1);
+                    fail("Invalid git information.  Field does not contain branch information.");
                 }
 
                 // Construct the git repository
@@ -1704,22 +1687,19 @@ public class CMnPatchTool extends CMnCmdLineTool {
             } else if (scmType.equalsIgnoreCase("perforce")) {
                 scm = new CMnPerforceServer();
             } else {
-                logger.severe("Unknown source control type: " + build.getVersionControlType());
-                System.exit(1);
+                fail("Unknown source control type: " + build.getVersionControlType());
             }
         } else if (build != null) {
-            logger.severe("Build does not contain source control information.");
-            System.exit(1);
+            fail("Build does not contain source control information.");
         } else {
-            logger.severe("Unable to retrieve information from build version.");
-            System.exit(1);
+            fail("Unable to retrieve information from build version.");
         }
 
         // Determine whether the tool will interact with the source control system using
         // a Java API or the native command-line client
         boolean execNative = cl.hasOption(ARG_NATIVE.getOpt());
         scm.setNativeMode(execNative);
-        logger.info("Execute source control commands using native executables: " + execNative); 
+        display("Execute source control commands using native executables: " + execNative); 
 
         // Determine if the source control commands will prompt for input
         scm.setInteractiveMode(interactive);
@@ -1746,7 +1726,7 @@ public class CMnPatchTool extends CMnCmdLineTool {
 
         // Skip all of the source control actions in config-only mode
         if (configOnly) {
-            logger.info("Running in config-only mode.  No source control actions will be performed.");
+            display("Running in config-only mode.  No source control actions will be performed.");
         } else {
             // Get access to the source code repository
             printHeader("Initialize");
@@ -1755,9 +1735,8 @@ public class CMnPatchTool extends CMnCmdLineTool {
                 scm.init(root);
                 scm.getSource(scmBranch);
             } catch (java.lang.Exception ex) {
-                logger.severe("Failed to initialize the repository.");
-                ex.printStackTrace();
-                System.exit(1);
+                displayException(ex);
+                fail("Failed to initialize the repository.");
             }
 
             // Get a list of check-ins associated with the bugs
@@ -1768,7 +1747,7 @@ public class CMnPatchTool extends CMnCmdLineTool {
             } else {
                 bugs = cmd.getBugs(scm, cl, bugDb);
             }
-            logger.info("Processing " + bugs.size() + " bugs...");
+            display("Processing " + bugs.size() + " bugs...");
 
             // Create a service patch branch
             cmd.branchAndIntegrate(scm, bugs, patch);
@@ -1779,11 +1758,11 @@ public class CMnPatchTool extends CMnCmdLineTool {
         if (templateDir.isDirectory()) {
             cmd.writeBuildFiles(templateDir, new File(destDir), variables, build);
         } else {
-            logger.severe("Build template directory does not exist: " + templateDir.getAbsolutePath());
+            display("Build template directory does not exist: " + templateDir.getAbsolutePath());
         }
 
 
-        logger.info("Service patch complete.");
+        display("Service patch complete.");
     }
 
 }

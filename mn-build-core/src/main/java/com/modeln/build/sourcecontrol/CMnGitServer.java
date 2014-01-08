@@ -190,7 +190,7 @@ public class CMnGitServer implements IMnServer {
         revWalk = new RevWalk(repository.getRepository());
 
         // Display the elapsed time for this operation
-        CMnCmdLineTool.showElapsedTime(logger, startDate, new Date(), "Repository initialization: ");
+        CMnCmdLineTool.logElapsedTime(logger, startDate, new Date(), "Repository initialization: ");
     }
 
 
@@ -248,7 +248,7 @@ public class CMnGitServer implements IMnServer {
         }
 
         // Display the elapsed time for this operation
-        CMnCmdLineTool.showElapsedTime(logger, startDate, new Date(), "Get bug map: ");
+        CMnCmdLineTool.logElapsedTime(logger, startDate, new Date(), "Get bug map: ");
 
         return bugs;
     }
@@ -294,7 +294,7 @@ public class CMnGitServer implements IMnServer {
         }
 
         // Display the elapsed time for this operation
-        CMnCmdLineTool.showElapsedTime(logger, startDate, new Date(), "Get check-in map: ");
+        CMnCmdLineTool.logElapsedTime(logger, startDate, new Date(), "Get check-in map: ");
 
         return checkins;
     }
@@ -400,7 +400,7 @@ public class CMnGitServer implements IMnServer {
         checkin = convert(head);
 
         // Display the elapsed time for this operation
-        CMnCmdLineTool.showElapsedTime(logger, startDate, new Date(), "Fetch head data: ");
+        CMnCmdLineTool.logElapsedTime(logger, startDate, new Date(), "Fetch head data: ");
 
         return checkin;
     }
@@ -419,7 +419,7 @@ public class CMnGitServer implements IMnServer {
         checkin = convert(revCommit);
 
         // Display the elapsed time for this operation
-        CMnCmdLineTool.showElapsedTime(logger, startDate, new Date(), "Fetch check-in data: ");
+        CMnCmdLineTool.logElapsedTime(logger, startDate, new Date(), "Fetch check-in data: ");
 
         return checkin;
     }
@@ -479,7 +479,7 @@ public class CMnGitServer implements IMnServer {
         }
 
         // Display the elapsed time for this operation
-        CMnCmdLineTool.showElapsedTime(logger, startDate, new Date(), "Get check-in list: ");
+        CMnCmdLineTool.logElapsedTime(logger, startDate, new Date(), "Get check-in list: ");
 
         return list;
     }
@@ -564,7 +564,7 @@ public class CMnGitServer implements IMnServer {
             repository = clone.call();
 
             // Display the elapsed time for this operation
-            CMnCmdLineTool.showElapsedTime(logger, startDate, new Date(), "API clone complete: ");
+            CMnCmdLineTool.logElapsedTime(logger, startDate, new Date(), "API clone complete: ");
 
         } else {
             logger.severe("Unable to clone repository.  No destination directory specified.");
@@ -679,7 +679,7 @@ public class CMnGitServer implements IMnServer {
                     Ref branchRef = branchCmd.call();
 
                     // Display the elapsed time for this operation
-                    CMnCmdLineTool.showElapsedTime(logger, startDate, new Date(), "Created local tracking branch: ");
+                    CMnCmdLineTool.logElapsedTime(logger, startDate, new Date(), "Created local tracking branch: ");
                 } else {
                     logger.severe("Unable to locate branch for checkout: " + branch);
                     System.exit(1);
@@ -698,7 +698,7 @@ public class CMnGitServer implements IMnServer {
                 Ref branchRef = checkoutCmd.call();
 
                 // Display the elapsed time for this operation
-                CMnCmdLineTool.showElapsedTime(logger, startDate, new Date(), "Checkout: ");
+                CMnCmdLineTool.logElapsedTime(logger, startDate, new Date(), "Checkout: ");
 
             } else {
                 logger.severe("Local branch does not exist: " + branch);
@@ -776,7 +776,7 @@ public class CMnGitServer implements IMnServer {
             pullCmd.call();
 
             // Display the elapsed time for this operation
-            CMnCmdLineTool.showElapsedTime(logger, startDate, new Date(), "Check-out and pull: ");
+            CMnCmdLineTool.logElapsedTime(logger, startDate, new Date(), "Check-out and pull: ");
 
         } else if (branch != null) {
             logger.severe("Unable to get source.  Git repository has not been initialized.");
@@ -808,7 +808,7 @@ public class CMnGitServer implements IMnServer {
         brCmd.call();
 
         // Display the elapsed time for this operation
-        CMnCmdLineTool.showElapsedTime(logger, startDate, new Date(), "Created branch: ");
+        CMnCmdLineTool.logElapsedTime(logger, startDate, new Date(), "Created branch: ");
 
     }
 
@@ -829,7 +829,7 @@ public class CMnGitServer implements IMnServer {
         cpCmd.include(getCommit(id));
         logger.info("Performing cherry-pick of " + id);
         CherryPickResult cmdResult = cpCmd.call();
-        CMnCmdLineTool.showElapsedTime(logger, startCherryPick, new Date(), "Cherry-pick: ");
+        CMnCmdLineTool.logElapsedTime(logger, startCherryPick, new Date(), "Cherry-pick: ");
 
         // Check the results of the merge operation
         CherryPickResult.CherryPickStatus cpStatus = cmdResult.getStatus();
@@ -851,7 +851,7 @@ public class CMnGitServer implements IMnServer {
                     ResolveMerger.MergeFailureReason reason = (ResolveMerger.MergeFailureReason) failures.get(key);
                     logger.severe("Merge failure: " + key + ": " + reason);
                 }
-                CMnCmdLineTool.showElapsedTime(logger, startFailureResults, new Date(), "Fetch failing paths: ");
+                CMnCmdLineTool.logElapsedTime(logger, startFailureResults, new Date(), "Fetch failing paths: ");
                 break;
         }
 
@@ -895,7 +895,7 @@ public class CMnGitServer implements IMnServer {
         }
 
         // Display the elapsed time for this operation
-        CMnCmdLineTool.showElapsedTime(logger, startDate, new Date(), "Native merge complete: ");
+        CMnCmdLineTool.logElapsedTime(logger, startDate, new Date(), "Native merge complete: ");
 
         return result;
     }
@@ -979,7 +979,7 @@ public class CMnGitServer implements IMnServer {
         } else {
             result = mergeApi(src, dest, id);
         }
-        CMnCmdLineTool.showElapsedTime(logger, startCherryPick, new Date(), "Cherry-pick: ");
+        CMnCmdLineTool.logElapsedTime(logger, startCherryPick, new Date(), "Cherry-pick: ");
 
 
         // Check the results of the merge operation
@@ -1025,7 +1025,7 @@ public class CMnGitServer implements IMnServer {
         }
 
         // Display the elapsed time for this operation
-        CMnCmdLineTool.showElapsedTime(logger, startDate, new Date(), "Merge complete: ");
+        CMnCmdLineTool.logElapsedTime(logger, startDate, new Date(), "Merge complete: ");
 
         return result;
     }
@@ -1067,7 +1067,7 @@ public class CMnGitServer implements IMnServer {
         }
 
         // Display the elapsed time for this operation
-        CMnCmdLineTool.showElapsedTime(logger, startDate, new Date(), "Merge completed: ");
+        CMnCmdLineTool.logElapsedTime(logger, startDate, new Date(), "Merge completed: ");
 
         return diverged;
     }
@@ -1352,7 +1352,7 @@ public class CMnGitServer implements IMnServer {
 
 
         // Display the elapsed time for this operation
-        CMnCmdLineTool.showElapsedTime(logger, startDate, new Date(), "Check merge status: ");
+        CMnCmdLineTool.logElapsedTime(logger, startDate, new Date(), "Check merge status: ");
 
         return matches;
     }
@@ -1395,7 +1395,7 @@ public class CMnGitServer implements IMnServer {
             }
 
             // Display the elapsed time for this operation
-            CMnCmdLineTool.showElapsedTime(logger, startDate, new Date(), "Remote branch query: ");
+            CMnCmdLineTool.logElapsedTime(logger, startDate, new Date(), "Remote branch query: ");
 
         } catch (GitAPIException apiex) {
             logger.severe("Failed to get a list of branches.");
@@ -1442,7 +1442,7 @@ public class CMnGitServer implements IMnServer {
             }
 
             // Display the elapsed time for this operation
-            CMnCmdLineTool.showElapsedTime(logger, startDate, new Date(), "Branch exists: ");
+            CMnCmdLineTool.logElapsedTime(logger, startDate, new Date(), "Branch exists: ");
 
         } catch (GitAPIException apiex) {
             logger.severe("Failed to get a list of branches.");
