@@ -140,14 +140,9 @@ The mn-build-ant jar can be available for download from the
 
 ## Compiling from Source ##
 
-Clone the repository
+Run a Maven build from the root directory:
 
-    git clone ssh://pdgit.modeln.com:8081/buildmanagement.git
-
-Run a build
-
-    cd mn-build-ant
-    mvn package
+    mvn package -pl mn-build-ant -am
 
 
 

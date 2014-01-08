@@ -58,18 +58,13 @@ download from the [project website].
 
 ## Compiling from Source ##
 
-Clone the repository
+Run a Maven build from the root directory:
 
-    git clone ssh://pdgit.modeln.com:8081/buildmanagement.git
+    mvn package -am -pl mn-build-patch
 
-Run a build
+To generate an RPM (optional)
 
-    cd mn-build-patch
-    mvn package
-
-Generate an RPM (optional)
-
-    mv package -P rpm
+    mvn package -am -pl mn-build-patch -P rpm
 
 
 # References #

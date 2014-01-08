@@ -27,12 +27,6 @@
       <version>1.2</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.eclipse.jgit</groupId>
-      <artifactId>org.eclipse.jgit</artifactId>
-      <version>3.1.0.201310021548-r</version>
-    </dependency>
-
     <!-- This dependency should be removed once the code is refactored -->
     <dependency>
       <groupId>org.apache.ant</groupId>

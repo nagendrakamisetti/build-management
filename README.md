@@ -67,7 +67,7 @@ if you wish to compile and package this project using Maven:
    Obtain a local copy of the JDBC jar (either from the installed
    database or by downloading directly from Oracle).
 
-        mvn install:install-file -DgroupId=com.oracle -DartifactId=oracle -Dversion=11.2.0.4.0 -Dpackaging=jar -Dfile=ojdbc6.jar
+        mvn install:install-file -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=11.2.0.4 -Dpackaging=jar -Dfile=/path/to/file/ojdbc6.jar -DgeneratePom=true
 
 2. Install the native `rpmbuild` command (*optional*) 
 
@@ -78,6 +78,20 @@ if you wish to compile and package this project using Maven:
    example of how to install that command on a RedHat system:
  
         yum install rpm-build
+
+3. Customize your Maven `settings.xml` file:
+
+    <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                          http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+      ...
+      <pluginGroups>
+        <pluginGroup>org.eclipse.jetty</pluginGroup>
+      </pluginGroups>
+    </settings>
+
 
 # Installation #
 
@@ -100,11 +114,7 @@ Individual project components may be available for download from the
 
 ## Compiling from Source ##
 
-Clone the repository
-
-    git clone ssh://pdgit.modeln.com:8081/buildmanagement.git
-
-Run a build
+Run a Maven build
 
     mvn package
 

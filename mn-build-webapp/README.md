@@ -20,14 +20,9 @@ download from the [project website].
 
 ## Compiling from Source ##
 
-Clone the repository
+Run a Maven build from the root directory:
 
-    git clone ssh://pdgit.modeln.com:8081/buildmanagement.git
-
-Run a build
-
-    cd mn-build-webapp
-    mvn package
+    mvn package -pl mn-build-webapp -am
 
 
 # References #

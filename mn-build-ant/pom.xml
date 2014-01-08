@@ -22,13 +22,11 @@
 
   <dependencies>
     <!-- Model N Build modules -->
-<!--
     <dependency>
       <groupId>com.modeln.build.core</groupId>
       <artifactId>mn-build-core</artifactId>
       <version>1.0</version>
     </dependency>
--->
 
     <!-- External 3rd Party modules -->
     <dependency>
