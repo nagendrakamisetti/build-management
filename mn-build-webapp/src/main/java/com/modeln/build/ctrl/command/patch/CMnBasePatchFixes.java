@@ -195,9 +195,10 @@ public class CMnBasePatchFixes extends CMnBasePatchRequest {
      *
      * @param   app     Web application reference
      * @param   build   Build data
+     * @param   strict  TRUE if the fixes should only include closed/fixed bugs
      * @return  List of bugs
      */
-    protected Vector<CMnPatchFix> getSourceFixes(WebApplication app, CMnDbBuildData build)
+    protected Vector<CMnPatchFix> getSourceFixes(WebApplication app, CMnDbBuildData build, boolean strict)
         throws ApplicationException
     {
         Vector<CMnPatchFix> fixes = null; 
@@ -207,7 +208,7 @@ public class CMnBasePatchFixes extends CMnBasePatchRequest {
             //if (build.getVersionControlType() == CMnDbBuildData.VersionControlType.PERFORCE) {
             //    fixes = getPerforceFixes(app, build);
             //} else {
-                fixes = getSDTrackerFixes(app, build);
+                fixes = getSDTrackerFixes(app, build, strict);
             //}
         }
 
@@ -366,9 +367,10 @@ public class CMnBasePatchFixes extends CMnBasePatchRequest {
      *
      * @param   app     Web application reference
      * @param   build   Build data
+     * @param   strict  TRUE if the fixes should only include closed/fixed bugs
      * @return  List of bugs
      */
-    protected Vector<CMnPatchFix> getSDTrackerFixes(WebApplication app, CMnDbBuildData build)
+    protected Vector<CMnPatchFix> getSDTrackerFixes(WebApplication app, CMnDbBuildData build, boolean strict)
         throws ApplicationException
     {
         Vector<CMnPatchFix> fixes = new Vector<CMnPatchFix>(0);
@@ -392,7 +394,7 @@ public class CMnBasePatchFixes extends CMnBasePatchRequest {
                     // build we should consider all fixes in 5.3.3.x
                     String family = getReleaseFamily(release);
                     app.debug("CMnBasePatchFixes: Querying SDTracker for fixed bugs: release=" + release + ", family=" + family + ", date=" + build.getStartTime());
-                    Vector<CMnBug> bugs = bugTable.getFixedBugs(rc.getConnection(), family, build.getStartTime());
+                    Vector<CMnBug> bugs = bugTable.getFixedBugs(rc.getConnection(), family, build.getStartTime(), strict);
                     if ((bugs != null) && (bugs.size() > 0)) {
                         app.debug("CMnBasePatchFixes: Converting " + bugs.size() + " bugs to patch fixes.");
                         fixes = convertBugs(bugs);

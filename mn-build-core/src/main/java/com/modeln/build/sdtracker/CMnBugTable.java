@@ -419,10 +419,11 @@ public class CMnBugTable extends CMnOracleTable {
      * @param   conn      Database connection
      * @param   release   Release number (i.e. 5.6.1)
      * @param   start     Starting date
+     * @param   strict    Limit the list of bugs to only those in closed/verified status
      *
      * @return  Bug information
      */
-    public synchronized Vector<CMnBug> getFixedBugs(Connection conn, String release, Date start)
+    public synchronized Vector<CMnBug> getFixedBugs(Connection conn, String release, Date start, boolean strict)
         throws SQLException
     {
         Vector<CMnBug> bugs = new Vector<CMnBug>();
@@ -433,9 +434,13 @@ public class CMnBugTable extends CMnOracleTable {
         String inner = "SELECT DISTINCT " + TABLE_SDR + "." + COLUMN_BUG_ID +
                        " FROM " + TABLE_SDR + ", " + CMnFixTable.TABLE_NAME + 
                        " WHERE " + TABLE_SDR + "." + COLUMN_BUG_ID + " = " + CMnFixTable.TABLE_NAME + "." + CMnFixTable.COLUMN_BUG_ID +
-                       "  AND " + TABLE_SDR + "." + COLUMN_STATUS + " IN ('closed', 'verified')" +
                        "  AND " + TABLE_SDR + "." + COLUMN_RESOLVED_DATE + " > " + format(start) +
                        "  AND " + TABLE_SDR + "." + COLUMN_RELEASE + " LIKE '" + release + "%'"; 
+
+        // Restrict the bugs to only the closed/verified bugs
+        if (strict) {
+            inner = inner + "  AND " + TABLE_SDR + "." + COLUMN_STATUS + " IN ('closed', 'verified')";
+        }
 
         // Select bug details from the rows returned by the inner select
         sql.append("SELECT " + getColumnNames() + 

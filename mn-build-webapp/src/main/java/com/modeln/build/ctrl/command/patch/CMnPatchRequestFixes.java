@@ -227,7 +227,11 @@ public class CMnPatchRequestFixes extends CMnBasePatchFixes {
                     app.debug("CMnPatchRequestFixes: obtained build data");
 
                     // Create a mapping between the requested fixes and the source control fixes
-                    availableFixes = getSourceFixes(app, build);
+                    boolean strict = true;
+                    if (!patch.getForExternalUse()) {
+                        strict = false;
+                    }
+                    availableFixes = getSourceFixes(app, build, strict);
                     app.debug("CMnPatchRequestFixes: available fixes = " + getFixesAsString(availableFixes));
 
                     // Update the fixes with fix origin information
