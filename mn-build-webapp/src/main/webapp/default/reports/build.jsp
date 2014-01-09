@@ -155,9 +155,9 @@
             actSuiteForm.setCollapseCriteria(CMnTestSuiteGroup.COLLAPSE_BY_GID);
         } else if (groupBy.equals("name") && hasValidAreas) {
             suiteForm.setCollapseCriteria(CMnTestSuiteGroup.COLLAPSE_BY_NAME);
-            suiteForm.enableTimeColumn(false);
+            suiteForm.enableTimeColumn(true);
             actSuiteForm.setCollapseCriteria(CMnTestSuiteGroup.COLLAPSE_BY_NAME);
-            actSuiteForm.enableTimeColumn(false);
+            actSuiteForm.enableTimeColumn(true);
         } else if (groupBy.equals("area") && hasValidAreas) {
             // Construct a form object which contains all of the test suites
             Vector<CMnDbTestSuite> allSuitesList = new Vector();
@@ -167,7 +167,7 @@
             allSuitesForm.setCollapseCriteria(CMnTestSuiteGroup.COLLAPSE_BY_NAME);
             allSuitesForm.setProductOwners(areas);
             allSuitesForm.enableAllColumns(!disableHeader);
-            allSuitesForm.enableTimeColumn(false);
+            allSuitesForm.enableTimeColumn(true);
         } else {
             suiteForm.setCollapseCriteria(CMnTestSuiteGroup.COLLAPSE_BY_NONE);
             actSuiteForm.setCollapseCriteria(CMnTestSuiteGroup.COLLAPSE_BY_NONE);
