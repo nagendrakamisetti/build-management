@@ -321,11 +321,11 @@ public class CMnBuildDiffForm extends CMnBaseTableForm implements IMnBuildForm {
 
         // Display a table row for each metric
         if (metricNames.size() > 0) {
-            html.append("<table border=1 width=\"50%\">\n");
+            html.append("<table border=1 width=\"90%\">\n");
 
             // Display the table header
             html.append("  <tr>\n");
-            html.append("  <td bgcolor=\"" + headerColor + "\"><b>Metric</b></td>\n");
+            html.append("  <td width=\"80%\" bgcolor=\"" + headerColor + "\"><b>Metric</b></td>\n");
             for (int idx = 0; idx < buildIds.length; idx++) {
                 html.append("    <td bgcolor=\"" + headerColor + "\" align=\"center\" width=\"100\">");
                 String buildId = buildIds[idx];
@@ -392,7 +392,7 @@ public class CMnBuildDiffForm extends CMnBaseTableForm implements IMnBuildForm {
 
         // Display the table header
         html.append("  <tr>\n");
-        html.append("    <td bgcolor=\"" + headerColor + "\"><b>" + title + "</b></td>\n");
+        html.append("    <td colspan=\"2\" width=\"80%\" bgcolor=\"" + headerColor + "\"><b>" + title + "</b></td>\n");
         for (int idx = 0; idx < buildIds.length; idx++) {
             html.append("    <td bgcolor=\"" + headerColor + "\" width=\"50\" align=\"center\">");
             html.append("<a href=\"" + buildUrl + "?" + BUILD_ID_LABEL + "=" + buildIds[idx] + "\">" + buildIds[idx] + "</a>");
@@ -409,9 +409,12 @@ public class CMnBuildDiffForm extends CMnBaseTableForm implements IMnBuildForm {
             // Determine if the test results differ across builds
             boolean resultsDiffer = false;
             boolean containsFailure = false;
+            boolean sameGroupName = false;
+            String groupName = null;
             if (values.length > 0) {
                 int expectedResult = CMnDbTestData.UNKNOWN_STATUS; 
                 int actualResult = CMnDbTestData.UNKNOWN_STATUS;
+                String currentGroupName = null;
                 for (int idx = 0; idx < values.length; idx++) {
                     // Set the expected value for the row to the first item in the list
                     if ((idx == 0) && (values[idx] != null)) {
@@ -423,6 +426,15 @@ public class CMnBuildDiffForm extends CMnBaseTableForm implements IMnBuildForm {
                         actualResult = values[idx].getStatus();
                         if ((actualResult == CMnDbTestData.ERROR) || (actualResult == CMnDbTestData.FAIL)) {
                             containsFailure = true;
+                        }
+
+                        // Determine if the tests belong to the same group
+                        currentGroupName = values[idx].getGroupName();
+                        if ((groupName != null) && (currentGroupName != null) && groupName.equals(currentGroupName)) {
+                            sameGroupName = true;
+                        } 
+                        if ((groupName == null) || (currentGroupName != null)) {
+                            groupName = currentGroupName;
                         }
                     } else {
                         actualResult = CMnDbTestData.UNKNOWN_STATUS;
@@ -438,7 +450,14 @@ public class CMnBuildDiffForm extends CMnBaseTableForm implements IMnBuildForm {
             // Display the results if there are differences for the current test
             if (resultsDiffer && containsFailure) {
                 html.append("  <tr>\n");
-                html.append("    <td>" + key + "</td>\n");
+
+                html.append("    <td width=\"10%\">");
+                if (sameGroupName) {
+                    html.append(groupName);
+                }
+                html.append("</td>\n");
+
+                html.append("    <td width=\"70%\">" + key + "</td>\n");
                 for (int idx = 0; idx < buildIds.length; idx++) {
                     CMnDbTestData data = values[idx]; 
                     if (data != null) {
@@ -519,7 +538,7 @@ public class CMnBuildDiffForm extends CMnBaseTableForm implements IMnBuildForm {
         } // while keys has more elements
 
         // Display the total number of tests associated with each build
-        html.append("  <tr><td bgcolor=\"" + footerColor + "\" align=\"right\"><b>Total:</b></td>");
+        html.append("  <tr><td colspan=\"2\" width=\"80%\" bgcolor=\"" + footerColor + "\" align=\"right\"><b>Total:</b></td>");
         for (int idx = 0; idx < buildIds.length; idx++) {
             html.append("<td bgcolor=\"" + footerColor + "\" align=\"right\"><b>" + totals[idx] + "</b></td>");
         }
