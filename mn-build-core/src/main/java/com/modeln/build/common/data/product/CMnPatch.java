@@ -494,6 +494,32 @@ public class CMnPatch {
     }
 
     /**
+     * Return the total number of fixes with the specified
+     * status value. 
+     *
+     * @return Number of fixes that match the given status 
+     */
+    public int getFixStatusCount(String status) {
+        int count = 0;
+
+        if ((fixes != null) && (status != null)) {
+            Enumeration<CMnPatchFix> fixList = fixes.elements();
+            while (fixList.hasMoreElements()) {
+                CMnPatchFix currentFix = (CMnPatchFix) fixList.nextElement();
+                if (currentFix.getStatus() != null) {
+                    String currentStatus = currentFix.getStatus();
+                    if (status.equalsIgnoreCase(currentStatus)) {
+                        count++;
+                    }
+                }
+            }
+        }
+
+        return count;
+    }
+
+
+    /**
      * Set the list of approvals associated with the patch.
      *
      * @param  list   List of approvals

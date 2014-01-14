@@ -135,6 +135,7 @@
     CMnPatchFixForm fixform = new CMnPatchFixForm(formSubmitUrl, formImageUrl);
     fixform.setExternalUrls(urls);
     if (fixes != null) {
+        patch.setFixes(fixes);
         fixform.setBaseFixes(fixes);
         fixform.setSelectedFixes(fixes);
     }

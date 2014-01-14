@@ -923,7 +923,7 @@ public class CMnPatchFixForm extends CMnPatchRequestForm implements IMnPatchForm
 
         // Render the status 
         if (visible[COLUMN_IDX_STATUS]) {
-            html.append("  <td NOWRAP valign=\"top\">" + fix.getStatus() + "</td>\n");
+            html.append("  <td NOWRAP valign=\"top\" class=\"fixstatus-" + fix.getStatus() + "\">" + fix.getStatus() + "</td>\n");
         }
 
 
