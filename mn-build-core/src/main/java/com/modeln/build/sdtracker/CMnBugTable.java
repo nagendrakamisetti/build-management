@@ -435,7 +435,7 @@ public class CMnBugTable extends CMnOracleTable {
                        " FROM " + TABLE_SDR + ", " + CMnFixTable.TABLE_NAME + 
                        " WHERE " + TABLE_SDR + "." + COLUMN_BUG_ID + " = " + CMnFixTable.TABLE_NAME + "." + CMnFixTable.COLUMN_BUG_ID +
                        "  AND " + TABLE_SDR + "." + COLUMN_RESOLVED_DATE + " > " + format(start) +
-                       "  AND " + TABLE_SDR + "." + COLUMN_RELEASE + " LIKE '" + release + "%'"; 
+                       "  AND " + TABLE_SDR + "." + COLUMN_RELEASE + " LIKE UPPER('" + release + "%')"; 
 
         // Restrict the bugs to only the closed/verified bugs
         if (strict) {
