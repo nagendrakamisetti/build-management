@@ -16,6 +16,12 @@ import java.util.Set;
  */
 public class CMnAccount {
 
+    /** List of possible branch types */
+    public static enum BranchType {
+        PRODUCT, CUSTOMER
+    }
+
+
     /** Auto-generated ID used to identify an account */
     private Integer id;
     
@@ -24,6 +30,10 @@ public class CMnAccount {
 
     /** Short name of the account */
     private String shortName;
+
+    /** Type of branch where the product build is maintained for this customer */
+    private BranchType branchType = BranchType.PRODUCT;
+
     
     /** Default language and country for the account */
     private Locale locale;
@@ -244,6 +254,47 @@ public class CMnAccount {
      */
     public void addEnvironment(CMnEnvironment environment) {
         environments.add(environment);
+    }
+
+
+    /**
+     * Set the branch type 
+     *
+     * @param    type   Branch type 
+     */
+    public void setBranchType(String type) {
+        if (type != null) {
+            branchType = BranchType.valueOf(type.toUpperCase());
+        } else {
+            branchType = null;
+        }
+    }
+
+
+    /**
+     * Return the branch type 
+     *
+     * @return  Branch type 
+     */
+    public BranchType getBranchType() {
+        return branchType;
+    }
+
+
+    /**
+     * Return the list of possible branch types as an array.
+     *
+     * @return List of branch types
+     */
+    public static String[] getBranchTypeList() {
+        BranchType[] list = BranchType.values();
+        String[] strList = new String[list.length];
+        int idx = 0;
+        while (idx < list.length) {
+            strList[idx] = list[idx].toString();
+            idx++;
+        }
+        return strList;
     }
 
     

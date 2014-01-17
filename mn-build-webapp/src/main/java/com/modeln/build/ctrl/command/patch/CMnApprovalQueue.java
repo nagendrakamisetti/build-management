@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.util.Vector;
 
 import com.modeln.build.common.data.account.UserData;
+import com.modeln.build.ctrl.forms.CMnUserForm;
 import com.modeln.build.web.errors.ApplicationError;
 import com.modeln.build.web.errors.ApplicationException;
 import com.modeln.build.web.application.CommandResult;
@@ -63,8 +64,23 @@ public class CMnApprovalQueue extends ProtectedCommand {
                 rc = app.getRepositoryConnection();
                 CMnPatchTable patchTable = CMnPatchTable.getInstance();
 
+                // Allow an admin to view the queue for a specific user
+                String uid = null; 
+                if (user.isAdmin()) { 
+                    uid = (String) req.getParameter(CMnUserForm.USER_ID_LABEL);
+                    if (uid == null) {
+                        uid = (String) req.getAttribute(CMnUserForm.USER_ID_LABEL);
+                    }
+                }
+
+                // If no user ID is specified, use the currently logged in user
+                if (uid == null) {
+                    uid = user.getUid();
+                }
+
+
                 // Obtain the list of patches waiting for approval from this user
-                Vector<CMnPatch> patches = patchTable.getPatchesForApproval(rc.getConnection(), user.getUid());
+                Vector<CMnPatch> patches = patchTable.getPatchesForApproval(rc.getConnection(), uid);
                 req.setAttribute(IMnPatchForm.PATCH_LIST_DATA, patches);
 
                 result.setDestination("patch/patch_approval.jsp");

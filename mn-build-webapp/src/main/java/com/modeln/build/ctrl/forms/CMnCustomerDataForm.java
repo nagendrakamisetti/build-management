@@ -42,12 +42,17 @@ public class CMnCustomerDataForm extends CMnBaseReleaseForm implements IMnPatchF
     /** Save a reference to the customer data so it can be used later */
     private CMnAccount customer = null;
 
+    /** Customer ID */
+    private TextTag custIdTag;
 
     /** Customer name */
     private TextTag nameTag;
 
     /** Short customer name */
     private TextTag shortNameTag;
+
+    /** List of branch types */
+    private SelectTag branchTypeTag;
 
 
     /** URL for deleting a table entry */
@@ -71,12 +76,17 @@ public class CMnCustomerDataForm extends CMnBaseReleaseForm implements IMnPatchF
     public CMnCustomerDataForm(URL form, URL images) {
         super(form, images);
 
+        custIdTag = new TextTag(CUSTOMER_ID_LABEL);
+        custIdTag.setWidth(10);
+
         nameTag = new TextTag(CUSTOMER_NAME_LABEL);
         nameTag.setWidth(30);
 
         shortNameTag = new TextTag(CUSTOMER_SHORT_NAME_LABEL);
         shortNameTag.setWidth(20);
 
+        branchTypeTag = new SelectTag(CUSTOMER_BRANCH_TYPE_LABEL, CMnAccount.getBranchTypeList());
+        branchTypeTag.setDefault(CMnAccount.BranchType.PRODUCT.toString());
     }
 
 
@@ -115,8 +125,10 @@ public class CMnCustomerDataForm extends CMnBaseReleaseForm implements IMnPatchF
      * @param  hidden   TRUE if the form elements should be hidden
      */
     public void setHidden(boolean hidden) {
+        custIdTag.setHidden(hidden);
         nameTag.setHidden(hidden);
         shortNameTag.setHidden(hidden);
+        branchTypeTag.setHidden(hidden);
     }
 
     /**
@@ -128,8 +140,10 @@ public class CMnCustomerDataForm extends CMnBaseReleaseForm implements IMnPatchF
     public void setInputMode(boolean enabled) {
         super.setInputMode(enabled);
 
+        custIdTag.setDisabled(!enabled);
         nameTag.setDisabled(!enabled);
         shortNameTag.setDisabled(!enabled);
+        branchTypeTag.setDisabled(!enabled);
     }
 
 
@@ -149,15 +163,19 @@ public class CMnCustomerDataForm extends CMnBaseReleaseForm implements IMnPatchF
         //
         // Override the request attribute data with form input values
         //
-
-        // Environments are customer-specific so this field only has meaning
-        // if a customer has been selected
+        if (custIdTag.isValueAvailable(req)) {
+            custIdTag.setValue(req);
+        }
         if (nameTag.isValueAvailable(req)) {
             nameTag.setValue(req);
         }
         if (shortNameTag.isValueAvailable(req)) {
             shortNameTag.setValue(req);
         }
+        if (branchTypeTag.isValueAvailable(req)) {
+            branchTypeTag.setValue(req);
+        }
+
     }
 
 
@@ -168,8 +186,12 @@ public class CMnCustomerDataForm extends CMnBaseReleaseForm implements IMnPatchF
      */
     public void setValues(CMnAccount cust) {
         customer = cust;
+        custIdTag.setValue(cust.getId().toString());
         nameTag.setValue(cust.getName());
         shortNameTag.setValue(cust.getShortName());
+        if (cust.getBranchType() != null) {
+            branchTypeTag.setSelected(cust.getBranchType().toString());
+        }
     }
 
 
@@ -189,6 +211,14 @@ public class CMnCustomerDataForm extends CMnBaseReleaseForm implements IMnPatchF
             html.append("<form method=\"" + method + "\" action=\"" + getFormUrl() + "\">\n");
         }
 
+        // Always render the customer ID as a hidden field since a primary key should never change
+        // But don't render the value if it is null
+        if (custIdTag.isComplete()) {
+            custIdTag.setHidden(true);
+            html.append(custIdTag.toString());
+        }
+
+
         html.append("<table border=\"0\" cellspacing=\"2\" cellpadding=\"2\">\n");
         html.append("  <tr>\n");
         html.append("    <td>Customer Name:</td>\n");
@@ -204,6 +234,14 @@ public class CMnCustomerDataForm extends CMnBaseReleaseForm implements IMnPatchF
         html.append(shortNameTag.toString());
         html.append("</td>\n");
         html.append("  </tr>\n");
+
+        html.append("  <tr>\n");
+        html.append("    <td>Branch Type:</td>\n");
+        html.append("    <td>");
+        html.append(branchTypeTag.toString());
+        html.append("</td>\n");
+        html.append("  </tr>\n");
+
 
         if ((customer != null) && (customer.getEnvironments() != null)) {
             html.append("  <tr>\n");

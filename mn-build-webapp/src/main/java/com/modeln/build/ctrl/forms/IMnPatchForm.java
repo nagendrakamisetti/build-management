@@ -93,6 +93,9 @@ public interface IMnPatchForm {
     /** Short customer name */
     public static final String CUSTOMER_SHORT_NAME_LABEL = "cshname";
 
+    /** Customer branch type */
+    public static final String CUSTOMER_BRANCH_TYPE_LABEL = "cbtype";
+
     /** Customer environment id */
     public static final String ENV_ID_LABEL = "env";
 

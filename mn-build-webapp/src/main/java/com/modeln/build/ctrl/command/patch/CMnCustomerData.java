@@ -75,32 +75,54 @@ public class CMnCustomerData extends ProtectedCommand {
                     custShortName = (String) req.getAttribute(IMnPatchForm.CUSTOMER_SHORT_NAME_LABEL);
                 }
 
-                // If custId is specified it means we are editing an existing customer
-                CMnAccount cust = null;
-                if ((custId != null) && (custId.length() > 0)) {
-                    // Update an existing customer record
-                    cust = custTable.getCustomer(rc.getConnection(), custId);
-                    if ((custName != null) && (custName.length() > 0)) {
-                        cust.setName(custName);
-                    }
-                    if ((custShortName != null) && (custShortName.length() > 0)) {
-                        cust.setShortName(custShortName);
-                    }
-                    custTable.updateCustomer(rc.getConnection(), cust);
-                } else if ((custName != null) && (custName.length() > 0)) {
-                    // Create a new customer record
-                    cust = new CMnAccount();
-                    cust.setName(custName);
-                    cust.setShortName(custShortName);
-                    String id = custTable.addCustomer(rc.getConnection(), cust);
-                    if ((id != null) && (id.length() > 0)) {
-                        cust.setId(new Integer(id)); 
-                    }
+                String custBranchType = (String) req.getParameter(IMnPatchForm.CUSTOMER_BRANCH_TYPE_LABEL);
+                if (custBranchType == null) {
+                    custBranchType = (String) req.getAttribute(IMnPatchForm.CUSTOMER_BRANCH_TYPE_LABEL);
                 }
 
-                req.setAttribute(IMnPatchForm.CUSTOMER_DATA, cust);
+                CMnAccount cust = null;
+                // If custId is specified it means we are editing an existing customer
+                if ((custId != null) && (custId.length() > 0)) {
+                    cust = custTable.getCustomer(rc.getConnection(), custId);
+                }
 
-                result.setDestination("patch/customer.jsp");
+                // Determine if the user has submitted the information
+                // Don't fall back to the request attributes because we don't want to
+                // consider this field if the request was forwarded from another command
+                String submitValue = (String) req.getParameter(IMnPatchForm.CUSTOMER_DATA_BUTTON);
+                if (submitValue != null) {
+                    // If custId is specified it means we are editing an existing customer
+                    if (cust != null) {
+                        // Update an existing customer record
+                        if ((custName != null) && (custName.length() > 0)) {
+                            cust.setName(custName);
+                        }
+                        if ((custShortName != null) && (custShortName.length() > 0)) {
+                            cust.setShortName(custShortName);
+                        }
+                        if ((custBranchType != null) && (custBranchType.length() > 0)) {
+                            cust.setBranchType(custBranchType);
+                        }
+                        custTable.updateCustomer(rc.getConnection(), cust);
+                    } else {
+                        // Create a new customer record
+                        cust = new CMnAccount();
+                        cust.setName(custName);
+                        cust.setShortName(custShortName);
+                        cust.setBranchType(custBranchType);
+                        String id = custTable.addCustomer(rc.getConnection(), cust);
+                        if ((id != null) && (id.length() > 0)) {
+                            cust.setId(new Integer(id)); 
+                        }
+                    }
+
+                    result = app.forwardToCommand(req, res, "/patch/CMnCustomerList");
+                } else {
+                    // Just display the customer information to the user
+                    req.setAttribute(IMnPatchForm.CUSTOMER_DATA, cust);
+                    result.setDestination("patch/customer.jsp");
+                }
+
             } catch (ApplicationException aex) {
                 exApp = aex;
             } catch (Exception ex) {

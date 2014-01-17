@@ -195,10 +195,11 @@ public class CMnBasePatchFixes extends CMnBasePatchRequest {
      *
      * @param   app     Web application reference
      * @param   build   Build data
+     * @param   cust    Customer data
      * @param   strict  TRUE if the fixes should only include closed/fixed bugs
      * @return  List of bugs
      */
-    protected Vector<CMnPatchFix> getSourceFixes(WebApplication app, CMnDbBuildData build, boolean strict)
+    protected Vector<CMnPatchFix> getSourceFixes(WebApplication app, CMnDbBuildData build, CMnAccount cust, boolean strict)
         throws ApplicationException
     {
         Vector<CMnPatchFix> fixes = null; 
@@ -208,7 +209,7 @@ public class CMnBasePatchFixes extends CMnBasePatchRequest {
             //if (build.getVersionControlType() == CMnDbBuildData.VersionControlType.PERFORCE) {
             //    fixes = getPerforceFixes(app, build);
             //} else {
-                fixes = getSDTrackerFixes(app, build, strict);
+                fixes = getSDTrackerFixes(app, build, cust, strict);
             //}
         }
 
@@ -367,10 +368,11 @@ public class CMnBasePatchFixes extends CMnBasePatchRequest {
      *
      * @param   app     Web application reference
      * @param   build   Build data
+     * @param   cust    Customer data
      * @param   strict  TRUE if the fixes should only include closed/fixed bugs
      * @return  List of bugs
      */
-    protected Vector<CMnPatchFix> getSDTrackerFixes(WebApplication app, CMnDbBuildData build, boolean strict)
+    protected Vector<CMnPatchFix> getSDTrackerFixes(WebApplication app, CMnDbBuildData build, CMnAccount cust, boolean strict)
         throws ApplicationException
     {
         Vector<CMnPatchFix> fixes = new Vector<CMnPatchFix>(0);
@@ -393,6 +395,16 @@ public class CMnBasePatchFixes extends CMnBasePatchRequest {
                     // a maintenance release family.  For example, if this is a 5.3.3.2
                     // build we should consider all fixes in 5.3.3.x
                     String family = getReleaseFamily(release);
+
+                    // If the customer is not on a product branch, we need to restrict
+                    // the query to target customer-specific bugs
+                    if ((cust.getShortName() != null) && 
+                        (cust.getBranchType() != null) && 
+                        (cust.getBranchType() == CMnAccount.BranchType.CUSTOMER)) 
+                    {
+                        family = family + "%_" + cust.getShortName();
+                    }
+
                     app.debug("CMnBasePatchFixes: Querying SDTracker for fixed bugs: release=" + release + ", family=" + family + ", date=" + build.getStartTime());
                     Vector<CMnBug> bugs = bugTable.getFixedBugs(rc.getConnection(), family, build.getStartTime(), strict);
                     if ((bugs != null) && (bugs.size() > 0)) {
