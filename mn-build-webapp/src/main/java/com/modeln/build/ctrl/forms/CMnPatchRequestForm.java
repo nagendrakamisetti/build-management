@@ -566,9 +566,11 @@ public class CMnPatchRequestForm extends CMnBaseReleaseForm implements IMnPatchF
             }
         }
 
-        patchUseTag.setDefault(Boolean.TRUE.toString());
         Boolean externalUse = new Boolean(patch.getForExternalUse());
         patchUseTag.setSelected(externalUse.toString());
+        // Force the default to be the selected value
+        // to avoid potential bugs where the tag has contradictory values
+        patchUseTag.setDefault(externalUse.toString());
 
         nameTag.setValue(patch.getName());
         notifyTag.setValue(InternetAddress.toString(patch.getCCList()));
