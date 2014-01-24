@@ -36,6 +36,11 @@ public class CMnServicePatch {
         SHOW, HIDE, ADMIN
     }
 
+    /** Severity level of a fix */
+    public static enum FixSeverity {
+        HIGH, MEDIUM, LOW
+    }
+
 
     /** 
      * Return request status by parsing the string.

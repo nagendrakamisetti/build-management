@@ -165,8 +165,17 @@ public class CMnExportFixes extends CMnBasePatchFixes {
 
                     row.add(currentFix.getStatus());
                     row.add(currentFix.getRelease());
+                    if (currentFix.getSeverity() != null) {
+                        row.add(currentFix.getSeverity().toString());
+                    } else {
+                        row.add("");
+                    }
                     row.add(currentFix.getType());
                     row.add(currentFix.getSubType());
+                    row.add(currentFix.getProductArea());
+                    if (currentFix.getNotes() != null) {
+                        row.add("\"" + currentFix.getNotes() + "\"");
+                    }
 
                     content.add(row);
                 }

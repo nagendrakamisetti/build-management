@@ -109,14 +109,48 @@ public class CMnPatchFixForm extends CMnPatchRequestForm implements IMnPatchForm
     private String bulkFixes = null;
 
     /** Define the text that will be used as the header of each table column */
-    private String[] COLUMN_NAMES = { "", "Bug", "Changes", "Excludes", "Status", "Release", "Class", "Sub-class", "Requested", "Branch", "Env", "Origin", "Bug Description" , "" };
+    private String[] COLUMN_NAMES = { 
+        "", // checkbox 
+        "Bug", 
+        "Changes", 
+        "Excludes", 
+        "Status", 
+        "Release", 
+        "Severity",
+        "Class", 
+        "Sub-class", 
+        "Area", 
+        "Requested", 
+        "Branch", 
+        "Env", 
+        "Origin", 
+        "Bug Description", 
+        "" // icons 
+    };
 
-    // Specify which columns should be visible to the user
-    // Columns:                         check    bug    CL#   excl   stat   rel   class  subcl    req  brnch    env   orig   note   icon
-    private boolean[] visiblePrev   = {  true,  true,  true, false,  true,  true,  true,  true, false, false,  true,  true,  true , true  };
-    private boolean[] populatePrev  = {  true,  true,  true, false,  true,  true,  true,  true, false, false,  true,  true,  true , true  };
-    private boolean[] visibleAvail  = {  true,  true,  true, false,  true,  true,  true,  true, false, false, false, false,  true , true  };
-    private boolean[] populateAvail = {  true,  true,  true, false,  true,  true,  true,  true, false, false, false, false,  true , true  };
+    /** Specify which columns in the previous SDR list should be visible to the user */
+    private boolean[] visiblePrev   = {  
+    // check    bug    CL#   excl   stat   rel     sev  class  subcl   area    req  brnch    env   orig   note   icon
+        true,  true,  true, false,  true,  true,  true,  true,  true,  true, false, false,  true,  true,  true , true  
+    };
+
+    /** Specify which columns in the previous SDR list should be populated with data */
+    private boolean[] populatePrev  = {  
+    // check    bug    CL#   excl   stat   rel     sev  class  subcl   area    req  brnch    env   orig   note   icon
+        true,  true,  true, false,  true,  true,  true,  true,  true,  true, false, false,  true,  true,  true , true  
+    };
+
+    /** Specify which columns in the available SDR list should be visible to the user */
+    private boolean[] visibleAvail  = {  
+    // check    bug    CL#   excl   stat   rel     sev  class  subcl   area    req  brnch    env   orig   note   icon
+        true,  true,  true, false,  true,  true,  true,  true,  true,  true, false, false, false, false,  true , true  
+    };
+
+    /** Specify which columns in the available SDR list should be populated with data */
+    private boolean[] populateAvail = {  
+    // check    bug    CL#   excl   stat   rel     sev  class  subcl   area    req  brnch    env   orig   note   icon
+        true,  true,  true, false,  true,  true,  true,  true,  true,  true, false, false, false, false,  true , true  
+    };
 
     public static final int COLUMN_IDX_SELECT    = 0;
     public static final int COLUMN_IDX_BUGNUM    = 1;
@@ -124,14 +158,16 @@ public class CMnPatchFixForm extends CMnPatchRequestForm implements IMnPatchForm
     public static final int COLUMN_IDX_EXCLUDE   = 3;
     public static final int COLUMN_IDX_STATUS    = 4;
     public static final int COLUMN_IDX_RELEASE   = 5;
-    public static final int COLUMN_IDX_CLASS     = 6;
-    public static final int COLUMN_IDX_SUBCLASS  = 7;
-    public static final int COLUMN_IDX_REQUEST   = 8;
-    public static final int COLUMN_IDX_BRANCH    = 9;
-    public static final int COLUMN_IDX_ENV       = 10;
-    public static final int COLUMN_IDX_ORIGIN    = 11;
-    public static final int COLUMN_IDX_NOTES     = 12; 
-    public static final int COLUMN_IDX_ICONS     = 13;
+    public static final int COLUMN_IDX_SEVERITY  = 6;
+    public static final int COLUMN_IDX_CLASS     = 7;
+    public static final int COLUMN_IDX_SUBCLASS  = 8;
+    public static final int COLUMN_IDX_AREA      = 9;
+    public static final int COLUMN_IDX_REQUEST   = 10;
+    public static final int COLUMN_IDX_BRANCH    = 11;
+    public static final int COLUMN_IDX_ENV       = 12;
+    public static final int COLUMN_IDX_ORIGIN    = 13;
+    public static final int COLUMN_IDX_NOTES     = 14; 
+    public static final int COLUMN_IDX_ICONS     = 15;
 
 
     /**
@@ -483,11 +519,17 @@ public class CMnPatchFixForm extends CMnPatchRequestForm implements IMnPatchForm
         if (visible[COLUMN_IDX_RELEASE]) {
             html.append("    <th width=\"50\"><b>" + COLUMN_NAMES[COLUMN_IDX_RELEASE] + "</b></th>\n");
         }
+        if (visible[COLUMN_IDX_SEVERITY]) {
+            html.append("    <th width=\"50\"><b>" + COLUMN_NAMES[COLUMN_IDX_SEVERITY] + "</b></th>\n");
+        }
         if (visible[COLUMN_IDX_CLASS]) {
             html.append("    <th width=\"50\"><b>" + COLUMN_NAMES[COLUMN_IDX_CLASS] + "</b></th>\n");
         }
         if (visible[COLUMN_IDX_SUBCLASS]) {
             html.append("    <th width=\"50\"><b>" + COLUMN_NAMES[COLUMN_IDX_SUBCLASS] + "</b></th>\n");
+        }
+        if (visible[COLUMN_IDX_AREA]) {
+            html.append("    <th width=\"100\"><b>" + COLUMN_NAMES[COLUMN_IDX_AREA] + "</b></th>\n");
         }
         if (visible[COLUMN_IDX_REQUEST]) {
             html.append("    <th width=\"100\"><b>" + COLUMN_NAMES[COLUMN_IDX_REQUEST] + "</b></th>\n");
@@ -932,6 +974,11 @@ public class CMnPatchFixForm extends CMnPatchRequestForm implements IMnPatchForm
             html.append("  <td NOWRAP valign=\"top\">" + fix.getRelease() + "</td>\n");
         }
 
+        // Render the severity
+        if (visible[COLUMN_IDX_SEVERITY]) {
+            html.append("  <td NOWRAP valign=\"top\">" + fix.getSeverity() + "</td>\n");
+        }
+
         // Render the class 
         if (visible[COLUMN_IDX_CLASS]) {
             html.append("  <td NOWRAP valign=\"top\">" + fix.getType() + "</td>\n");
@@ -940,6 +987,11 @@ public class CMnPatchFixForm extends CMnPatchRequestForm implements IMnPatchForm
         // Render the subclass 
         if (visible[COLUMN_IDX_SUBCLASS]) {
             html.append("  <td NOWRAP valign=\"top\">" + fix.getSubType() + "</td>\n");
+        }
+
+        // Render the subclass
+        if (visible[COLUMN_IDX_AREA]) {
+            html.append("  <td NOWRAP valign=\"top\">" + fix.getProductArea() + "</td>\n");
         }
 
         // Render the requested by information

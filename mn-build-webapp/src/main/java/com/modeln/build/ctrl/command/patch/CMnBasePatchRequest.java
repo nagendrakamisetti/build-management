@@ -16,6 +16,7 @@ import com.modeln.build.common.data.product.CMnPatchApprover;
 import com.modeln.build.common.data.product.CMnPatchApproverGroup;
 import com.modeln.build.common.data.product.CMnPatchNotification;
 import com.modeln.build.common.data.product.CMnProduct;
+import com.modeln.build.common.enums.CMnServicePatch;
 import com.modeln.build.common.database.CMnCustomerTable;
 import com.modeln.build.common.tool.CMnPatchUtil;
 import com.modeln.build.ctrl.CMnControlApp;
@@ -490,12 +491,25 @@ public class CMnBasePatchRequest extends ProtectedCommand {
             fix.setBugName(bug.getVertical().toUpperCase() + "-" + bug.getNumber().toString());
         }
 
+        // Translate the SDTracker severity to a more structured type
+        String severity = bug.getSeverity();
+        if (severity != null) { 
+            if (severity.startsWith("1")) {
+                fix.setSeverity(CMnServicePatch.FixSeverity.HIGH);
+            } else if (severity.startsWith("2")) {
+                fix.setSeverity(CMnServicePatch.FixSeverity.MEDIUM);
+            } else {
+                fix.setSeverity(CMnServicePatch.FixSeverity.LOW);
+            }
+        }
+
         // fix.setTitle(bug.getTitle());
         fix.setStatus(bug.getStatus());
         fix.setRelease(bug.getRelease());
         fix.setDescription(bug.getTitle());
         fix.setType(bug.getType());
         fix.setSubType(bug.getSubType());
+        fix.setProductArea(bug.getProductArea());
         if (bug.getCheckIns() != null) {
             Enumeration<CMnCheckIn> clist = bug.getCheckIns().elements();
             while (clist.hasMoreElements()) {

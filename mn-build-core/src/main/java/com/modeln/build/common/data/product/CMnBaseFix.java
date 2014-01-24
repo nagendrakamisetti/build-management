@@ -9,6 +9,7 @@
 */
 package com.modeln.build.common.data.product;
 
+import com.modeln.build.common.enums.CMnServicePatch;
 import com.modeln.build.sourcecontrol.CMnCheckIn;
 
 import java.util.Date;
@@ -50,11 +51,17 @@ public class CMnBaseFix {
     /** Status of the fix */
     private String status;
 
+    /** Severity of the fix */
+    private CMnServicePatch.FixSeverity severity;
+
     /** Type of fix (defect, enhancement, etc) */
     private String fixType;
 
     /** Sub-type of fix (data, performance, etc) */
     private String fixSubType;
+
+    /** Product area of the fix */
+    private String productArea;
 
     /** Type of version control system used */
     private String versionControlType;
@@ -278,6 +285,23 @@ public class CMnBaseFix {
         return status;
     }
 
+    /**
+     * Set the severity of the fix.
+     *
+     * @param  severity   Fix severity
+     */
+    public void setSeverity(CMnServicePatch.FixSeverity severity) {
+        this.severity = severity;
+    }
+
+    /**
+     * Return the severity of the fix.
+     *
+     * @return Fix severity
+     */
+    public CMnServicePatch.FixSeverity getSeverity() {
+        return severity;
+    }
 
     /**
      * Set the type of fix 
@@ -316,6 +340,23 @@ public class CMnBaseFix {
         return fixSubType;
     }
 
+    /**
+     * Set the product area
+     *
+     * @param  area     Product area
+     */
+    public void setProductArea(String area) {
+        productArea = area;
+    }
+
+    /**
+     * Return the product area
+     *
+     * @return Product area
+     */
+    public String getProductArea() {
+        return productArea;
+    }
 
 
     /**
