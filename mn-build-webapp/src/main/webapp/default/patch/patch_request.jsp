@@ -223,14 +223,30 @@
         out.println("</p>");
     }
 %>
+
+      <!-- =============================================================== -->
+      <!-- Patch owner                                                     -->
+      <!-- =============================================================== -->
 <%  // Display the owner information
-    if (admin && (patch != null)) {
+    if (patch != null) {
         out.println("<p>");
+        String ownerFormTitle = "Patch Owner";
+        String ownerFormHtml = null;
+        String ownerFormButton = null;
         if (owner != null) {
-            out.println(ownerForm.getTitledBorderLink("Patch Owner", ownerForm.toString(), patchAssignmentUrl, "Update"));
+            ownerFormHtml = ownerForm.toString();
+            ownerFormButton = "Update";
         } else {
-            out.println(ownerForm.getTitledBorderLink("Patch Owner", "<center><i>No Assigned Owner</i></center>", patchAssignmentUrl, "Assign"));
+            ownerFormHtml = "<center><i>No Assigned Owner</i></center>";
+            ownerFormButton = "Assign";
         }
+
+        if (admin) {
+            out.println(ownerForm.getTitledBorderLink(ownerFormTitle, ownerFormHtml, patchAssignmentUrl, ownerFormButton));
+        } else {
+            out.println(ownerForm.getTitledBorder(ownerFormTitle, ownerFormHtml, true));
+        }
+
         out.println("</p>");
     }
 %>
