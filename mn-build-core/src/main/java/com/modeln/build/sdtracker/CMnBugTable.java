@@ -396,7 +396,6 @@ public class CMnBugTable extends CMnOracleTable {
                        " FROM " + TABLE_SDR + 
                            ", " + TABLE_SDR_CLASS + 
                            ", " + TABLE_SDR_SUBCLASS + 
-                           ", " + TABLE_SDR_SUBCLASS + 
                            ", " + TABLE_CATEGORY +
                        " WHERE " + TABLE_SDR + "." + COLUMN_CLASS_ID + " = " + TABLE_SDR_CLASS + "." + OID +
                        " AND " + TABLE_SDR + "." + COLUMN_BUG_CATEGORY + " = " + TABLE_CATEGORY + "." + OID +
@@ -464,7 +463,6 @@ public class CMnBugTable extends CMnOracleTable {
         sql.append("SELECT " + getColumnNames() + 
                    " FROM " + TABLE_SDR + 
                        ", " + TABLE_SDR_CLASS + 
-                       ", " + TABLE_SDR_SUBCLASS + 
                        ", " + TABLE_SDR_SUBCLASS + 
                        ", " + TABLE_CATEGORY +
                    " WHERE " + TABLE_SDR + "." + COLUMN_CLASS_ID + " = " + TABLE_SDR_CLASS + "." + OID +
