@@ -11,6 +11,7 @@ package com.modeln.build.ctrl.forms;
 
 import com.modeln.build.common.data.account.CMnAccount;
 import com.modeln.build.common.data.account.CMnEnvironment;
+import com.modeln.build.common.data.product.CMnBaseFixDependency;
 import com.modeln.build.common.data.product.CMnPatchFix;
 import com.modeln.build.common.data.product.CMnPatchGroup;
 import com.modeln.build.common.data.product.CMnProduct;
@@ -65,6 +66,9 @@ public class CMnPatchFixForm extends CMnPatchRequestForm implements IMnPatchForm
     /** The URL used to update the origin information */
     protected URL originUrl = null;
 
+    /** The URL used to update the dependency information */
+    protected URL dependencyUrl = null;
+
 
     /** Title displayed at the top of the available fixes table */
     private String availableFixesTitle = "Available Fixes";
@@ -95,6 +99,9 @@ public class CMnPatchFixForm extends CMnPatchRequestForm implements IMnPatchForm
 
     /** List of selected fixes */
     private Vector<Integer> selectedFixes;
+
+    /** Customer information associated with the fixes */
+    private CMnAccount customer;
 
     /** Width of the text fields used for branch information */
     private int branchWidth = 30;
@@ -260,6 +267,25 @@ public class CMnPatchFixForm extends CMnPatchRequestForm implements IMnPatchForm
     }
 
 
+    /**
+     * Set the URL used for updating the dependency information. 
+     *
+     * @param  url   Dependency URL 
+     */
+    public void setDependencyUrl(URL url) {
+        dependencyUrl = url;
+    }
+
+
+    /**
+     * Return the URL used for updating dependency information. 
+     *
+     * @return Dependency URL
+     */
+    public URL getDependencyUrl() {
+        return dependencyUrl;
+    }
+
 
 
     /**
@@ -306,6 +332,15 @@ public class CMnPatchFixForm extends CMnPatchRequestForm implements IMnPatchForm
      */
     public void setAvailableFixes(Vector fixes) {
         this.fixes = fixes;
+    }
+
+    /**
+     * Set the customer associated with this patch request. 
+     *
+     * @param   cust   Customer information
+     */
+    public void setCustomer(CMnAccount cust) {
+        customer = cust;
     }
 
     /**
@@ -618,6 +653,9 @@ public class CMnPatchFixForm extends CMnPatchRequestForm implements IMnPatchForm
                 if (exportUrl != null) {
                     html.append("<input type=\"submit\" name=\"Export\" value=\"Export\" onClick=\"location.href='" + exportUrl + "'\"/>\n");
                 }
+                if (dependencyUrl != null) {
+                    html.append("<input type=\"submit\" name=\"Dependencies\" value=\"Dependencies\" onClick=\"location.href='" + dependencyUrl + "'\"/>\n");
+                }
                 if (getAdminMode() && (originUrl != null)) {
                     html.append("<input type=\"submit\" name=\"Origin\" value=\"Fix Origins\" onClick=\"location.href='" + originUrl + "'\"/>\n");
                 }
@@ -768,11 +806,30 @@ public class CMnPatchFixForm extends CMnPatchRequestForm implements IMnPatchForm
     private String getAvailableFixes() {
         StringBuffer html = new StringBuffer();
 
-        if ((fixes != null) && (fixes.size() > 0)) {
+        boolean hasFixes = ((fixes != null) && (fixes.size() > 0));
+        boolean customerFixes = ((customer != null) && customer.isBranchType(CMnAccount.BranchType.CUSTOMER));
+
+        // Display an informational banner if the data is being limited by customer
+        if (!hasFixes && customerFixes) {
+            html.append("<table width=\"90%\" border=\"0\" cellspacing=\"1\" cellpadding=\"1\">");
+            html.append("<tr class=\"spreadsheet-header\">");
+            html.append("<td align=\"center\">");
+            html.append("No customer-specific fixes found for this customer.");
+            html.append("</td>");
+            html.append("</tr>");
+            html.append("</table>\n");
+        }
+
+
+        if (hasFixes) {
             html.append("<p>\n");
+
             html.append("<table width=\"90%\" class=\"spreadsheet\">\n");
             html.append("<tr><td colspan=\"" + getVisibleCount(visibleAvail) + "\" align=\"center\">&nbsp;</td></tr>\n");
             html.append("<tr class=\"spreadsheet-header\"><th colspan=\"" + getVisibleCount(visibleAvail) + "\" align=\"center\"><b>" + availableFixesTitle + "</b></th></tr>\n");
+            if (customerFixes) {
+                html.append("<tr class=\"spreadsheet-subheader\"><th colspan=\"" + getVisibleCount(visibleAvail) + "\" align=\"center\"><b>Only customer-specific fixes are shown</b></th></tr>\n");
+            }
             html.append(getHeader(visibleAvail));
             int rowcount = 0;
             CMnPatchFix currentFix = null;
@@ -837,6 +894,42 @@ public class CMnPatchFixForm extends CMnPatchRequestForm implements IMnPatchForm
         }
 
         return matches;
+    }
+
+    /**
+     * Render the dependency list.
+     *
+     * @param  Bug fix data 
+     *
+     * @return HTML representation of the dependency list
+     */
+    public String dependenciesToString(CMnPatchFix fix) {
+        StringBuffer html = new StringBuffer();
+
+        boolean allowEdit = (getAdminMode() && (dependencyUrl != null));
+        boolean hasDeps = ((fix.getDependencies() != null) && (fix.getDependencies().size() > 0));
+
+        if (allowEdit || hasDeps) {
+            html.append("<ul>\n");
+            Enumeration deplist = fix.getDependencies().elements();
+            while (deplist.hasMoreElements()) {
+                CMnBaseFixDependency dep = (CMnBaseFixDependency) deplist.nextElement();
+                html.append("<li>Depends On: " + dep.getBugId());
+                if (dep.getType() != null) {
+                    html.append(" (" + dep.getType().toString() + ")");
+                }
+                html.append("</li>\n");
+            }
+
+            if (allowEdit) {
+                String url = dependencyUrl + "&" + FIX_BUG_LABEL + "=" + fix.getBugId();
+                html.append("<li><a href=\"" + url + "\">Edit dependencies</a></li>\n");
+            }
+
+            html.append("</ul>\n");
+        }
+
+        return html.toString();
     }
 
     /**
@@ -1062,7 +1155,10 @@ public class CMnPatchFixForm extends CMnPatchRequestForm implements IMnPatchForm
         if (visible[COLUMN_IDX_NOTES]) {
             html.append("  <td valign=\"top\"");
             if (getInputMode() || (notesValue.length() > 0)) {
-                html.append(" onClick=\"show('div" + IMnPatchForm.FIX_NOTE_PREFIX + fix.getBugId() + "')\"");
+                html.append(" onClick=\"");
+                html.append("show('div" + IMnPatchForm.FIX_NOTE_PREFIX + fix.getBugId() + "');");
+                html.append("show('div" + IMnPatchForm.FIX_DEPENDENCY_PREFIX + fix.getBugId() + "')");
+                html.append("\"");
             }
             html.append(">");
             if (populate[COLUMN_IDX_NOTES]) {
@@ -1074,6 +1170,7 @@ public class CMnPatchFixForm extends CMnPatchRequestForm implements IMnPatchForm
                     }
                 }
 
+                // Display notes DIV element
                 html.append("<div id=\"div" + IMnPatchForm.FIX_NOTE_PREFIX + fix.getBugId() + "\" style=\"display:none;\">\n");
                 html.append("<p><u><i>Service Patch Notes:</i></u><br/>\n");
                 if (getInputMode()) {
@@ -1083,6 +1180,14 @@ public class CMnPatchFixForm extends CMnPatchRequestForm implements IMnPatchForm
                 }
                 html.append("</p>\n");
                 html.append("</div>");
+
+                // Display dependency DIV element
+                html.append("<div id=\"div" + IMnPatchForm.FIX_DEPENDENCY_PREFIX + fix.getBugId() + "\" style=\"display:none;\">\n");
+                html.append("<p><u><i>Service Patch Dependencies:</i></u><br/>\n");
+                html.append(dependenciesToString(fix));
+                html.append("</p>\n");
+                html.append("</div>");
+
             }
             html.append("</td>\n");
 
@@ -1090,16 +1195,26 @@ public class CMnPatchFixForm extends CMnPatchRequestForm implements IMnPatchForm
 
         // Display a notes icon if the row contains note data
         if (visible[COLUMN_IDX_ICONS]) {
-            html.append("  <td valign=\"top\""); 
-            if (getInputMode() || (notesValue.length() > 0)) {
-                html.append(" onClick=\"toggleElement('div" + IMnPatchForm.FIX_NOTE_PREFIX + fix.getBugId() + "')\"");
-            }
-            html.append(">");
+            html.append("  <td valign=\"top\">"); 
+
+            // Display a notes icon
             if (notesValue.length() > 0) {
-                html.append("<img src=\"" + imageUrl + "/icons_small/notice.png\">\n");
+                html.append("<img src=\"" + imageUrl + "/icons_small/notice.png\"");
+                html.append(" onClick=\"toggleElement('div" + IMnPatchForm.FIX_NOTE_PREFIX + fix.getBugId() + "')\"");
+                html.append(">\n");
             } else {
                 html.append("&nbsp;");
             }
+
+            // Display a dependency icon
+            if ((fix.getDependencies() != null) && (fix.getDependencies().size() > 0)) {
+                html.append("<img src=\"" + imageUrl + "/icons_small/link.png\"");
+                html.append(" onClick=\"toggleElement('div" + IMnPatchForm.FIX_DEPENDENCY_PREFIX + fix.getBugId() + "')\"");
+                html.append(">\n");
+            } else {
+                html.append("&nbsp;");
+            }
+
             html.append("</td>\n");
         }
 

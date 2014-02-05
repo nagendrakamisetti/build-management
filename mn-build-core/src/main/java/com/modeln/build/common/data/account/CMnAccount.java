@@ -258,6 +258,16 @@ public class CMnAccount {
 
 
     /**
+     * Determine if the account is of the specified type.
+     *
+     * @param    type   Branch type
+     */
+    public boolean isBranchType(BranchType type) {
+        return (branchType == type);
+    }
+
+
+    /**
      * Set the branch type 
      *
      * @param    type   Branch type 

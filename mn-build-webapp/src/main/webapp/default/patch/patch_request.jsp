@@ -149,6 +149,8 @@
         fixform.setVerifyUrl(new URL(appUrl + "/patch/CMnValidateFixes?" + IMnPatchForm.PATCH_ID_LABEL + "=" + patch.getId()));
         fixform.setExportUrl(new URL(appUrl + "/patch/CMnExportFixes?" + IMnPatchForm.PATCH_ID_LABEL + "=" + patch.getId()));
         fixform.setOriginUrl(new URL(appUrl + "/patch/CMnOriginUpdate?" + IMnPatchForm.PATCH_ID_LABEL + "=" + patch.getId()));
+        fixform.setDependencyUrl(new URL(appUrl + "/patch/CMnDependencyUpdate?" + IMnPatchForm.PATCH_ID_LABEL + "=" + patch.getId()));
+        fixform.setCustomer(patch.getCustomer());
     }
 %>
 <html>

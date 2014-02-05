@@ -45,6 +45,9 @@ public class CMnBaseFix {
     /** List of changelists to exclude from the list */
     private Vector<CMnCheckIn> exclusions = new Vector<CMnCheckIn>();
 
+    /** List of bugs on which this one depends */
+    private Vector<CMnBaseFixDependency> dependencies = new Vector<CMnBaseFixDependency>();
+
     /** Product release where this fix has been applied */
     private String release;
 
@@ -247,6 +250,60 @@ public class CMnBaseFix {
             }
         }
         return list.toString();
+    }
+
+
+    /**
+     * Set the list of dependencies. 
+     *
+     * @param   list  Dependencies 
+     */
+    public void setDependencies(Vector<CMnBaseFixDependency> list) {
+        dependencies = list;
+    }
+
+    /**
+     * Add a dependency to the list if it does not already exist.
+     *
+     * @param   dep    Dependency information
+     */
+    public void addDependency(CMnBaseFixDependency dep) {
+        CMnBaseFixDependency existing = getDependency(dep.getBugId());
+        if (existing == null) { 
+            if (dependencies == null) {
+                dependencies = new Vector<CMnBaseFixDependency>();
+            }
+            dependencies.add(dep);
+        }
+    }
+
+    /**
+     * Return the list of dependencies.
+     *
+     * @return Dependency list
+     */
+    public Vector<CMnBaseFixDependency> getDependencies() {
+        return dependencies;
+    }
+
+
+    /**
+     * Return the matching dependency or null if none found.
+     *
+     * @param   bid   Bug ID
+     * @return Dependency
+     */
+    public CMnBaseFixDependency getDependency(int id) {
+        if (dependencies != null) {
+            Enumeration list = dependencies.elements();
+            while (list.hasMoreElements()) {
+                CMnBaseFixDependency current = (CMnBaseFixDependency) list.nextElement();
+                if (current.getBugId() == id) {
+                    return current;
+                }
+            }
+        }
+        return null;
     }
 
     /**

@@ -242,6 +242,18 @@ public class CMnPatchTable extends CMnTable {
 
 
 
+    /** Name of the table used to represent patch fix dependencies */
+    public static final String DEPENDENCY_TABLE = "patch_fix_dependency";
+
+    /** Name of the column that identifies the bug that a fix depends on */
+    public static final String DEPENDENCY_ON = "depends_on";
+
+    /** Name of the column that identifies the type of dependency */
+    public static final String DEPENDENCY_TYPE = "dependency_type";
+
+
+
+
 
 
     /** Singleton instance of the table class */
@@ -315,7 +327,7 @@ public class CMnPatchTable extends CMnTable {
                     patch.setNotifications(notifications);
 
                     // Load the list of fixes for the current patch
-                    Vector<CMnPatchFix> fixes = getFixes(conn, patchId, false);
+                    Vector<CMnPatchFix> fixes = getFixes(conn, patchId, true);
                     patch.setFixes(fixes);
 
                     // Load the list of comments
@@ -557,6 +569,13 @@ public class CMnPatchTable extends CMnTable {
                 while (rs.next()) {
                     fix = parseFixData(rs);
                     if (fix != null) {
+                        // Get the list of dependencies
+                        if (deep) {
+                            String bugId = Integer.toString(fix.getBugId());
+                            fix.setDependencies(getDependencies(conn, pid, bugId));
+                        }
+
+                        // Get the origin information
                         if (fix.getOrigin() != null) {
                             Integer oid = fix.getOrigin().getId();
                             CMnPatch origin = null;
@@ -576,6 +595,7 @@ public class CMnPatchTable extends CMnTable {
                             }
                             fix.setOrigin(origin);
                         }
+
                         list.add(fix);
                         getInstance().debugWrite("Added fix " + fix.getBugId() + " to the patch request.");
                     } else {
@@ -846,6 +866,140 @@ public class CMnPatchTable extends CMnTable {
         return comments;
     }
 
+    /**
+     * Retrieve the list of dependencies associated with the given bug. 
+     *
+     * @param   conn      Database connection
+     * @param   patchId   Patch ID
+     * @param   bugId     Bug ID
+     *
+     * @return  List of bugs on which this one depends 
+     */
+    public synchronized Vector<CMnBaseFixDependency> getDependencies(Connection conn, String patchId, String bugId)
+        throws SQLException
+    {
+        Vector<CMnBaseFixDependency> dependencies = null;
+
+        StringBuffer sql = new StringBuffer();
+        sql.append("SELECT * FROM " + DEPENDENCY_TABLE +
+                   " WHERE " + REQUEST_ID + " = '" + patchId + "'" +
+                   "  AND  " + FIX_BUG_ID + " = '" + bugId + "'");
+
+        Statement st = conn.createStatement();
+        ResultSet rs = null;
+        try {
+            getInstance().debugWrite("Attempting to execute: " + sql.toString());
+            rs = executeQuery(st, "getDependencies", sql.toString());
+            if (rs != null) {
+                getInstance().debugWrite("getDependencies cursor is at ROW " + rs.getRow());
+                boolean hasMoreRows = rs.first();
+                dependencies = new Vector<CMnBaseFixDependency>();
+                while (hasMoreRows) {
+                    getInstance().debugWrite("Attempting to parse dependency data.");
+                    CMnBaseFixDependency data = parseDependencyData(rs);
+                    dependencies.add(data);
+                    hasMoreRows = rs.next();
+                }
+            } else {
+                getInstance().debugWrite("Unable to obtain the dependencies for Bug ID " + bugId);
+            }
+        } catch (SQLException ex) {
+            getInstance().debugWrite("Failed to obtain service patch dependencies: " + sql.toString());
+            ex.printStackTrace();
+        } finally {
+            if (rs != null) rs.close();
+            if (st != null) st.close();
+        }
+
+        return dependencies;
+    }
+
+
+    /**
+     * Add a new bug dependency to the database.
+     *
+     * @param   conn     Database connection
+     * @param   pid      Patch ID
+     * @param   bid      Bug ID
+     * @param   dep      Dependency information
+     * 
+     * @return  TRUE if the dependency was added
+     */
+    public synchronized boolean addDependency(Connection conn, String pid, String bid, CMnBaseFixDependency dep)
+        throws SQLException
+    {
+        boolean success = false;
+
+        StringBuffer sql = new StringBuffer();
+        sql.append("INSERT INTO " + DEPENDENCY_TABLE + " ");
+        sql.append("(" + REQUEST_ID);
+        sql.append(", " + FIX_BUG_ID);
+        sql.append(", " + DEPENDENCY_ON);
+        sql.append(", " + DEPENDENCY_TYPE + ") ");
+
+        sql.append("VALUES ");
+        sql.append("(\"" + pid + "\"");
+        sql.append(", \"" + bid + "\"");
+        sql.append(", \"" + dep.getBugId() + "\"");
+        sql.append(", \"" + dep.getType() + "\")");
+
+        Statement st = conn.createStatement();
+        ResultSet rs = null;
+        try {
+            getInstance().debugWrite("Attempting to execute: " + sql.toString());
+            st.execute(sql.toString());
+            success = true;
+        } catch (SQLException ex) {
+            getInstance().debugWrite("Encountered exception while inserting dependency data: " + ex.toString());
+            getInstance().debugWrite(ex);
+        } finally {
+            if (rs != null) rs.close();
+            if (st != null) st.close();
+        }
+
+        return success;
+    }
+
+
+    /**
+     * Delete the dependency from the patch request bug list. 
+     *
+     * @param   conn    Database connection
+     * @param   pid     Service patch ID
+     * @param   bid     Bug ID (source)
+     * @param   did     Dependent Bug ID (target)
+     * @return  Number of rows deleted, or -1 if an error occurred
+     */
+    public synchronized int deleteDependency(Connection conn, String pid, String bid, String did)
+        throws SQLException
+    {
+        int count = 0;
+
+        StringBuffer sql = new StringBuffer();
+        sql.append("DELETE FROM " + DEPENDENCY_TABLE +
+                   " WHERE " + REQUEST_ID + " = '" + pid + "'" +
+                   "  AND  " + FIX_BUG_ID + " = '" + bid + "'" +
+                   "  AND  " + DEPENDENCY_ON + " = '" + did + "'");
+
+        Statement st = conn.createStatement();
+        ResultSet rs = null;
+        try {
+            getInstance().debugWrite("Attempting to execute: " + sql.toString());
+            boolean success = st.execute(sql.toString());
+            if (success) {
+                count = 1;
+            }
+        } catch (SQLException ex) {
+            count = -1;
+            getInstance().debugWrite("Encountered exception while deleting approval data: " + ex.toString());
+            getInstance().debugWrite(ex);
+        } finally {
+            if (rs != null) rs.close();
+            if (st != null) st.close();
+        }
+
+        return count;
+    }
 
 
     /**
@@ -2638,6 +2792,30 @@ public class CMnPatchTable extends CMnTable {
         comment.setStatus(status);
 
         return comment;
+    }
+
+
+    /**
+     * Parse the patch dependency.
+     *
+     * @param  rs   Result set containing the dependency data
+     *
+     * @return  Patch dependency
+     */
+    public static CMnBaseFixDependency parseDependencyData(ResultSet rs)
+        throws SQLException
+    {
+        CMnBaseFixDependency dependency = new CMnBaseFixDependency();
+
+        int bugId = rs.getInt(DEPENDENCY_ON);
+        dependency.setBugId(new Integer(bugId));
+
+        String type = rs.getString(DEPENDENCY_TYPE);
+        if (type != null) {
+            dependency.setType(CMnBaseFixDependency.DependencyType.valueOf(type.toUpperCase()));
+        }
+
+        return dependency;
     }
 
 

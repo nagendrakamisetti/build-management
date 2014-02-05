@@ -51,6 +51,7 @@
     String baseUrl = HttpUtility.getApplicationUrl(request);
     String appUrl = baseUrl + "/command"; 
     String imgUrl = baseUrl + "/default/images";
+    String d3Url = baseUrl + "/d3js/d3.v3.js";
     String downloadUrl = urls.get("download"); 
 
     // Determine whether the header and footer should be displayed
