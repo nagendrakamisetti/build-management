@@ -135,6 +135,10 @@ public class CMnCustomerTable extends CMnTable {
                 CMnAccount account = null;
                 while (rs.next()) {
                     account = parseCustomerData(rs);
+
+                    // Load environment information for that customer
+                    account.setEnvironments(getEnvironments(conn, account.getId().toString()));
+
                     list.add(account);
                 }
             } else {
