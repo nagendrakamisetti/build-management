@@ -29,8 +29,15 @@ public class CMnPatchDateComparator implements Comparator {
     public int compare(Object patch1, Object patch2) {
         Date time1 = ((CMnPatch) patch1).getRequestDate();
         Date time2   = ((CMnPatch) patch2).getRequestDate();
-
-        return time1.compareTo(time2);
+        if ((time1 != null) && (time2 != null)) {
+            return time1.compareTo(time2);
+        } else if (time1 != null) {
+            return -1;
+        } else if (time2 != null) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
 }
