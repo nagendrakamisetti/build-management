@@ -480,6 +480,101 @@ public class CMnPatchTable extends CMnTable {
 
 
     /**
+     * Retrieve a list of all patches from the database, limiting the result
+     * set to a specified number or rows.  If the limit is set to zero, all
+     * matches will be returned.
+     *
+     * @param   conn      Database connection
+     * @param   fixes     List of fixes
+     * @param   criteria  Set of limiting criteria
+     * @param   count     Number of rows to return, or zero for all rows
+     * @param   deep      Determines whether to perform querries to fill in related data
+     * @return  List of patch information objects
+     */
+    public synchronized Vector<CMnPatch> getAllRequestsByFix(
+            Connection conn,
+            Collection<CMnPatchFix> fixes,
+            CMnSearchGroup criteria,
+            int count,
+            boolean deep)
+        throws SQLException
+    {
+        Vector<CMnPatch> list = new Vector<CMnPatch>();
+
+        // Construct the inner select query from the list of fixes
+        StringBuffer inner = new StringBuffer();
+        if (fixes != null) {
+            inner.append("SELECT DISTINCT " + REQUEST_TABLE + "." + REQUEST_ID);
+            inner.append(" FROM " + REQUEST_TABLE + ", " + FIX_TABLE);
+            inner.append(" WHERE " + REQUEST_TABLE + "." + REQUEST_ID + " = " + FIX_TABLE + "." + REQUEST_ID);
+            inner.append(" AND " + FIX_TABLE + "." + FIX_BUG_ID + " IN ("); 
+            Iterator iter = fixes.iterator();
+            while (iter.hasNext()) {
+                String currentFix = (String) iter.next();
+                inner.append("'" + currentFix + "'");
+                if (iter.hasNext()) {
+                    inner.append(", ");
+                }
+            }
+            inner.append(")");
+        }
+
+
+        // Construct the outer select query
+        StringBuffer sql = new StringBuffer();
+        sql.append("SELECT * FROM " + REQUEST_TABLE + ", " +
+                                      CMnBuildTable.BUILD_TABLE + ", " +
+                                      CMnCustomerTable.ACCOUNT_TABLE + ", " +
+                                      CMnCustomerTable.ENV_TABLE +
+                           " WHERE " + REQUEST_TABLE + "." + ACCOUNT_ID + " = " + CMnCustomerTable.ACCOUNT_TABLE + "." + CMnCustomerTable.ACCOUNT_ID +
+                             " AND " + REQUEST_TABLE + "." + ENVIRONMENT_ID + " = " + CMnCustomerTable.ENV_TABLE + "." + CMnCustomerTable.ENV_ID +
+                             " AND " + REQUEST_TABLE + "." + BUILD_ID + " = " + CMnBuildTable.BUILD_TABLE + "." + CMnBuildTable.BUILD_ID +
+                             " AND " + REQUEST_TABLE + "." + REQUEST_ID + " IN (" + inner + ")");
+
+        // Make sure we actually have some criteria to add
+        if (criteria != null) {
+            String crStr = criteria.toSql();
+            if ((crStr != null) && (crStr.length() > 0)) {
+                sql.append(" AND " + criteria.toSql());
+            }
+        }
+        sql.append(" ORDER BY " + REQUEST_TABLE + "." + REQUEST_DATE + " DESC");
+        if (count > 0) {
+            sql.append(" LIMIT " + count);
+        }
+
+        Statement st = conn.createStatement();
+        ResultSet rs = null;
+        try {
+            getInstance().debugWrite("getAllRequests: Attempting to execute: " + sql.toString());
+            rs = executeQuery(st, "getAllRequests", sql.toString());
+            if (rs != null) {
+                CMnPatch patch = null;
+                while (rs.next()) {
+                    patch = parseRequestData(rs);
+                    if (deep && (patch != null)) {
+                        // Load the list of fixes for the current patch
+                        Vector<CMnPatchFix> fxs = getFixes(conn, patch.getId().toString(), false);
+                        patch.setFixes(fxs);
+                    }
+                    list.add(patch);
+                }
+            } else {
+                 getInstance().debugWrite("Unable to obtain the service patch data.");
+            }
+        } catch (SQLException ex) {
+            getInstance().debugWrite("getAllRequests: Failed to obtain service patch data: " + ex.toString());
+            getInstance().debugWrite(ex);
+        } finally {
+            if (rs != null) rs.close();
+            if (st != null) st.close();
+        }
+
+        return list;
+    }
+
+
+    /**
      * Retrieve a list of service patches previously requested for this customer and build.
      *
      * @param   conn    Database connection

@@ -44,38 +44,38 @@ import com.modeln.build.web.tags.TagGroup;
 public class CMnPatchListForm extends CMnBaseTableForm implements IMnPatchForm {
 
     /** Patch request status field */
-    private SelectTag statusTag = new SelectTag(PATCH_STATUS_LABEL);
+    protected SelectTag statusTag = new SelectTag(PATCH_STATUS_LABEL);
 
     /** Customer name field */
-    private SelectTag customerTag = new SelectTag(CUSTOMER_ID_LABEL);
+    protected SelectTag customerTag = new SelectTag(CUSTOMER_ID_LABEL);
 
 
     /** Build version field */
-    private TextTag buildVersionTag = new TextTag(BUILD_VERSION_LABEL);
+    protected TextTag buildVersionTag = new TextTag(BUILD_VERSION_LABEL);
 
     /** Patch request date field */
-    private DateTag requestDateTag = new DateTag("requestDate");
+    protected DateTag requestDateTag = new DateTag("requestDate");
 
     /** Request date query operator field */
-    private SelectTag requestDateOp;
+    protected SelectTag requestDateOp;
 
     /** Tag group to contain the date fields. */
-    private TagGroup requestDateGroup = new TagGroup("requestDateGroup");
+    protected TagGroup requestDateGroup = new TagGroup("requestDateGroup");
 
 
 
     /** List of patch request data objects. */
-    private Vector requestList = null;
+    protected Vector requestList = null;
 
 
     /** URL for deleting a table entry */
-    private URL deleteUrl = null;
+    protected URL deleteUrl = null;
 
     /** URL for accessing build information */
-    private URL buildUrl = null;
+    protected URL buildUrl = null;
 
     /** URL for editing patch information */
-    private URL patchUrl = null;
+    protected URL patchUrl = null;
 
 
     /**
