@@ -1,3 +1,6 @@
+Build Management Service 
+========================
+
 The purpose is to create a central service layer over our databases. Some of the goals are to :
 - Make sure that we don't perform direct call to database from external services but through this service layer.
 - Open the project to the open source community by simplifying the installation on various infrastructures and environments.
