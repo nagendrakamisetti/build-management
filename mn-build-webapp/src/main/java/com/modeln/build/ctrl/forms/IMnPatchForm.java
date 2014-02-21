@@ -70,6 +70,9 @@ public interface IMnPatchForm {
     /** List of groups that are required for patch approval */
     public static final String APPROVER_GROUP_DATA = "APPROVER_GROUPS";
 
+    /** List of dependencies associated with a fix */
+    public static final String DEPENDENCY_LIST_DATA = "DEPENDENCY_LIST";
+
 
     // ========================================================================
     // The following section contains URL parameter names
@@ -92,6 +95,9 @@ public interface IMnPatchForm {
 
     /** Short customer name */
     public static final String CUSTOMER_SHORT_NAME_LABEL = "cshname";
+
+    /** Customer branch type */
+    public static final String CUSTOMER_BRANCH_TYPE_LABEL = "cbtype";
 
     /** Customer environment id */
     public static final String ENV_ID_LABEL = "env";
@@ -175,6 +181,12 @@ public interface IMnPatchForm {
     /** Individual bug ID */
     public static final String FIX_BUG_LABEL = "bug";
 
+    /** Fix dependency bug ID */
+    public static final String DEPENDENCY_BUG_LABEL = "depon";
+
+    /** Fix dependency type */
+    public static final String DEPENDENCY_TYPE_LABEL = "deptype";
+
 
 
     // ========================================================================
@@ -190,6 +202,9 @@ public interface IMnPatchForm {
 
     /** Note associated with the fix */
     public static final String FIX_NOTE_PREFIX = "note";
+
+    /** Dependencies associated with the fix */
+    public static final String FIX_DEPENDENCY_PREFIX = "dep";
 
     /** Origin associated with the fix */
     public static final String FIX_ORIGIN_PREFIX = "or";
@@ -219,6 +234,9 @@ public interface IMnPatchForm {
 
     /** Submit patch comment information */
     public static final String PATCH_COMMENT_BUTTON = "pcomment";
+
+    /** Submit fix dependency information */
+    public static final String DEPENDENCY_BUTTON = "fixdep";
 
 
     // ========================================================================

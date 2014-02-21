@@ -43,6 +43,12 @@ public class CMnBug {
     /** Bug status */
     private String status = null;
 
+    /** Bug severity */
+    private String severity = null;
+
+    /** Bug product area */
+    private String productArea = null;
+
     /** Resolved date */
     private Date resolveDate = null;
 
@@ -201,6 +207,25 @@ public class CMnBug {
     }
 
     /**
+     * Set the severity of the bug 
+     *
+     * @param  severity   Severity of the bug 
+     */
+    public void setSeverity(String severity) {
+        this.severity = severity;
+    }
+
+    /**
+     * Return the severity of the bug. 
+     *
+     * @return Severity of the bug 
+     */
+    public String getSeverity() {
+        return severity;
+    }
+
+
+    /**
      * Set the type of fix 
      *
      * @param  type   Fix type 
@@ -236,6 +261,25 @@ public class CMnBug {
     public String getSubType() {
         return fixSubType;
     }
+
+    /**
+     * Set the product area 
+     *
+     * @param  area     Product area 
+     */
+    public void setProductArea(String area) {
+        productArea = area;
+    }
+
+    /**
+     * Return the product area 
+     *
+     * @return Product area 
+     */
+    public String getProductArea() {
+        return productArea;
+    }
+
 
 
 

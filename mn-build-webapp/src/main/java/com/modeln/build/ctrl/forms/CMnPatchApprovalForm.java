@@ -276,6 +276,8 @@ public class CMnPatchApprovalForm extends CMnBaseForm implements IMnPatchForm {
                         currentGroup = (CMnPatchApproverGroup) i.next();
                         html.append(toString(currentStatus, currentGroup));
                     }
+                } else {
+                    html.append(toString(currentStatus));
                 }
             }
 
@@ -374,6 +376,34 @@ public class CMnPatchApprovalForm extends CMnBaseForm implements IMnPatchForm {
     }
 
     /**
+     * Render all of the approvals for the specified status.
+     *
+     * @param  status   Patch request status
+     *
+     * @return  HTML representation of the patch approval data
+     */
+    public String toString(CMnServicePatch.RequestStatus status) {
+        StringBuffer html = new StringBuffer();
+
+        // Get a list of all approvals associated with the specified status
+        Vector<CMnPatchApproval> currentApprovals = approvals.get(status);
+        Enumeration list = currentApprovals.elements();
+        while (list.hasMoreElements()) {
+            CMnPatchApproval currentApproval = (CMnPatchApproval) list.nextElement();
+
+            // Render each approval as an HTML string
+            html.append("<tr>\n");
+            html.append("  <td NOWRAP valign=\"top\">" + status + "</td>\n");
+            html.append("  <td NOWRAP valign=\"top\">&nbsp;</td>\n");
+            html.append(toString(currentApproval));
+            html.append("</tr>\n");
+        }
+
+        return html.toString();
+    }
+
+
+    /**
      * Render the patch approval to a row in the table of fixes.
      *
      * @param  approval  Patch approval data
@@ -383,23 +413,21 @@ public class CMnPatchApprovalForm extends CMnBaseForm implements IMnPatchForm {
     private String toString(CMnPatchApproval approval) {
         StringBuffer html = new StringBuffer();
 
-        String bgcolor = "#FFFFCC";
-
         // Render the user information 
-        html.append("  <td bgcolor=\"" + bgcolor + "\" NOWRAP valign=\"top\">");
+        html.append("  <td NOWRAP valign=\"top\">");
         if (approval.getUser() != null) {
             html.append(approval.getUser().getUsername());
         }
         html.append("</td>\n");
 
         // Render the approval status 
-        html.append("  <td bgcolor=\"" + bgcolor + "\" NOWRAP valign=\"top\">");
+        html.append("  <td NOWRAP valign=\"top\">");
         if (approval.getStatus() != null) {
             html.append(approval.getStatus());
         }
         html.append("</td>\n");
 
-        html.append("  <td bgcolor=\"" + bgcolor + "\" valign=\"top\">");
+        html.append("  <td valign=\"top\">");
         html.append(approval.getComment());
         html.append("</td>\n");
 

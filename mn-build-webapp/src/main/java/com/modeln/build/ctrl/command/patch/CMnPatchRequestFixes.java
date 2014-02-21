@@ -6,6 +6,7 @@
  */
 package com.modeln.build.ctrl.command.patch;
 
+import com.modeln.build.common.data.account.CMnAccount;
 import com.modeln.build.common.data.product.CMnPatch;
 import com.modeln.build.common.data.product.CMnPatchApprover;
 import com.modeln.build.common.data.product.CMnPatchFix;
@@ -19,6 +20,7 @@ import com.modeln.build.sdtracker.CMnBug;
 import com.modeln.testfw.reporting.CMnBuildTable;
 import com.modeln.testfw.reporting.CMnDbBuildData;
 import com.modeln.build.common.data.account.UserData;
+import com.modeln.build.common.database.CMnCustomerTable;
 import com.modeln.build.common.database.LoginTable;
 import com.modeln.build.web.errors.ApplicationError;
 import com.modeln.build.web.errors.ApplicationException;
@@ -77,6 +79,7 @@ public class CMnPatchRequestFixes extends CMnBasePatchFixes {
                 rc = app.getRepositoryConnection();
                 ac = app.getAccountConnection();
                 CMnPatchTable patchTable = CMnPatchTable.getInstance();
+                CMnCustomerTable custTable = CMnCustomerTable.getInstance();
                 app.debug("CMnPatchRequestFixes: obtained a connection to the build database");
 
                 // Keep track of field validation errors
@@ -220,14 +223,23 @@ public class CMnPatchRequestFixes extends CMnBasePatchFixes {
 
                 // Obtain available fix information
                 CMnDbBuildData build = null;
+                CMnAccount customer = null;
                 Vector<CMnPatchFix> availableFixes = null;
-                if (buildId != null) {
+                if ((buildId != null) && (custId != null)) {
                     // Obtain detailed build information that will be used to get a list of available fixes
                     build = CMnBuildTable.getBuild(rc.getConnection(), buildId);
                     app.debug("CMnPatchRequestFixes: obtained build data");
 
+                    // Obtain detailed customer information that will be used to limit the available fixes
+                    customer = custTable.getCustomer(rc.getConnection(), custId); 
+                    app.debug("CMnPatchRequestFixes: obtained customer data");
+
                     // Create a mapping between the requested fixes and the source control fixes
-                    availableFixes = getSourceFixes(app, build);
+                    boolean strict = true;
+                    if (!patch.getForExternalUse()) {
+                        strict = false;
+                    }
+                    availableFixes = getSourceFixes(app, build, customer, strict);
                     app.debug("CMnPatchRequestFixes: available fixes = " + getFixesAsString(availableFixes));
 
                     // Update the fixes with fix origin information
@@ -235,7 +247,7 @@ public class CMnPatchRequestFixes extends CMnBasePatchFixes {
                         setOrigin(basePatch, availableFixes, false);
                     }
                 } else {
-                    app.debug("CMnPatchRequestFixes: unable to obtain available fixes due to missing build ID.");
+                    app.debug("CMnPatchRequestFixes: unable to obtain available fixes due to missing build and customer ID.");
                 }
 
 

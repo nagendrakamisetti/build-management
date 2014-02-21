@@ -9,6 +9,7 @@
 */
 package com.modeln.build.common.data.product;
 
+import com.modeln.build.common.enums.CMnServicePatch;
 import com.modeln.build.sourcecontrol.CMnCheckIn;
 
 import java.util.Date;
@@ -44,17 +45,26 @@ public class CMnBaseFix {
     /** List of changelists to exclude from the list */
     private Vector<CMnCheckIn> exclusions = new Vector<CMnCheckIn>();
 
+    /** List of bugs on which this one depends */
+    private Vector<CMnBaseFixDependency> dependencies = new Vector<CMnBaseFixDependency>();
+
     /** Product release where this fix has been applied */
     private String release;
 
     /** Status of the fix */
     private String status;
 
+    /** Severity of the fix */
+    private CMnServicePatch.FixSeverity severity;
+
     /** Type of fix (defect, enhancement, etc) */
     private String fixType;
 
     /** Sub-type of fix (data, performance, etc) */
     private String fixSubType;
+
+    /** Product area of the fix */
+    private String productArea;
 
     /** Type of version control system used */
     private String versionControlType;
@@ -242,6 +252,60 @@ public class CMnBaseFix {
         return list.toString();
     }
 
+
+    /**
+     * Set the list of dependencies. 
+     *
+     * @param   list  Dependencies 
+     */
+    public void setDependencies(Vector<CMnBaseFixDependency> list) {
+        dependencies = list;
+    }
+
+    /**
+     * Add a dependency to the list if it does not already exist.
+     *
+     * @param   dep    Dependency information
+     */
+    public void addDependency(CMnBaseFixDependency dep) {
+        CMnBaseFixDependency existing = getDependency(dep.getBugId());
+        if (existing == null) { 
+            if (dependencies == null) {
+                dependencies = new Vector<CMnBaseFixDependency>();
+            }
+            dependencies.add(dep);
+        }
+    }
+
+    /**
+     * Return the list of dependencies.
+     *
+     * @return Dependency list
+     */
+    public Vector<CMnBaseFixDependency> getDependencies() {
+        return dependencies;
+    }
+
+
+    /**
+     * Return the matching dependency or null if none found.
+     *
+     * @param   bid   Bug ID
+     * @return Dependency
+     */
+    public CMnBaseFixDependency getDependency(int id) {
+        if (dependencies != null) {
+            Enumeration list = dependencies.elements();
+            while (list.hasMoreElements()) {
+                CMnBaseFixDependency current = (CMnBaseFixDependency) list.nextElement();
+                if (current.getBugId() == id) {
+                    return current;
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Set the release where the fix was applied. 
      *
@@ -278,6 +342,23 @@ public class CMnBaseFix {
         return status;
     }
 
+    /**
+     * Set the severity of the fix.
+     *
+     * @param  severity   Fix severity
+     */
+    public void setSeverity(CMnServicePatch.FixSeverity severity) {
+        this.severity = severity;
+    }
+
+    /**
+     * Return the severity of the fix.
+     *
+     * @return Fix severity
+     */
+    public CMnServicePatch.FixSeverity getSeverity() {
+        return severity;
+    }
 
     /**
      * Set the type of fix 
@@ -316,6 +397,23 @@ public class CMnBaseFix {
         return fixSubType;
     }
 
+    /**
+     * Set the product area
+     *
+     * @param  area     Product area
+     */
+    public void setProductArea(String area) {
+        productArea = area;
+    }
+
+    /**
+     * Return the product area
+     *
+     * @return Product area
+     */
+    public String getProductArea() {
+        return productArea;
+    }
 
 
     /**

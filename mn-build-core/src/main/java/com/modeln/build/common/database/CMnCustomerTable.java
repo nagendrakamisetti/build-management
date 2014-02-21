@@ -51,6 +51,10 @@ public class CMnCustomerTable extends CMnTable {
     /** Name of the column that identifies the customer by a short name */
     public static final String ACCOUNT_SHORT_NAME = "short_name";
 
+    /** Name of the column that identifies the customer branch type */
+    public static final String ACCOUNT_BRANCH_TYPE = "branch_type";
+
+
 
     /** Name of the table used for the customer environment information */
     public static final String ENV_TABLE = "customer_env";
@@ -131,6 +135,10 @@ public class CMnCustomerTable extends CMnTable {
                 CMnAccount account = null;
                 while (rs.next()) {
                     account = parseCustomerData(rs);
+
+                    // Load environment information for that customer
+                    account.setEnvironments(getEnvironments(conn, account.getId().toString()));
+
                     list.add(account);
                 }
             } else {
@@ -350,10 +358,18 @@ public class CMnCustomerTable extends CMnTable {
 
         StringBuffer sql = new StringBuffer();
         sql.append("INSERT INTO " + ACCOUNT_TABLE + " ");
-        sql.append("(" + ACCOUNT_NAME + ", " + ACCOUNT_SHORT_NAME + ")");
+        sql.append("(" + ACCOUNT_NAME);
+        if (cust.getBranchType() != null) {
+            sql.append(", " + ACCOUNT_BRANCH_TYPE);
+        }
+        sql.append(", " + ACCOUNT_SHORT_NAME + ")");
 
         sql.append(" VALUES ");
-        sql.append("(\"" + cust.getName() + "\", \"" + cust.getShortName() + "\")");
+        sql.append("(\"" + cust.getName() + "\"");
+        if (cust.getBranchType() != null) {
+            sql.append(", \"" + cust.getBranchType() + "\"");
+        }
+        sql.append(", \"" + cust.getShortName() + "\")");
 
         Statement st = conn.createStatement();
         ResultSet rs = null;
@@ -391,6 +407,9 @@ public class CMnCustomerTable extends CMnTable {
 
         sql.append("UPDATE " + ACCOUNT_TABLE + " ");
         sql.append("SET " + ACCOUNT_NAME + "=\"" + cust.getName() + "\" ");
+        if (cust.getBranchType() != null) {
+            sql.append(", " + ACCOUNT_BRANCH_TYPE + "=\"" + cust.getBranchType() + "\" ");
+        }
         sql.append(", " + ACCOUNT_SHORT_NAME + "=\"" + cust.getShortName() + "\" ");
         sql.append("WHERE " + ACCOUNT_ID + "=\"" + cust.getId() + "\"");
 
@@ -613,6 +632,9 @@ public class CMnCustomerTable extends CMnTable {
 
         String shortName = rs.getString(ACCOUNT_TABLE + "." + ACCOUNT_SHORT_NAME);
         data.setShortName(shortName);
+
+        String branchType = rs.getString(ACCOUNT_TABLE + "." + ACCOUNT_BRANCH_TYPE);
+        data.setBranchType(branchType);
 
         return data;
     }

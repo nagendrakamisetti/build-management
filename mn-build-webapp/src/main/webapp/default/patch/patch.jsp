@@ -24,6 +24,7 @@
           <li><a href="<%= appUrl %>/patch/CMnPatchRequest">Request a Service Patch</a></li>
           <li><a href="<%= appUrl %>/patch/CMnPatchQueue">View All Pending Patches</a></li>
           <li><a href="<%= appUrl %>/patch/CMnPatchList">Search by Patch Requests</a></li>
+          <li><a href="<%= appUrl %>/patch/CMnPatchBugs">Search by SDR</a></li>
           <li><a href="<%= appUrl %>/patch/CMnRequestQueue">View My Requests</a></li>
           <li><a href="<%= appUrl %>/patch/CMnApprovalQueue">View My Approval Queue</a></li>
           <li><a href="<%= appUrl %>/patch/CMnPatchChart">View Charts</a></li>

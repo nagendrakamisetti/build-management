@@ -35,6 +35,7 @@
     boolean forExternalUse = true;
     if (patch != null) { 
         forExternalUse = patch.getForExternalUse();
+        form.setCustomer(patch.getCustomer());
     }
     form.showAdvancedFeatures(true);
     if (fixGroups != null) {

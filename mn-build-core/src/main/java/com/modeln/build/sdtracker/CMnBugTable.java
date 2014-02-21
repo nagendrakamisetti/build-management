@@ -210,6 +210,9 @@ public class CMnBugTable extends CMnOracleTable {
     /** Name of the column representing the bug sub-type */
     protected static final String COLUMN_SUBCLASS_ID = "sdr_sub_class_oid";
 
+    /** Name of the column representing the bug severity */
+    protected static final String COLUMN_SEVERITY = "severity";
+
 
 
 
@@ -233,7 +236,7 @@ public class CMnBugTable extends CMnOracleTable {
     protected static final String TABLE_CATEGORY = "category";
 
     /** Name of the column representing the category name */
-    protected static final String COLUMN_CATEGORY_NAME = "name";
+    protected static final String COLUMN_CATEGORY_NAME = "display";
 
     /** Name of the column representing the category product area foreign key */
     protected static final String COLUMN_CATEGORY_PRODUCT_AREA = "product_area_oid";
@@ -253,6 +256,9 @@ public class CMnBugTable extends CMnOracleTable {
 
     /** Name of an alias that will be used to identify the SDR OID */
     private static final String ALIAS_BUG_ID = "bugid";
+
+    /** Name of the alias that will be used to identify the SDR prudcut area name */
+    private static final String ALIAS_CATEGORY_NAME = "category";
 
 
 
@@ -302,11 +308,14 @@ public class CMnBugTable extends CMnOracleTable {
         names.append(", " + TABLE_SDR + "." + COLUMN_TITLE);
         names.append(", " + TABLE_SDR + "." + COLUMN_DESCRIPTION);
         names.append(", " + TABLE_SDR + "." + COLUMN_RELEASE);
+        names.append(", " + TABLE_SDR + "." + COLUMN_SEVERITY);
         names.append(", " + TABLE_SDR + "." + COLUMN_RESOLVED_DATE);
 
         names.append(", " + TABLE_SDR_CLASS + "." + COLUMN_CLASS);
 
         names.append(", " + TABLE_SDR_SUBCLASS + "." + COLUMN_SUBCLASS);
+
+        names.append(", " + TABLE_CATEGORY + "." + COLUMN_CATEGORY_NAME + " AS " + ALIAS_CATEGORY_NAME); 
 
         return names.toString();
     }
@@ -327,8 +336,12 @@ public class CMnBugTable extends CMnOracleTable {
 
         StringBuffer sql = new StringBuffer();
         sql.append("SELECT " + getColumnNames() + 
-                   " FROM " + TABLE_SDR + ", " + TABLE_SDR_CLASS + ", " + TABLE_SDR_SUBCLASS +
+                   " FROM " + TABLE_SDR + 
+                       ", " + TABLE_SDR_CLASS + 
+                       ", " + TABLE_SDR_SUBCLASS + 
+                       ", " + TABLE_CATEGORY +
                    " WHERE " + TABLE_SDR + "." + COLUMN_CLASS_ID + " = " + TABLE_SDR_CLASS + "." + OID + 
+                   " AND " + TABLE_SDR + "." + COLUMN_BUG_CATEGORY + " = " + TABLE_CATEGORY + "." + OID + 
                    " AND " + TABLE_SDR + "." + COLUMN_SUBCLASS_ID + " = " + TABLE_SDR_SUBCLASS + "." + OID +
                    " AND " + TABLE_SDR + "." + COLUMN_BUG_ID + " = '" + bugId + "'");
 
@@ -380,8 +393,12 @@ public class CMnBugTable extends CMnOracleTable {
             // Select bug details from the rows returned by the inner select
             StringBuffer sql = new StringBuffer();
             sql.append("SELECT " + getColumnNames() + 
-                       " FROM " + TABLE_SDR + ", " + TABLE_SDR_CLASS + ", " + TABLE_SDR_SUBCLASS +
+                       " FROM " + TABLE_SDR + 
+                           ", " + TABLE_SDR_CLASS + 
+                           ", " + TABLE_SDR_SUBCLASS + 
+                           ", " + TABLE_CATEGORY +
                        " WHERE " + TABLE_SDR + "." + COLUMN_CLASS_ID + " = " + TABLE_SDR_CLASS + "." + OID +
+                       " AND " + TABLE_SDR + "." + COLUMN_BUG_CATEGORY + " = " + TABLE_CATEGORY + "." + OID +
                        " AND " + TABLE_SDR + "." + COLUMN_SUBCLASS_ID + " = " + TABLE_SDR_SUBCLASS + "." + OID +
                        " AND " + TABLE_SDR + "." + COLUMN_BUG_ID + " IN (" + list + ")");
             Statement st = conn.createStatement();
@@ -419,10 +436,11 @@ public class CMnBugTable extends CMnOracleTable {
      * @param   conn      Database connection
      * @param   release   Release number (i.e. 5.6.1)
      * @param   start     Starting date
+     * @param   strict    Limit the list of bugs to only those in closed/verified status
      *
      * @return  Bug information
      */
-    public synchronized Vector<CMnBug> getFixedBugs(Connection conn, String release, Date start)
+    public synchronized Vector<CMnBug> getFixedBugs(Connection conn, String release, Date start, boolean strict)
         throws SQLException
     {
         Vector<CMnBug> bugs = new Vector<CMnBug>();
@@ -433,14 +451,22 @@ public class CMnBugTable extends CMnOracleTable {
         String inner = "SELECT DISTINCT " + TABLE_SDR + "." + COLUMN_BUG_ID +
                        " FROM " + TABLE_SDR + ", " + CMnFixTable.TABLE_NAME + 
                        " WHERE " + TABLE_SDR + "." + COLUMN_BUG_ID + " = " + CMnFixTable.TABLE_NAME + "." + CMnFixTable.COLUMN_BUG_ID +
-                       "  AND " + TABLE_SDR + "." + COLUMN_STATUS + " IN ('closed', 'verified')" +
                        "  AND " + TABLE_SDR + "." + COLUMN_RESOLVED_DATE + " > " + format(start) +
-                       "  AND " + TABLE_SDR + "." + COLUMN_RELEASE + " LIKE '" + release + "%'"; 
+                       "  AND " + TABLE_SDR + "." + COLUMN_RELEASE + " LIKE UPPER('" + release + "%')"; 
+
+        // Restrict the bugs to only the closed/verified bugs
+        if (strict) {
+            inner = inner + "  AND " + TABLE_SDR + "." + COLUMN_STATUS + " IN ('closed', 'verified')";
+        }
 
         // Select bug details from the rows returned by the inner select
         sql.append("SELECT " + getColumnNames() + 
-                   " FROM " + TABLE_SDR + ", " + TABLE_SDR_CLASS + ", " + TABLE_SDR_SUBCLASS +
+                   " FROM " + TABLE_SDR + 
+                       ", " + TABLE_SDR_CLASS + 
+                       ", " + TABLE_SDR_SUBCLASS + 
+                       ", " + TABLE_CATEGORY +
                    " WHERE " + TABLE_SDR + "." + COLUMN_CLASS_ID + " = " + TABLE_SDR_CLASS + "." + OID +
+                   " AND " + TABLE_SDR + "." + COLUMN_BUG_CATEGORY + " = " + TABLE_CATEGORY + "." + OID +
                    " AND " + TABLE_SDR + "." + COLUMN_SUBCLASS_ID + " = " + TABLE_SDR_SUBCLASS + "." + OID +
                    " AND " + TABLE_SDR + "." + COLUMN_BUG_ID + " IN (" + inner + ")");
 
@@ -560,11 +586,17 @@ public class CMnBugTable extends CMnOracleTable {
         String release = rs.getString(COLUMN_RELEASE);
         bug.setRelease(release);
 
+        String severity = rs.getString(COLUMN_SEVERITY);
+        bug.setSeverity(severity);
+
         String type = rs.getString(COLUMN_CLASS);
         bug.setType(type);
 
         String subtype = rs.getString(COLUMN_SUBCLASS);
         bug.setSubType(subtype);
+
+        String area = rs.getString(ALIAS_CATEGORY_NAME);
+        bug.setProductArea(area);
 
         Date resolveDate = rs.getTimestamp(COLUMN_RESOLVED_DATE);
         bug.setResolveDate(resolveDate);

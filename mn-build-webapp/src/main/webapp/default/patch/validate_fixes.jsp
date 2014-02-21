@@ -21,6 +21,8 @@
         // Ensure that all user-entered fixes are selected
         fixForm.addSelectedFixes(validFixes);
         fixForm.addSelectedFixes(invalidFixes);
+
+        fixForm.setCustomer(patch.getCustomer());
     }
 
     // Modify the default table titles

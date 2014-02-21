@@ -10,7 +10,9 @@
 package com.modeln.testfw.reporting.search;
 
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 
 /**
  * The data object represents a search criteria that will be used to locate
@@ -33,6 +35,9 @@ public class CMnSearchCriteria {
 
     /** The "like" operator is used to perform a partial match on a string. */
     public static final String LIKE = "like";
+
+    /** The "in" operator is used to search for a set of values */
+    public static final String IN = "in";
     
     /** Unique identifier for the current criteria */
     private String system_id;
@@ -166,6 +171,8 @@ public class CMnSearchCriteria {
             criteria.append(">=");
         } else if (LIKE.equalsIgnoreCase(operator)) {
             criteria.append(" LIKE ");
+        } else if (IN.equalsIgnoreCase(operator)) {
+            criteria.append(" IN ");
         } else {
             criteria.append("=");
         }
@@ -174,6 +181,17 @@ public class CMnSearchCriteria {
         String valueStr = null; 
         if (value instanceof Date) {
             valueStr = DATETIME.format(value);
+        } else if (value instanceof Collection) {
+            StringBuffer sb = new StringBuffer();
+            Iterator iter = ((Collection) value).iterator();
+            while (iter.hasNext()) {
+                Object currentValue = iter.next();
+                if (sb.length() > 0) {
+                    sb.append(", ");
+                }
+                sb.append("'" + currentValue.toString() + "'");
+            }
+            valueStr = sb.toString();
         } else {
             valueStr = value.toString();
         }
@@ -181,6 +199,8 @@ public class CMnSearchCriteria {
         // Make sure that the correct escape strings are used for the LIKE operator
         if (LIKE.equalsIgnoreCase(operator)) {
             criteria.append("'%" + valueStr + "%'");
+        } else if (IN.equalsIgnoreCase(operator)) {
+            criteria.append("(" + valueStr + ")");
         } else {
             criteria.append("'" + valueStr + "'");
         }

@@ -1,29 +1,31 @@
-<html>
+<?xml version="1.0" encoding="UTF-8"?>
+<document xmlns="http://maven.apache.org/XDOC/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/XDOC/2.0 http://maven.apache.org/xsd/xdoc-2.0.xsd">
 
-<head>
-  <meta http-equiv="Content-Language" content="en-us">
-  <link rel="stylesheet" type="text/css" href="../index.css">
-  <title>DiffReport Task</title>
-</head>
+  <properties>
+    <title>DiffReport Task</title>
+    <author email="sstafford@modeln.com">Shawn Stafford</author>
+  </properties>
 
-<body>
+  <body>
+    <section name="DiffReport">
+      <p>
+        Compares the differences between two Jar files and generates an 
+        HTML report of the files which have been added, deleted, or modified 
+        between the two versions of the Jar file.  The tool uses the Jar CRC 
+        checksum combined with textual/bytecode diff to determine whether 
+        files from two different Jar files have changed.  If the files have 
+        changed, the files will be extracted and a textual diff will be performed
+        to highlight the changes.  In the case of binary class files, the classes
+        will be extracted and disassembled using the <tt>javap</tt> command.  The
+        disassembled code will be compared to determine which methods have changed.
+      </p>
 
-<h2><a name="DiffReport">DiffReport</a></h2>
-
-<h3>Description</h3>
-<p>
-  Compares the differences between two Jar files and generates an HTML report
-  of the files which have been added, deleted, or modified between the two 
-  versions of the Jar file.  The tool uses the Jar CRC checksum combined with textual/bytecode diff to determine
-  whether files from two different Jar files have changed.  If the files
-  have changed, the files will be extracted and a textual diff will be performed
-  to highlight the changes.  In the case of binary class files, the classes
-  will be extracted and disassembled using the <tt>javap</tt> command.  The
-  disassembled code will be compared to determine which methods have changed. 
-</p>
-
-
-<h3>Parameters</h3>
+      <!-- ================================================================= -->
+      <!-- Parameters                                                        -->
+      <!-- ================================================================= -->
+      <subsection name="Parameters">
 <table border="1" cellpadding="2" cellspacing="0" width="100%">
   <tr>
     <td valign="top" width="15%"><b>Attribute</b></td>
@@ -187,31 +189,42 @@
 
 </table>
 
-
-<h3>Parameters specified as nested elements</h3>
-
-<h4>PatternSet</h4>
-PatternSets can be used to include or exclude files from the report processing.
-If no pattern sets are specified, all files will be analyzed.  
-If a pattern set is specified, all files are assumed to be excluded
-unless explicitly included by an <tt>include</tt> pattern.  See the Ant
-<a href="http://ant.apache.org/manual/CoreTypes/patternset.html">PatternSets</a>
-documentation for additional information about how to use the <tt>patternset</tt>
-tags.
+      </subsection>
 
 
-<h3>Examples</h3>
-<p><b>Compare the entire contents of two jar files</b></p>
-<pre>
+      <!-- ================================================================= -->
+      <!-- Nested Elements                                                   -->
+      <!-- ================================================================= -->
+      <subsection name="Nested Elements">
+
+        <subsection name="PatternSet">
+          PatternSets can be used to include or exclude files from the report processing.
+          If no pattern sets are specified, all files will be analyzed.  
+          If a pattern set is specified, all files are assumed to be excluded
+          unless explicitly included by an <tt>include</tt> pattern.  See the Ant
+          <a href="http://ant.apache.org/manual/CoreTypes/patternset.html">PatternSets</a>
+          documentation for additional information about how to use the <tt>patternset</tt>
+          tags.
+        </subsection>
+
+      </subsection>
+
+
+      <!-- ================================================================= -->
+      <!-- Examples                                                          -->
+      <!-- ================================================================= -->
+      <subsection name="Examples">
+        <b>Compare the entire contents of two jar files</b>
+<source>
   &lt;diffreport old=&quot;myjar-v5.7.jar&quot;
               new=&quot;myjar-v5.8.jar&quot;
               verbose=&quot;true&quot;
               reportdir=&quot;/var/tmp/report&quot;/&gt;
-</pre>
+</source>
 
 
-<p><b>Compare only class and property files, exluding test files</b></p>
-<pre>
+        <b>Compare only class and property files, exluding test files</b>
+<source>
   &lt;diffreport old=&quot;myjar-v5.7.jar&quot;
               new=&quot;myjar-v5.8.jar&quot;
               verbose=&quot;true&quot;
@@ -224,10 +237,13 @@ tags.
       &lt;exclude name="**/test/**/*"/&gt;
     &lt;/patternset&gt;
   &lt;/diffreport&gt;
-</pre>
+</source>
 
+      </subsection>
 
-</body>
-</html>
+    </section>
 
+  </body>
+
+</document>
 

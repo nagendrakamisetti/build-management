@@ -1,40 +1,49 @@
 /*
- * Login.java
- *
  * Copyright 2002 by Shawn Stafford (sstafford@modeln.com)
  * All rights reserved.
  */
 package com.modeln.build.ctrl.command.patch; 
 
+import com.modeln.build.common.data.product.CMnBaseFixDependency;
 import com.modeln.build.common.data.product.CMnPatch;
+import com.modeln.build.common.data.product.CMnPatchFix;
+import com.modeln.build.ctrl.CMnControlApp;
 import com.modeln.build.ctrl.database.CMnPatchTable;
+import com.modeln.build.ctrl.forms.CMnBaseForm;
 import com.modeln.build.ctrl.forms.IMnPatchForm;
+import com.modeln.testfw.reporting.CMnBuildTable;
+import com.modeln.testfw.reporting.CMnDbBuildData;
 
+
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import java.io.*;
+import java.net.URL;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Vector;
 
-import com.modeln.build.common.data.account.UserData;
-import com.modeln.build.ctrl.forms.CMnUserForm;
 import com.modeln.build.web.errors.ApplicationError;
 import com.modeln.build.web.errors.ApplicationException;
 import com.modeln.build.web.application.CommandResult;
-import com.modeln.build.web.application.ProtectedCommand;
+import com.modeln.build.web.application.AdminCommand;
 import com.modeln.build.web.application.WebApplication;
 import com.modeln.build.web.database.RepositoryConnection;
 import com.modeln.build.web.errors.ErrorMap;
-import com.modeln.build.web.util.SessionUtility;
 
 
 /**
- * This command displays a list of all service patches. 
+ * This command allows a user to delete a dependency the patch request. 
  * 
  * @author             Shawn Stafford
  */
-public class CMnApprovalQueue extends ProtectedCommand {
+public class CMnDependencyDelete extends AdminCommand {
 
     /**
      * This is the primary method which will be used to perform the command
@@ -54,9 +63,6 @@ public class CMnApprovalQueue extends ProtectedCommand {
 
         // Execute the actions for the command
         if (!result.containsError()) {
-            // Get the login information from the session
-            UserData user = SessionUtility.getLogin(req.getSession());
-
             ApplicationException exApp = null;
             ApplicationError error = null;
             RepositoryConnection rc = null;
@@ -64,27 +70,41 @@ public class CMnApprovalQueue extends ProtectedCommand {
                 rc = app.getRepositoryConnection();
                 CMnPatchTable patchTable = CMnPatchTable.getInstance();
 
-                // Allow an admin to view the queue for a specific user
-                String uid = null; 
-                if (user.isAdmin()) { 
-                    uid = (String) req.getParameter(CMnUserForm.USER_ID_LABEL);
-                    if (uid == null) {
-                        uid = (String) req.getAttribute(CMnUserForm.USER_ID_LABEL);
+                // Fall back to the request attributes in case the data was set by another command
+                String patchId = (String) req.getParameter(IMnPatchForm.PATCH_ID_LABEL);
+                if (patchId == null) {
+                    patchId = (String) req.getAttribute(IMnPatchForm.PATCH_ID_LABEL);
+                }
+
+                String bugId = (String) req.getParameter(IMnPatchForm.FIX_BUG_LABEL);
+                if (bugId == null) {
+                    bugId = (String) req.getAttribute(IMnPatchForm.FIX_BUG_LABEL);
+                }
+
+                String dependsOn = (String) req.getParameter(IMnPatchForm.DEPENDENCY_BUG_LABEL);
+                if (dependsOn == null) {
+                    dependsOn = (String) req.getAttribute(IMnPatchForm.DEPENDENCY_BUG_LABEL);
+                }
+
+
+                // Delete the dependency 
+                if (((patchId != null) && (patchId.length() > 0)) && 
+                    ((bugId != null) && (bugId.length() > 0)) &&
+                    ((dependsOn != null) && (dependsOn.length() > 0)))
+                {
+                    int count = patchTable.deleteDependency(rc.getConnection(), patchId, bugId, dependsOn);
+                }
+
+                // Obtain the patch data
+                CMnPatch patch = null;
+                if ((patchId != null) && (patchId.length() > 0)) {
+                    patch = patchTable.getRequest(rc.getConnection(), patchId, true);
+                    if (patch != null) {
+                        req.setAttribute(IMnPatchForm.PATCH_DATA, patch);
                     }
                 }
 
-                // If no user ID is specified, use the currently logged in user
-                if (uid == null) {
-                    uid = user.getUid();
-                }
-
-
-                // Obtain the list of patches waiting for approval from this user
-                Vector<CMnPatch> patches = patchTable.getPatchesForApproval(rc.getConnection(), uid);
-                req.setAttribute(IMnPatchForm.PATCH_LIST_DATA, patches);
-
-                result.setDestination("patch/patch_approval.jsp");
-
+                result.setDestination("patch/dependency_update.jsp");
             } catch (ApplicationException aex) {
                 exApp = aex;
             } catch (Exception ex) {
@@ -100,6 +120,8 @@ public class CMnApprovalQueue extends ProtectedCommand {
                     throw exApp;
                 }
             }
+        } else {
+            app.debug("CMnDependencyUpdate: skipping execution due to pre-existing error: " + result.getError());
         }
 
         return result;

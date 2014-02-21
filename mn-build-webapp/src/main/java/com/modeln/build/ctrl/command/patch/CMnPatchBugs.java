@@ -6,19 +6,21 @@
  */
 package com.modeln.build.ctrl.command.patch; 
 
-import com.modeln.build.common.data.product.CMnPatch;
+import com.modeln.build.common.database.CMnCustomerTable;
 import com.modeln.build.ctrl.database.CMnPatchTable;
+import com.modeln.build.ctrl.forms.CMnPatchBugForm;
 import com.modeln.build.ctrl.forms.IMnPatchForm;
 
+
 import java.io.*;
+import java.net.URL;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Enumeration;
 import java.util.Vector;
 
-import com.modeln.build.common.data.account.UserData;
-import com.modeln.build.ctrl.forms.CMnUserForm;
 import com.modeln.build.web.errors.ApplicationError;
 import com.modeln.build.web.errors.ApplicationException;
 import com.modeln.build.web.application.CommandResult;
@@ -26,7 +28,6 @@ import com.modeln.build.web.application.ProtectedCommand;
 import com.modeln.build.web.application.WebApplication;
 import com.modeln.build.web.database.RepositoryConnection;
 import com.modeln.build.web.errors.ErrorMap;
-import com.modeln.build.web.util.SessionUtility;
 
 
 /**
@@ -34,7 +35,7 @@ import com.modeln.build.web.util.SessionUtility;
  * 
  * @author             Shawn Stafford
  */
-public class CMnApprovalQueue extends ProtectedCommand {
+public class CMnPatchBugs extends CMnBasePatchRequest {
 
     /**
      * This is the primary method which will be used to perform the command
@@ -54,36 +55,50 @@ public class CMnApprovalQueue extends ProtectedCommand {
 
         // Execute the actions for the command
         if (!result.containsError()) {
-            // Get the login information from the session
-            UserData user = SessionUtility.getLogin(req.getSession());
-
             ApplicationException exApp = null;
             ApplicationError error = null;
             RepositoryConnection rc = null;
+            RepositoryConnection ac = null;
             try {
+                // Collect the query results from the patch list page
+                CMnPatchBugForm form = new CMnPatchBugForm(new URL("http://localhost/CMnBuildList"), new URL("http://localhost/images"), new Vector());
+                form.setValues(req);
+
                 rc = app.getRepositoryConnection();
+                ac = app.getAccountConnection();
+
                 CMnPatchTable patchTable = CMnPatchTable.getInstance();
+                CMnCustomerTable custTable = CMnCustomerTable.getInstance();
 
-                // Allow an admin to view the queue for a specific user
-                String uid = null; 
-                if (user.isAdmin()) { 
-                    uid = (String) req.getParameter(CMnUserForm.USER_ID_LABEL);
-                    if (uid == null) {
-                        uid = (String) req.getAttribute(CMnUserForm.USER_ID_LABEL);
-                    }
+                // Query the database for the list of patches that contain the fixes
+                Vector patches = 
+                    patchTable.getAllRequestsByFix(
+                        rc.getConnection(), 
+                        form.getFixes(),      // List of fixes provided by the user 
+                        form.getValues(),     // Additional search criteria 
+                        form.getMaxRows(),    // Max number of rows to return 
+                        true                  // Deep query of sub-object data
+                    );
+
+                int patchCount = 0;
+                if ((patches != null) && (patches.size() > 0)) {
+                    getPatchUserData(ac.getConnection(), patches);
+                    app.debug("Returned " + patches.size() + " results from the patch table.");
+                } else {
+                    app.debug("Returned no results from the patch table.");
                 }
+                req.setAttribute(IMnPatchForm.PATCH_LIST_DATA, patches); 
 
-                // If no user ID is specified, use the currently logged in user
-                if (uid == null) {
-                    uid = user.getUid();
+                Vector customers = custTable.getAllCustomers(rc.getConnection());
+                if (customers != null) {
+                    app.debug("Returned " + customers.size() + " results from the customer table.");
+                } else {
+                    app.debug("Returned no results from the customer table.");
                 }
+                req.setAttribute(IMnPatchForm.CUSTOMER_LIST_DATA, customers);
 
 
-                // Obtain the list of patches waiting for approval from this user
-                Vector<CMnPatch> patches = patchTable.getPatchesForApproval(rc.getConnection(), uid);
-                req.setAttribute(IMnPatchForm.PATCH_LIST_DATA, patches);
-
-                result.setDestination("patch/patch_approval.jsp");
+                result.setDestination("patch/patch_bugs.jsp");
 
             } catch (ApplicationException aex) {
                 exApp = aex;
@@ -94,6 +109,7 @@ public class CMnApprovalQueue extends ProtectedCommand {
                 exApp.setStackTrace(ex);
             } finally {
                 app.releaseRepositoryConnection(rc);
+                app.releaseRepositoryConnection(ac);
 
                 // Throw any exceptions once the database connections have been cleaned up
                 if (exApp != null) {

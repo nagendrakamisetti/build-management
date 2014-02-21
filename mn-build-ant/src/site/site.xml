@@ -12,8 +12,9 @@
     </menu>
 
     <menu name="Task Reference">
-      <item name="FileInfo" href="FileInfo.html"/>
-      <item name="Hostname" href="Hostname.html"/>
+      <item name="DiffReport" href="DiffReport.html"/>
+      <item name="FileInfo"   href="FileInfo.html"/>
+      <item name="Hostname"   href="Hostname.html"/>
     </menu>
 
     <!-- Generated content: modules - a menu containing the links to the sites of the submodules of this project -->

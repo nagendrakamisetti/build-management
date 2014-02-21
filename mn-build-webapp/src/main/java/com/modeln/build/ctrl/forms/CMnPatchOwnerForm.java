@@ -247,55 +247,60 @@ public class CMnPatchOwnerForm extends CMnBaseForm implements IMnPatchForm {
         } 
         html.append("  </tr>\n");
 
-        html.append("  <tr>\n");
-        html.append("    <td width=\"20%\" align=\"right\">Deadline:</td>\n");
-        html.append("    <td width=\"80%\">"); 
-        if (allowInput) { 
-            html.append(deadlineTag.toString());
-        } else {
-            if (deadlineTag.isComplete() && (deadlineTag.getDate() != null)) {
+        boolean hasDeadlineValue = (deadlineTag.isComplete() && (deadlineTag.getDate() != null));
+        if (allowInput || hasDeadlineValue) {
+            html.append("  <tr>\n");
+            html.append("    <td width=\"20%\" align=\"right\">Deadline:</td>\n");
+            html.append("    <td width=\"80%\">"); 
+            if (allowInput) { 
+                html.append(deadlineTag.toString());
+            } else if (hasDeadlineValue) {
                 Date deadline = deadlineTag.getDate();
                 html.append(deadline.toString());
-            }
-        } 
-        html.append("  </tr>\n");
+            } 
+            html.append("  </tr>\n");
+        }
 
-        html.append("  <tr>\n");
-        html.append("    <td width=\"20%\" align=\"right\">Start Date:</td>\n");
-        html.append("    <td width=\"80%\">"); 
-        if (allowInput) { 
-            html.append(startDateTag.toString());
-        } else {
-            if (startDateTag.isComplete() && (startDateTag.getDate() != null)) {
+        boolean hasStartDate = (startDateTag.isComplete() && (startDateTag.getDate() != null));
+        if (allowInput || hasStartDate) {
+            html.append("  <tr>\n");
+            html.append("    <td width=\"20%\" align=\"right\">Start Date:</td>\n");
+            html.append("    <td width=\"80%\">"); 
+            if (allowInput) { 
+                html.append(startDateTag.toString());
+            } else if (hasStartDate) {
                 Date startDate = startDateTag.getDate();
                 html.append(startDate.toString());
-            }
-        } 
-        html.append("  </tr>\n");
+            } 
+            html.append("  </tr>\n");
+        }
 
-        html.append("  <tr>\n");
-        html.append("    <td width=\"20%\" align=\"right\">Completion Date:</td>\n");
-        html.append("    <td width=\"80%\">"); 
-        if (allowInput) { 
-            html.append(endDateTag.toString());
-        } else {
-            if (endDateTag.isComplete() && (endDateTag.getDate() != null)) {
+        boolean hasEndDate = (endDateTag.isComplete() && (endDateTag.getDate() != null));
+        if (allowInput || hasEndDate) {
+            html.append("  <tr>\n");
+            html.append("    <td width=\"20%\" align=\"right\">Completion Date:</td>\n");
+            html.append("    <td width=\"80%\">"); 
+            if (allowInput) { 
+                html.append(endDateTag.toString());
+            } else if (hasEndDate) {
                 Date endDate = endDateTag.getDate();
                 html.append(endDate.toString());
-            }
-        } 
-        html.append("  </tr>\n");
+            } 
+            html.append("  </tr>\n");
+        }
 
-        html.append("  <tr>\n");
-        html.append("    <td width=\"20%\" align=\"right\" valign=\"top\">Comments:</td>\n");
-        html.append("    <td width=\"80%\">"); 
-        if (allowInput) { 
-            html.append(commentTag.toString()); 
-        } else {
-            html.append(commentTag.getValue()); 
-        } 
-        html.append("  </tr>\n");
-
+        boolean hasComments = (commentTag.isComplete() && (commentTag.getValue() != null));
+        if (allowInput || hasComments) {
+            html.append("  <tr>\n");
+            html.append("    <td width=\"20%\" align=\"right\" valign=\"top\">Comments:</td>\n");
+            html.append("    <td width=\"80%\">"); 
+            if (allowInput) { 
+                html.append(commentTag.toString()); 
+            } else if (hasComments) {
+                html.append(commentTag.getValue()); 
+            } 
+            html.append("  </tr>\n");
+        }
 
         html.append("</table>\n");
 

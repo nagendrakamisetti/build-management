@@ -4,6 +4,7 @@ import com.modeln.build.common.data.account.CMnAccount;
 import com.modeln.build.common.data.account.CMnEnvironment;
 import com.modeln.build.common.data.product.CMnBuildReviewData;
 import com.modeln.build.common.data.product.CMnPatch;
+import com.modeln.build.common.data.product.CMnPatchFix;
 import com.modeln.build.common.enums.CMnServicePatch;
 import com.modeln.build.sourcecontrol.CMnCheckIn;
 import com.modeln.build.sourcecontrol.CMnGitCheckIn;
@@ -16,6 +17,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
@@ -91,6 +93,64 @@ public class CMnPatchReviewForm extends CMnBaseReleaseForm implements IMnPatchFo
         this.patch = patch;
     }
 
+    /**
+     * Return a hashtable containing a summary of the fix status values.
+     *
+     * @return List of status values and their corresponding counts
+     */
+    public HashMap<String, Integer> getStatusCount() {
+        HashMap<String, Integer> summary = new HashMap<String, Integer>();
+
+        // Iterate through each fix in the patch
+        if ((patch != null) && (patch.getFixes() != null)) {
+            Enumeration<CMnPatchFix> fixList = patch.getFixes().elements();
+            while (fixList.hasMoreElements()) {
+                CMnPatchFix currentFix = (CMnPatchFix) fixList.nextElement();
+                if (currentFix.getStatus() != null) {
+                    String currentStatus = currentFix.getStatus();
+                    Integer currentCount = null;
+                    if (summary.containsKey(currentStatus)) {
+                        currentCount = (Integer) summary.get(currentStatus);
+                        currentCount++;
+                    } else {
+                        currentCount = new Integer(1);
+                    }
+                    summary.put(currentStatus, currentCount);
+                }
+            }
+        } else {
+            summary.put("Fix count", new Integer(0));
+        }
+
+        return summary; 
+    }
+
+    /**
+     * Render the status summary as a bulleted list.
+     *
+     * @return  HTML representing the fix status count
+     */
+    public String statusToString() {
+        StringBuffer html = new StringBuffer();
+
+        HashMap<String, Integer> summary = getStatusCount();
+        if ((summary != null) && (summary.size() > 0)) {
+            html.append("<ul>\n");
+            Set keys = summary.keySet();
+            Iterator iter = keys.iterator();
+            while (iter.hasNext()) {
+                String status = (String) iter.next(); 
+                Integer count = (Integer) summary.get(status);
+                html.append("<li><div class=\"fixstatus-" + status + "\">" + status + " - <i>" + count + "</i></div></li>\n");
+            }
+            html.append("</ul>\n");
+        } else {
+            html.append("<li>No fixes requested</li>\n");
+        }
+
+        return html.toString();
+    }
+
 
     /**
      * Render the patch request form as HTML. 
@@ -142,6 +202,10 @@ public class CMnPatchReviewForm extends CMnBaseReleaseForm implements IMnPatchFo
                 } else if (patch.getStatus() == CMnServicePatch.RequestStatus.COMPLETE) {
                     // Display a link for releasing the build
                     html.append("<li><a href=\"" + hrefReview + "\">Notify requester of release</a></li>\n");
+
+                    // Display a summary of the SDR status values
+                    html.append(statusToString());
+
                 } else if (patch.getStatus() == CMnServicePatch.RequestStatus.RELEASE) {
                     html.append("<li>Build has been released</li>\n");
                 } else {

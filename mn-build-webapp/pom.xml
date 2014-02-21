@@ -67,12 +67,55 @@
       <version>1.0.13</version>
     </dependency>
 
+    <!-- 
+      - The following dependency must be installed in Maven manually.
+      - 1) Download the zip file: http://d3js.org/
+      - 2) Install the maven dependency:
+      -    mvn install:install-file -DgroupId=org.d3js -DartifactId=d3js -Dversion=3.4.1 -Dpackaging=zip -Dfile=/path/to/file/d3js.zip -DgeneratePom=true
+      -->
+    <dependency>
+      <groupId>org.d3js</groupId>
+      <artifactId>d3js</artifactId>
+      <version>3.4.1</version>
+      <type>zip</type>
+    </dependency>
+
   </dependencies>
 
   <build>
     <finalName>mn-build-webapp</finalName>
 
     <plugins>
+      <!-- ======================================================= -->
+      <!-- Deploy D3 JavaScript library to webapp                  -->
+      <!-- ======================================================= -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.8</version>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.d3js</groupId>
+                  <artifactId>d3js</artifactId>
+                  <version>3.4.1</version>
+                  <type>zip</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${project.build.directory}/${project.build.finalName}/d3js</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <!-- ======================================================= -->
       <!-- War Plug-in                                             -->
       <!-- ======================================================= -->

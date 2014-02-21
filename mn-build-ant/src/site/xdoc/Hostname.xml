@@ -20,6 +20,9 @@
         </blockquote>
       </p>
 
+      <!-- ================================================================= -->
+      <!-- Parameters                                                        -->
+      <!-- ================================================================= -->
       <subsection name="Parameters">
 <table border="1" cellpadding="2" cellspacing="0" width="100%">
   <tr>
@@ -45,6 +48,9 @@
 
       </subsection>
 
+      <!-- ================================================================= -->
+      <!-- Examples                                                          -->
+      <!-- ================================================================= -->
       <subsection name="Examples">
         <b>Obtain the hostname and store the value in Ant properties:</b>
         <source>
