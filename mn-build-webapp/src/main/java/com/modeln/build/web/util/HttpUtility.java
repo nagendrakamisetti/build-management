@@ -61,6 +61,12 @@ public class HttpUtility {
             defaultPort = true;
         }
 
+        // HTTPS request protocol shows as "HTTP" so we need to adjust for that
+        if (req.getServerPort() == 443) {
+            pstr = "https";
+            defaultPort = true;
+        }
+
         // Protocol
         url.append(pstr.toLowerCase() + "://");
 
