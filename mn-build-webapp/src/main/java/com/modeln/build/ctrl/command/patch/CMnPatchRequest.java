@@ -171,9 +171,10 @@ public class CMnPatchRequest extends CMnBasePatchRequest {
                 // consider this field if the request was forwarded from another command
                 String submitValue = (String) req.getParameter(IMnPatchForm.PATCH_REQUEST_BUTTON);
 
-                // Validate the user input
-                if ((patchName != null) && (!patchName.matches("SP[0-9]+"))) {
-                    inputErrors.put(IMnPatchForm.PATCH_NAME_LABEL, "Invalid patch name.  Format must match 'SP#'");
+                // Validate the user input of the patch name
+                String nameRegex = "SP\\d+([.]\\d+)?";
+                if ((patchName != null) && (!patchName.matches(nameRegex))) {
+                    inputErrors.put(IMnPatchForm.PATCH_NAME_LABEL, "Invalid patch name.  Format must match 'SP#' or 'SP#.#'");
                 }
                 if (notification != null) {
                     try {
