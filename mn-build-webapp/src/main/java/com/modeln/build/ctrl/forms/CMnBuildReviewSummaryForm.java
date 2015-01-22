@@ -9,6 +9,7 @@
 */
 package com.modeln.build.ctrl.forms;
 
+import com.modeln.build.ctrl.command.report.CMnBuildReview;
 import com.modeln.testfw.reporting.CMnBuildTable;
 import com.modeln.testfw.reporting.CMnDbBuildData;
 import com.modeln.testfw.reporting.CMnDbBuildStatusData;
@@ -74,6 +75,9 @@ public class CMnBuildReviewSummaryForm extends CMnBaseForm implements IMnBuildFo
 
     /** Form parameter value used to indicate the patch is rejected by the user */
     public static final String AREA_REJECTED_VALUE = "rejected";
+
+    /** Form parameter value used to indicate the patch is in progress by the user */
+    public static final String AREA_IN_PROGRESS_VALUE = "in_progress";
 
 
     /** Build ID associated with this review */
@@ -151,9 +155,10 @@ public class CMnBuildReviewSummaryForm extends CMnBaseForm implements IMnBuildFo
             summary.append("<table border=\"0\" cellspacing=\"2\" cellpadding=\"5\" width=\"100%\">\n");
             summary.append("  <tr>\n");
             summary.append("    <td width=\"5%\"></td>\n");
-            summary.append("    <td width=\"75%\">Area</td>\n");
+            summary.append("    <td width=\"65%\">Area</td>\n");
             summary.append("    <td width=\"10%\" align=\"center\">Accepted</td>\n");
             summary.append("    <td width=\"10%\" align=\"center\">Rejected</td>\n");
+            summary.append("    <td width=\"10%\" align=\"center\">In Progress</td>\n");
             summary.append("  </tr>\n");
 
             Iterator areaIter = areaList.iterator();
@@ -197,14 +202,13 @@ public class CMnBuildReviewSummaryForm extends CMnBaseForm implements IMnBuildFo
 
         Iterator areaIter = null;
         CMnDbFeatureOwnerData area = null;
-
         // Display the detailed comments for each area
         if ((areaList != null) && (areaList.size() > 0)) {
             html.append("<ul>\n");
             areaIter = areaList.iterator();
             while (areaIter.hasNext()) {
                 area = (CMnDbFeatureOwnerData) areaIter.next();
-                html.append("<li>" + area.getDisplayName() + " - <i>" + getReviewStatus(area) + "</i></li>\n");
+                html.append("<li>" + area.getDisplayName() + " - <i title=\""+ getReviewComment(area) +"\">" + getReviewStatus(area) + "</i></li>\n");
             }
             html.append("</ul>\n");
         }
@@ -244,6 +248,7 @@ public class CMnBuildReviewSummaryForm extends CMnBaseForm implements IMnBuildFo
     public String getReviewStatus(CMnDbFeatureOwnerData area) {
         int approved = 0;
         int rejected = 0;
+        int inProgress = 0;
         if (reviewList != null) {
             Iterator reviewIter = reviewList.iterator();
             while (reviewIter.hasNext()) {
@@ -251,8 +256,10 @@ public class CMnBuildReviewSummaryForm extends CMnBaseForm implements IMnBuildFo
                 if (area.getId() == review.getAreaId()) {
                     if (CMnBuildReviewData.ReviewStatus.APPROVED == review.getStatus()) {
                         approved++;
-                    } else {
+                    } else if (CMnBuildReviewData.ReviewStatus.REJECTED == review.getStatus()) {
                         rejected++;
+                    } else if (CMnBuildReviewData.ReviewStatus.IN_PROGRESS == review.getStatus()){
+                        inProgress++;
                     }
                 }
             }
@@ -262,11 +269,31 @@ public class CMnBuildReviewSummaryForm extends CMnBaseForm implements IMnBuildFo
             return "rejected";
         } else if (approved > 0) {
             return "approved";
+        } else if (inProgress>0) {
+            return "in progress";
         } else {
             return "pending";
         }
-    }
 
+    }
+    /**
+     * Return the review comment for the specified area.
+     *
+     * @param  area    Feature area
+     * @return Review comment
+     */
+    public String getReviewComment(CMnDbFeatureOwnerData area) {
+        if (reviewList != null) {
+            Iterator reviewIter = reviewList.iterator();
+            while (reviewIter.hasNext()) {
+                CMnBuildReviewData review = (CMnBuildReviewData) reviewIter.next();
+                if (area.getId() == review.getAreaId()) {
+                    return review.getComment();
+                }
+            }
+        }
+        return "No comments are added";
+    }
 
     /**
      * Return a summary of results for the specified area.
@@ -279,6 +306,7 @@ public class CMnBuildReviewSummaryForm extends CMnBaseForm implements IMnBuildFo
 
         int approved = 0;
         int rejected = 0;
+        int inProgress = 0;
         if (reviewList != null) {
             Iterator reviewIter = reviewList.iterator();
             while (reviewIter.hasNext()) {
@@ -286,14 +314,17 @@ public class CMnBuildReviewSummaryForm extends CMnBaseForm implements IMnBuildFo
                 if (area.getId() == review.getAreaId()) {
                     if (CMnBuildReviewData.ReviewStatus.APPROVED == review.getStatus()) {
                         approved++;
-                    } else {
+                    } else if (CMnBuildReviewData.ReviewStatus.REJECTED == review.getStatus()) {
                         rejected++;
+                    } else {
+                        inProgress++;
                     }
                 }
             }
         }
         html.append("<td align=\"center\">" + approved + "</td>\n");
         html.append("<td align=\"center\">" + rejected + "</td>\n");
+        html.append("<td align=\"center\">" + inProgress + "</td>\n");
 
         return html.toString();
     }
@@ -314,6 +345,7 @@ public class CMnBuildReviewSummaryForm extends CMnBaseForm implements IMnBuildFo
             SelectTag statusTag = new SelectTag(REVIEW_STATUS_LABEL);
             statusTag.addOption(CMnBuildReviewData.ReviewStatus.REJECTED.name(), AREA_REJECTED_VALUE);
             statusTag.addOption(CMnBuildReviewData.ReviewStatus.APPROVED.name(), AREA_APPROVED_VALUE);
+            statusTag.addOption(CMnBuildReviewData.ReviewStatus.IN_PROGRESS.name(), AREA_IN_PROGRESS_VALUE);
             statusTag.setSorting(true);
             statusTag.setDefault(CMnBuildReviewData.ReviewStatus.APPROVED.name());
 

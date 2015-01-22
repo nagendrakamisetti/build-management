@@ -23,7 +23,7 @@ import com.modeln.build.common.data.account.UserData;
 public class CMnBuildReviewData {
 
     public static enum ReviewStatus {
-        APPROVED, REJECTED
+        APPROVED, REJECTED, IN_PROGRESS
     }
 
 
