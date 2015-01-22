@@ -124,7 +124,7 @@
     int totalFailures = suiteFailures + actFailures + flexFailures + uitFailures;
     String title = null;
     if (totalFailures != 0) {
-        float percent = ((float)totalPass / (float)totalTests) * 100;
+        float percent = ((float)totalPass / (float)(totalPass + totalFailures)) * 100;
         title = buildForm.getVersionNumber() + " " + buildForm.getProductAbreviation() + " " + ((int) percent) + "% pass : " + build.getReleaseId() + " Build";
     } else {
         title = buildForm.getVersionNumber() + " " + buildForm.getProductAbreviation() + " success : " + build.getReleaseId() + " Build";
