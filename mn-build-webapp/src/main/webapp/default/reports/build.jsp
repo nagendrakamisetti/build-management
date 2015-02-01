@@ -1,4 +1,5 @@
 <%@ include file="../common.jsp" %>
+<%@ page import="java.text.NumberFormat"%>
 <%@ page import="com.modeln.testfw.reporting.*"%>
 <%@ page import="com.modeln.build.ctrl.forms.CMnBaseSuiteForm"%>
 <%@ page import="com.modeln.build.ctrl.forms.CMnBuildDataForm"%>
@@ -125,7 +126,9 @@
     String title = null;
     if (totalFailures != 0) {
         float percent = ((float)totalPass / (float)(totalPass + totalFailures)) * 100;
-        title = buildForm.getVersionNumber() + " " + buildForm.getProductAbreviation() + " " + ((int) percent) + "% pass : " + build.getReleaseId() + " Build";
+        NumberFormat numberFormat = NumberFormat.getInstance();
+        numberFormat.setMaximumFractionDigits(1);
+        title = buildForm.getVersionNumber() + " " + buildForm.getProductAbreviation() + " " + numberFormat.format(percent) + "% pass : " + build.getReleaseId() + " Build";
     } else {
         title = buildForm.getVersionNumber() + " " + buildForm.getProductAbreviation() + " success : " + build.getReleaseId() + " Build";
     }
