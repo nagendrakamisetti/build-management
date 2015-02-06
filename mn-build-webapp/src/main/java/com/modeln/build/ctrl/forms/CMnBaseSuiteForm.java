@@ -288,13 +288,14 @@ public class CMnBaseSuiteForm extends CMnBaseTestForm {
         CMnDbTestSuite currentSuite = null;
         for (int suiteIdx = 0; suiteIdx < suiteList.size(); suiteIdx++) {
             currentSuite = (CMnDbTestSuite) suiteList.get(suiteIdx);
-            totalTests = totalTests + currentSuite.getTestCount();
-            totalPassing = totalPassing + currentSuite.getPassingCount();
+        /*    totalTests = totalTests + currentSuite.getTestCount();
+            totalPassing = totalPassing + currentSuite.getPassingCount();*/
+            totalFailing = totalFailing + currentSuite.getFailingCount() + currentSuite.getErrorCount();
         }
 
-        if (totalTests > totalPassing) {
+        /*if (totalTests > totalPassing) {
             totalFailing = totalTests - totalPassing;
-        }
+        }*/
 
         return totalFailing;
     }
