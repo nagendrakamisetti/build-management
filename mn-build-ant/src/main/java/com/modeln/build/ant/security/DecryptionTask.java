@@ -13,17 +13,11 @@ import java.io.IOException;
 import java.security.AlgorithmParameters;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildEvent;
 
 
 /**

@@ -21,10 +21,10 @@ import java.util.Vector;
 public class ReportParseTargetSummary {
 
     /** List of build events that match the current target */
-    private Vector reportEvents = new Vector();
+    private Vector<ReportParseEvent> reportEvents = new Vector<ReportParseEvent>();
 
     /** Hash table containing the list of severity levels and the total count */
-    private Hashtable errorCount = new Hashtable();
+    private Hashtable<String, Integer> errorCount = new Hashtable<String, Integer>();
 
     /** Reference to the parse target that is being summarized */
     private ReportParseTarget parseTarget;
@@ -34,7 +34,7 @@ public class ReportParseTargetSummary {
      *
      * @param   events      List of parse events to summarize
      */
-    public ReportParseTargetSummary(ReportParseTarget target, Vector events) {
+    public ReportParseTargetSummary(ReportParseTarget target, Vector<ReportParseEvent> events) {
         parseTarget = target;
 
         ReportParseEvent currentEvent = null;
@@ -61,7 +61,7 @@ public class ReportParseTargetSummary {
      *
      * @return  Hashtable containing level occurance counts.
      */
-    public Hashtable getTypeSummary() {
+    public Hashtable<String, Integer> getTypeSummary() {
         return errorCount;
     }
 
@@ -70,7 +70,7 @@ public class ReportParseTargetSummary {
      *
      * @return  List of events.
      */
-    public Vector getEvents() {
+    public Vector<ReportParseEvent> getEvents() {
         return reportEvents;
     }
 

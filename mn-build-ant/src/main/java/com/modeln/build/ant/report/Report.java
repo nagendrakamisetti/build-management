@@ -10,7 +10,6 @@
 package com.modeln.build.ant.report;
 
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildException;
 
 import java.io.File;
@@ -44,10 +43,10 @@ public class Report extends Task {
     private String reportFormat = TEXT_FORMAT;
 
     /** List of parse targets that must be processed when processing a build event */
-    protected Vector parseTargets = new Vector();
+    protected Vector<ReportParseTarget> parseTargets = new Vector<ReportParseTarget>();
 
     /** List of notifications that must be sent as a result of the build process */
-    protected Vector notificationList = new Vector();
+    protected Vector<ReportNotification> notificationList = new Vector<ReportNotification>();
 
 
     /**
@@ -122,7 +121,7 @@ public class Report extends Task {
     /**
      * Return a list of log criteria to be parsed.
      */
-    public Vector getParseTargets() {
+    public Vector<ReportParseTarget> getParseTargets() {
         return parseTargets;
     }
 
@@ -138,7 +137,7 @@ public class Report extends Task {
     /**
      * Return a list of notification tasks.
      */
-    public Vector getNotifications() {
+    public Vector<ReportNotification> getNotifications() {
         return notificationList;
     }
 

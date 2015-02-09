@@ -13,11 +13,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildEvent;
-
 
 /**
  * Generates a public and private key pair.

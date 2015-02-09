@@ -12,13 +12,11 @@ package com.modeln.build.ant.perforce;
 import com.modeln.build.ant.EmailMessage;
 
 import java.io.File;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.taskdefs.email.EmailAddress;
 import org.apache.tools.ant.types.Reference;
 
 /**
@@ -78,7 +76,7 @@ public class P4BlameReport extends Task {
     private String depotName;
 
     /** List of e-mail messages to be sent. */
-    private Vector messageList = new Vector();
+    private Vector<EmailMessage> messageList = new Vector<EmailMessage>();
 
     /** Default e-mail recipient if no matching users are found. */
     private String defaultRecipient;
@@ -320,7 +318,7 @@ public class P4BlameReport extends Task {
      *
      * @return List of email messages
      */
-    public Vector getEmailMessages() {
+    public Vector<EmailMessage> getEmailMessages() {
         return messageList;
     }
 
@@ -328,7 +326,8 @@ public class P4BlameReport extends Task {
      * Register an event listener to process build events and generate
      * a summary report.
      */
-    public void execute() throws BuildException {
+    @SuppressWarnings("deprecation")
+	public void execute() throws BuildException {
         if (counterName == null) {
             throw new BuildException("A Perforce counter name must be specified.");
         }

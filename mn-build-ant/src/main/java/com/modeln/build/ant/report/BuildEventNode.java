@@ -10,7 +10,6 @@
 package com.modeln.build.ant.report;
 
 import java.util.ArrayList;
-import java.util.EventObject;
 
 import org.apache.tools.ant.BuildEvent;
 
@@ -33,7 +32,7 @@ public class BuildEventNode {
     /**
      * List of children in the tree.
      */
-    private ArrayList children = null;
+    private ArrayList<BuildEventNode> children = null;
 
     /** Build event associated with the current node */
     private BuildEvent event;
@@ -72,7 +71,7 @@ public class BuildEventNode {
      *
      * @return  List of child nodes
      */
-    protected ArrayList getChildren() {
+    protected ArrayList<BuildEventNode> getChildren() {
         return children;
     }
 
@@ -192,7 +191,7 @@ public class BuildEventNode {
     public void addChild(BuildEventNode child) {
         if (children == null) {
             // Initialize the list of child nodes if it does not exist
-            children = new ArrayList();
+            children = new ArrayList<BuildEventNode>();
             children.add(child);
         } else {
             // Determine if the child node already exists
@@ -211,7 +210,7 @@ public class BuildEventNode {
     public BuildEventNode[] getPathToRoot() {
         BuildEventNode[] path = null;
         if (parent != null) {
-            ArrayList pathList = constructPath();
+            ArrayList<BuildEventNode> pathList = constructPath();
 
             // Convert the list to an array
             path = new BuildEventNode[pathList.size()];
@@ -233,12 +232,12 @@ public class BuildEventNode {
      *
      * @param   path    List of nodes that form a path in the tree
      */
-    protected ArrayList constructPath() {
-        ArrayList path = null;
+    protected ArrayList<BuildEventNode> constructPath() {
+        ArrayList<BuildEventNode> path = null;
         if (parent != null) {
             path = parent.constructPath();
         } else {
-            path = new ArrayList();
+            path = new ArrayList<BuildEventNode>();
         }
         path.add(this);
 
@@ -271,7 +270,7 @@ public class BuildEventNode {
                 sb.append("  ");
             }
             System.out.println(sb.toString() + node.getEvent().toString());
-            ArrayList nodeChildren = node.getChildren();
+            ArrayList<BuildEventNode> nodeChildren = node.getChildren();
             if (nodeChildren != null) {
                 for (int idx = 0; idx < nodeChildren.size(); idx++) {
                     printNode((BuildEventNode)nodeChildren.get(idx));

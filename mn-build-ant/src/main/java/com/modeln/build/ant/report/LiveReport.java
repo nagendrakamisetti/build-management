@@ -9,15 +9,10 @@
  */
 package com.modeln.build.ant.report;
 
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildException;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Vector;
 
 /**
  * Parses the Ant logging events and generates a report to summarize the
@@ -41,7 +36,8 @@ public final class LiveReport extends Report {
      * Perform the task parsing and generate the report.  This method 
      * performs the event listener registration.
      */
-    public void execute() throws BuildException {
+    @SuppressWarnings("deprecation")
+	public void execute() throws BuildException {
         // Create a new build listener for parsing events
         ReportListener listener = new LiveReportListener(this, getParseTargets());
 

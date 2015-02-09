@@ -10,7 +10,6 @@
 package com.modeln.build.ant.report;
 
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
 
@@ -24,7 +23,7 @@ import java.util.regex.Matcher;
  *
  * @author Shawn Stafford
  */
-public final class ReportParseCriteria extends Task implements Comparator {
+public final class ReportParseCriteria extends Task implements Comparator<ReportParseCriteria> {
 
     /** Parse events at the debug level */
     public static final String DEBUG_LEVEL = "debug";
@@ -211,15 +210,13 @@ public final class ReportParseCriteria extends Task implements Comparator {
      * Compare the target priority of each criteria to determine which criteria
      * is a higher priority.
      */
-    public int compare(Object o1, Object o2) throws ClassCastException {
-        ReportParseCriteria cr1 = (ReportParseCriteria) o1;
-        ReportParseCriteria cr2 = (ReportParseCriteria) o2;
+    public int compare(ReportParseCriteria o1, ReportParseCriteria o2) throws ClassCastException {
 
         // The comparison operators are actually counter-intuitive in this case
         // because a low number (i.e. error = 0) is considered a higher severity
-        if (cr1.getTypeValue() > cr2.getTypeValue()) {
+        if (o1.getTypeValue() > o2.getTypeValue()) {
             return -1;
-        } else if (cr1.getTypeValue() < cr2.getTypeValue()) {
+        } else if (o1.getTypeValue() < o2.getTypeValue()) {
             return 1;
         } else {
             return 0;
@@ -230,7 +227,7 @@ public final class ReportParseCriteria extends Task implements Comparator {
      * Compare the target priority of each criteria to determine if they are
      * equal.
      */
-    public boolean equals(Object obj) {
+    public boolean equals(ReportParseCriteria obj) {
         int cmp = compare(this, obj);
         return (cmp == 0);
     }

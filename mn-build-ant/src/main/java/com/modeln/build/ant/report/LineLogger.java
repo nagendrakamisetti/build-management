@@ -9,28 +9,17 @@
  */
 package com.modeln.build.ant.report;
 
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.StringReader;
-
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.Target;
-
-import org.apache.tools.ant.util.StringUtils;
-import org.apache.tools.ant.util.DateUtils;
 
 /**
  */
@@ -74,7 +63,7 @@ public class LineLogger extends DefaultLogger {
 
 
     /** Record the execution stack for the build */
-    private LinkedList executionStack = new LinkedList();
+    private LinkedList<BuildEvent> executionStack = new LinkedList<BuildEvent>();
 
     /** Display the execution stack as part of each message */
     private boolean showStack = false;
@@ -285,7 +274,7 @@ public class LineLogger extends DefaultLogger {
         StringBuffer stackTrace = new StringBuffer();
         BuildEvent current = null;
 
-        ListIterator iterator = executionStack.listIterator(0);
+        ListIterator<BuildEvent> iterator = executionStack.listIterator(0);
         while (iterator.hasNext()) {
             current = (BuildEvent) iterator.next();
             if (current.getTask() != null) {

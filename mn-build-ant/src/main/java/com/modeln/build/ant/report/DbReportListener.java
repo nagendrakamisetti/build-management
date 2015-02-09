@@ -11,24 +11,15 @@ package com.modeln.build.ant.report;
 
 import com.modeln.testfw.reporting.CMnReportTable;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Enumeration;
-import java.util.Stack;
 import java.util.Vector;
-import java.util.EventObject;
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Target;
-
 
 /**
  * Parses the output of Ant events, categorizes the events based upon a 
@@ -38,11 +29,11 @@ import org.apache.tools.ant.Target;
  */
 public class DbReportListener implements BuildListener {
 
-    /** List of report entries recieved so far */
-    private Vector targets;
+    /** List of report entries received so far */
+    private Vector<ReportParseTarget> targets;
 
     /** List of parse events that have not yet been committed to the database */
-    private Vector pendingEvents = new Vector();
+    private Vector<ReportParseEvent> pendingEvents = new Vector<ReportParseEvent>();
 
     /** The pending events will be flushed to the database when the maximum limit is reached */
     private int maxEventCount = 20;
@@ -53,9 +44,6 @@ public class DbReportListener implements BuildListener {
 
     /** The current node being executed in the task execution tree */
     private BuildEventNode currentNode = null;
-
-    /** File where debugging messages will be written */
-    private PrintWriter debugWriter;
 
     /** Connection to the build database */
     private Connection dbConnection;
@@ -87,7 +75,7 @@ public class DbReportListener implements BuildListener {
      * @param   list    List of build targets to scan for text
      * @param   table   Database query object
      */
-    public DbReportListener(Connection conn, String version, Vector list, CMnReportTable table) {
+    public DbReportListener(Connection conn, String version, Vector<ReportParseTarget> list, CMnReportTable table) {
         dbConnection = conn;
         dbTable = table;
         targets = list;
@@ -245,7 +233,7 @@ public class DbReportListener implements BuildListener {
         int priority = event.getPriority();
         // Filter out messages based on priority
         if (priority <= msgOutputLevel) {
-            ReportParseEvent parseEvent = new ReportParseEvent(event, new Vector());
+            ReportParseEvent parseEvent = new ReportParseEvent(event, new Vector<ReportParseCriteria>());
             if (currentNode != null) {
                 parseEvent.setExecutionPath(getPathToRoot(currentNode));
             }
@@ -254,10 +242,8 @@ public class DbReportListener implements BuildListener {
             // Set execution path for this message (event)
             BuildEvent[] execPath = parseEvent.getExecutionPath();
 
-            Vector matchingCriteria = new Vector();
-
             // Cycle through the list of targets to search for matching criteria
-            Vector localMatches = null;
+            Vector<ReportParseCriteria> localMatches = null;
             ReportParseTarget currentTarget = null;
             for (int targetIdx = 0; targetIdx < targets.size(); targetIdx++) {
                 currentTarget = (ReportParseTarget) targets.get(targetIdx);
@@ -396,30 +382,6 @@ public class DbReportListener implements BuildListener {
         return oldNode;
     }
 
-
-    /**
-     * Write debugging output to a file.  Since the logging listeners are capturing
-     * output from stderr and stdout, print statements cannot be used for debugging
-     * because they often lead to infinite loops within the string parsing code.
-     * To avoid this, debugging statements should be written to another output stream,
-     * such as a file.
-     *
-     * @param  msg   Debugging message
-     */
-    private void debug(String msg) {
-        if (debugWriter == null) {
-            try {
-                debugWriter = new PrintWriter(new FileWriter(new File("debug.txt")));
-            } catch (IOException ex) {
-                System.err.println("Unable to create a debug file.");
-                ex.printStackTrace();
-            }
-        }
-
-        debugWriter.println(msg); 
-        debugWriter.flush();
-    }
-
     /**
      * Commit any pending events to the database.  Events should only be committed
      * during the push/pop operations in order to reduce the frequency of database
@@ -430,9 +392,10 @@ public class DbReportListener implements BuildListener {
         // Syncronize on the pendingEvent list to ensure that a parallel thread
         // does not consume the same event or clear out the list before the current
         // item can be obtained.
-        Enumeration events = null;
+        Enumeration<ReportParseEvent> events = null;
         synchronized (pendingEvents) {
-            Vector eventList = (Vector) pendingEvents.clone();
+            @SuppressWarnings("unchecked")
+			Vector<ReportParseEvent> eventList = (Vector<ReportParseEvent>) pendingEvents.clone();
             events = eventList.elements();
             pendingEvents.clear();
         }

@@ -9,12 +9,8 @@
  */
 package com.modeln.build.ant.report;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
-import java.util.ListIterator;
-import java.util.Vector;
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Project;
@@ -32,7 +28,7 @@ public class LogEntry {
     private Date timestamp;
 
     /** Record the execution stack for the build */
-    private LinkedList executionStack = new LinkedList();
+    private LinkedList<Object> executionStack = new LinkedList<Object>();
 
     /** Message associated with the log entry */
     private String message;

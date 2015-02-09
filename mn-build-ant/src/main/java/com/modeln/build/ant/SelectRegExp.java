@@ -23,8 +23,6 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.RegularExpression;
-import org.apache.tools.ant.types.Substitution;
-import org.apache.tools.ant.util.FileUtils;
 import org.apache.tools.ant.util.regexp.Regexp;
 
 /**
@@ -89,18 +87,15 @@ public class SelectRegExp extends Task {
     private File outfile;
     private String flags;
 
-    private Vector filesets;// Keep jdk 1.1 compliant so others can use this
-    private Vector regexList;
-
-    private FileUtils fileUtils = FileUtils.newFileUtils();
-
+    private Vector<FileSet> filesets;// Keep jdk 1.1 compliant so others can use this
+    private Vector<Regexp> regexList;
 
     /** Default Constructor  */
     public SelectRegExp() {
         super();
         this.file = null;
-        this.filesets = new Vector();
-        this.regexList = new Vector();
+        this.filesets = new Vector<FileSet>();
+        this.regexList = new Vector<Regexp>();
         this.flags = "";
     }
 
@@ -162,7 +157,8 @@ public class SelectRegExp extends Task {
     /**
      * Adds a set of files to count.
      */
-    public void addConfiguredRegexp(RegularExpression regex) {
+    @SuppressWarnings("deprecation")
+	public void addConfiguredRegexp(RegularExpression regex) {
         Regexp regexp = regex.getRegexp(project);
         regexList.add(regexp);
     }
@@ -183,12 +179,10 @@ public class SelectRegExp extends Task {
             BufferedWriter bw = new BufferedWriter(w);
             PrintWriter pw = new PrintWriter(bw);
 
-            boolean changes = false;
             String line = null;
             while ((line = br.readLine()) != null) {
                 line = getMatch(line, options);
                 if (line != null) {
-                    changes = true;
                     pw.println(line);
                     pw.flush();
                 }
@@ -216,37 +210,15 @@ public class SelectRegExp extends Task {
         }
     }
 
-
-    /** 
-     * Perform a regular expression search to determine if the line
-     * contains a matching string.
-     *
-     * @param   line    String to be examined
-     * @param   opts    Regular expression flages
-     */
-    private boolean matches(String line, int opts) {
-        // Compare the line to each regular expression
-        Regexp current = null;
-        for (int idx = 0; idx < regexList.size(); idx++) {
-            current = (Regexp) regexList.get(idx);
-            if (current.matches(line, opts)) {
-                // log("Match found: " + line);
-                return true;
-            }
-        }
-
-        // log("Line discarded: " + line, Project.MSG_VERBOSE);
-        return false;
-    }
-
     /** 
      * Return the full match to the regular expression.
      *
      * @param   line    String to be examined
      * @param   opts    Regular expression flages
      */
-    private String getMatch(String line, int opts) {
-        Vector matches = null;
+    @SuppressWarnings("unchecked")
+	private String getMatch(String line, int opts) {
+        Vector<String> matches = null;
 
         // Compare the line to each regular expression
         Regexp current = null;

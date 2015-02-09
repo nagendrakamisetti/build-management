@@ -9,19 +9,15 @@
  */
 package com.modeln.build.ant.report;
 
-import java.io.File;
 import java.io.BufferedInputStream;
 import java.io.OutputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Vector;
 import java.util.Hashtable;
 import java.util.Enumeration;
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Location;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildEvent;
 
 import com.modeln.build.perforce.Changelist;
@@ -38,7 +34,7 @@ public class ReportComposer {
 
 
     /** Individual entries on the report (correspond to parse targets) */
-    private Vector reportEntries = new Vector();
+    private Vector<ReportParseTargetSummary> reportEntries = new Vector<ReportParseTargetSummary>();
 
     /** Report output stream */
     private BufferedOutputStream out;
@@ -77,7 +73,7 @@ public class ReportComposer {
      * @param   events      List of ReportParseEvents
      * @param   stream      Output stream to which the report should be written
      */
-    public ReportComposer(Vector targets, Vector events, OutputStream stream) {
+    public ReportComposer(Vector<ReportParseTarget> targets, Vector<ReportParseEvent> events, OutputStream stream) {
         out = new BufferedOutputStream(stream);
 
         ReportParseTarget currentTarget = null;
@@ -159,10 +155,10 @@ public class ReportComposer {
             rpt.append(num + ". Parsing Summary: " + currentEntry.getTarget().getTargetName() + "\n");
 
             // Display the summary counts
-            Hashtable errorSummary = currentEntry.getTypeSummary();
+            Hashtable<String, Integer> errorSummary = currentEntry.getTypeSummary();
             String currentKey = null;
             String separator = "   ";
-            for (Enumeration keys = errorSummary.keys() ; keys.hasMoreElements(); ) {
+            for (Enumeration<String> keys = errorSummary.keys() ; keys.hasMoreElements(); ) {
                 currentKey = (String) keys.nextElement();
                 rpt.append(separator + errorSummary.get(currentKey) + " " + currentKey);
                 separator = ", ";
@@ -170,7 +166,7 @@ public class ReportComposer {
             rpt.append("\n\n");
 
             // Display the errors
-            Vector events = currentEntry.getEvents();
+            Vector<ReportParseEvent> events = currentEntry.getEvents();
             ReportParseEvent currentEvent = null;
             ReportParseCriteria currentCriteria = null;
             for (int eventIdx = 0; eventIdx < events.size(); eventIdx++) {
@@ -235,7 +231,7 @@ public class ReportComposer {
         for (int idx = 0; idx < reportEntries.size(); idx++) {
             int num = idx + 1;
             currentEntry = (ReportParseTargetSummary) reportEntries.get(idx);
-            Vector events = currentEntry.getEvents();
+            Vector<ReportParseEvent> events = currentEntry.getEvents();
 
             // If there are errors to report, an extra table cell will be needed
             String rowspan = "1";
@@ -258,10 +254,10 @@ public class ReportComposer {
             
             // Display the summary counts
             rpt.append("<td width=\"75%\" valign=\"top\" class=\"standard\">");
-            Hashtable errorSummary = currentEntry.getTypeSummary();
+            Hashtable<String, Integer> errorSummary = currentEntry.getTypeSummary();
             String currentKey = null;
             String separator = "   ";
-            for (Enumeration keys = errorSummary.keys(); keys.hasMoreElements(); ) {
+            for (Enumeration<String> keys = errorSummary.keys(); keys.hasMoreElements(); ) {
                 currentKey = (String) keys.nextElement();
                 rpt.append(separator + errorSummary.get(currentKey) + " " + currentKey);
                 separator = ", ";
@@ -399,7 +395,7 @@ public class ReportComposer {
         html.append("  <b>" + node.getName() + ":</b><br>\n");
 
         // Display each event
-        Vector events = node.getEvents();
+        Vector<ReportParseEvent> events = node.getEvents();
         ReportParseEvent event = null;
         BuildEvent buildEvent = null;
         for (int idx = 0; idx < events.size(); idx++) {
@@ -409,8 +405,7 @@ public class ReportComposer {
         }
 
         // Display each child node
-        Vector children = node.getChildren();
-        ReportTreeNode child = null;
+        Vector<ReportTreeNode> children = node.getChildren();
         for (int idx = 0; idx < children.size(); idx++) {
             html.append(getHtmlNode((ReportTreeNode)children.get(idx)));
         }

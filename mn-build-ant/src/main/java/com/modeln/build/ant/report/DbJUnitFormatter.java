@@ -12,28 +12,21 @@ package com.modeln.build.ant.report;
 import com.modeln.testfw.reporting.CMnBuildTable;
 import com.modeln.testfw.reporting.CMnDbBuildData;
 import com.modeln.testfw.reporting.CMnDbHostData;
-import com.modeln.testfw.reporting.CMnDbTestData;
 import com.modeln.testfw.reporting.CMnDbUnitTestData;
 import com.modeln.testfw.reporting.CMnDbTestSuite;
-import com.modeln.testfw.reporting.CMnReportTable;
 import com.modeln.testfw.reporting.CMnUnittestTable;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.io.StringReader;
 import java.io.StringWriter;
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.text.NumberFormat;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Properties;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import junit.framework.AssertionFailedError;
@@ -45,7 +38,6 @@ import org.apache.tools.ant.taskdefs.optional.junit.JUnitResultFormatter;
 import org.apache.tools.ant.taskdefs.optional.junit.JUnitTest;
 import org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner;
 import org.apache.tools.ant.taskdefs.optional.junit.JUnitVersionHelper;
-import org.apache.tools.ant.util.StringUtils;
 
 /**
  * Parses the output of the JUnit Ant task and logs the result to the 
@@ -66,23 +58,6 @@ public class DbJUnitFormatter implements JUnitResultFormatter {
 
     /** Property name that identifies the Model N product version */
     private static final String MODELN_VERSION = "modeln.version";
-
-    /** List of lines to filter out of stack traces */
-    private static final String[] DEFAULT_TRACE_FILTERS = new String[] {
-                "junit.framework.TestCase", 
-                "junit.framework.TestResult",
-                "junit.framework.TestSuite",
-                "junit.framework.Assert.", // don't filter AssertionFailure
-                "junit.swingui.TestRunner",
-                "junit.awtui.TestRunner",
-                "junit.textui.TestRunner",
-                "java.lang.reflect.Method.invoke(",
-                "sun.reflect.",
-                "org.apache.tools.ant."
-        };
-
-
-
 
     /** Connection to the audit database */
     private Connection conn = null;
@@ -109,7 +84,7 @@ public class DbJUnitFormatter implements JUnitResultFormatter {
     /**
      * Timing helper.
      */
-    private Hashtable testStarts = new Hashtable();
+    private Hashtable<Test, Long> testStarts = new Hashtable<Test, Long>();
 
     /**
      * Where to write the log to.
@@ -129,7 +104,7 @@ public class DbJUnitFormatter implements JUnitResultFormatter {
     /**
      * Suppress endTest if testcase failed.
      */
-    private Hashtable failed = new Hashtable();
+    private Hashtable<Test, Boolean> failed = new Hashtable<Test, Boolean>();
 
     private String systemOutput = null;
     private String systemError = null;
@@ -146,7 +121,8 @@ public class DbJUnitFormatter implements JUnitResultFormatter {
     //
     // Implements: JUNitResultFormatter.startTestSuite(JUnitTest suite)
     //
-    public void startTestSuite(JUnitTest suite) throws BuildException {
+    @SuppressWarnings("unchecked")
+	public void startTestSuite(JUnitTest suite) throws BuildException {
         // We create a new suite data object for this suite
         suiteData = createSuiteData(suite);
         suiteData.setSuiteName(getSuiteName(suite));
@@ -160,7 +136,7 @@ public class DbJUnitFormatter implements JUnitResultFormatter {
         // Load build data from the database
         String buildVersion = System.getProperty(MODELN_VERSION);
         if ((buildVersion != null) && (buildVersion.length() > 0)) {
-            Vector builds = null;
+            Vector<CMnDbBuildData> builds = null;
             try {
                 builds = CMnBuildTable.getBuildsByVersion(conn, buildVersion);
             } catch (Exception ex) {
@@ -169,7 +145,7 @@ public class DbJUnitFormatter implements JUnitResultFormatter {
 
             // Select a build and save the associated suite data
             if ((builds != null) && (builds.size() > 0)) {
-                build = (CMnDbBuildData) builds.get(0);
+                build = builds.get(0);
             } else {
                 throw new BuildException("No builds found for this version: " + buildVersion);
             }
@@ -252,8 +228,7 @@ public class DbJUnitFormatter implements JUnitResultFormatter {
         if (conn != null) {
             try {
                 Date enddate = new Date();
-                boolean success = false;
-                success = CMnUnittestTable.getInstance().setSuiteEndDate(conn, suiteId, enddate);
+                CMnUnittestTable.getInstance().setSuiteEndDate(conn, suiteId, enddate);
                 suiteData.setEndTime(enddate);
             } catch (SQLException ex) {
                 throw new BuildException("Unable to add suite information to the database.", ex);
@@ -355,7 +330,7 @@ public class DbJUnitFormatter implements JUnitResultFormatter {
         if (!Boolean.TRUE.equals(failed.get(test))) {
             synchronized (wri) {
                 wri.print("Testcase: " + JUnitVersionHelper.getTestCaseName(test));
-                Long l = (Long) testStarts.get(test);
+                Long l = testStarts.get(test);
                 double seconds = 0;
                 // can be null if an error occurred in setUp
                 if (l != null) {

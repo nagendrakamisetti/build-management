@@ -13,16 +13,9 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildEvent;
-import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.TaskContainer;
-import org.apache.tools.ant.taskdefs.ConditionTask;
-import org.apache.tools.ant.taskdefs.condition.Condition;
-import org.apache.tools.ant.taskdefs.condition.ConditionBase;
 import org.apache.tools.ant.types.EnumeratedAttribute;
-
 
 /**
  * Executes a set of tasks in a loop until a condition is met.
@@ -33,7 +26,7 @@ public class Repeat extends Task implements TaskContainer {
     private RepeatCondition condition = null;
 
     // storage for nested tasks
-    private Vector tasks = new Vector();
+    private Vector<Task> tasks = new Vector<Task>();
 
     /** default max wait time */
     private long maxWaitMillis = 1000L * 60L * 3L;
@@ -166,7 +159,7 @@ public class Repeat extends Task implements TaskContainer {
             MILLISECOND, SECOND, MINUTE, HOUR, DAY, WEEK
         };
 
-        private Hashtable timeTable = new Hashtable();
+        private Hashtable<String, Long> timeTable = new Hashtable<String, Long>();
 
         public Unit() {
             timeTable.put(MILLISECOND, new Long(1L));

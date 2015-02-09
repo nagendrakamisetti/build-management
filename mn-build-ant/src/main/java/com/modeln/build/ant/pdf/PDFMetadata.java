@@ -9,17 +9,13 @@
  */
 package com.modeln.build.ant.pdf;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Set;
 
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildEvent;
 
 import com.itextpdf.text.pdf.PdfReader;
 
@@ -67,9 +63,9 @@ public final class PDFMetadata extends Task {
             System.out.println("Number of pages: " + pagecount);
             getProject().setProperty(prefix + "PageCount", Integer.toString(pagecount));
 
-            HashMap map = pdf.getInfo(); 
-            Set keys = map.keySet();
-            Iterator iter = keys.iterator();
+            HashMap<String, String> map = pdf.getInfo(); 
+            Set<String> keys = map.keySet();
+            Iterator<String> iter = keys.iterator();
             while (iter.hasNext()) {
                 Object key = iter.next();
                 Object value = map.get(key);

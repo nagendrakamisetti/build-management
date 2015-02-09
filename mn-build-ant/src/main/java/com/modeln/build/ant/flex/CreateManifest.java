@@ -11,9 +11,7 @@ package com.modeln.build.ant.flex;
 
 
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 
@@ -33,7 +31,7 @@ import java.util.Vector;
 public final class CreateManifest extends Task {
 
     /** The fileset is used to specify the list of files to count */
-    protected Vector filesets = new Vector();
+    protected Vector<FileSet> filesets = new Vector<FileSet>();
 
     /** Manifest file to create */
     protected File manifest = null;
@@ -75,7 +73,7 @@ public final class CreateManifest extends Task {
      */
     public void execute() {
         // Iterate through each fileset to build the list of files
-        Vector files = new Vector();
+        Vector<String> files = new Vector<String>();
         for (int idx = 0; idx < filesets.size(); idx++) {
             FileSet current = (FileSet) filesets.get(idx);
             DirectoryScanner scanner = current.getDirectoryScanner(getProject());
@@ -123,13 +121,13 @@ public final class CreateManifest extends Task {
      *
      * @param files  List of files
      */
-    public void generateManifest(Vector files) throws IOException {
+    public void generateManifest(Vector<String> files) throws IOException {
         FileWriter writer = null;
         try {
             writer = new FileWriter(manifest);
             writer.write("<?xml version=\"1.0\"?>\n");
             writer.write("<componentPackage>\n");
-            for (Enumeration list = files.elements(); list.hasMoreElements(); ) {
+            for (Enumeration<String> list = files.elements(); list.hasMoreElements(); ) {
                 String currentFile = (String) list.nextElement();
 
                 // Ensure that we replace the OS file separator character with forward slashes

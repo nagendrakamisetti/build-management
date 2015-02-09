@@ -10,22 +10,14 @@
 package com.modeln.build.ant.flex;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.AbstractFileSet;
 import org.apache.tools.ant.types.DirSet;
@@ -33,12 +25,6 @@ import org.apache.tools.ant.types.FileSet;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-
-
 
 /**
  * Generate a configuration file used when invoking the flex compiler. 
@@ -61,16 +47,16 @@ public final class CreateConfig extends Task {
 
 
     /** A list of FileSets that refer to resource bundle property files */
-    protected Vector resourceBundles = new Vector();
+    protected Vector<FileSet> resourceBundles = new Vector<FileSet>();
 
     /** A list of external libraries to include */
-    protected Vector externalLibraryPath = new Vector();
+    protected Vector<AbstractFileSet> externalLibraryPath = new Vector<AbstractFileSet>();
 
     /** A list of library path directories */
-    protected Vector libraryPath = new Vector();
+    protected Vector<DirSet> libraryPath = new Vector<DirSet>();
 
     /** A list of runtime library path files */
-    protected Vector runtimeLibraryPath = new Vector();
+    protected Vector<FileSet> runtimeLibraryPath = new Vector<FileSet>();
 
 
     /**
@@ -145,7 +131,7 @@ public final class CreateConfig extends Task {
      */
     public void execute() {
         // Construct an XML merge object for generating the final config data
-        XmlMergeUtil xmlUtil = new XmlMergeUtil(XmlMergeUtil.MERGE, XmlMergeUtil.OVERWRITE, XmlMergeUtil.OVERWRITE);
+        XmlMergeUtil xmlUtil = new XmlMergeUtil(XmlMergeUtil.MERGE, XmlMergeUtil.OVERWRITE);
 
         // Construct a configuration data object from the user data
         Document userconfig = null;
@@ -196,13 +182,13 @@ public final class CreateConfig extends Task {
      * @param  tagname  Name of the XML tag to be created
      * @param  filesets Vector of FileSet objects to be converted to path-element child tags
      */
-    private Element createPathElement(Document doc, String tagname, Vector filesets) {
+    private Element createPathElement(Document doc, String tagname, Vector<? extends AbstractFileSet> filesets) {
         Element pathNode = doc.createElement(tagname);
         AbstractFileSet currentSet = null;
         for (int idx = 0; idx < filesets.size(); idx++) {
             currentSet = (AbstractFileSet) filesets.get(idx);
             try {
-                Vector files = getFilenames(currentSet);
+                Vector<String> files = getFilenames(currentSet);
 
                 // Create a new element for each file
                 for (int idxFile = 0; idxFile < files.size(); idxFile++) {
@@ -259,7 +245,7 @@ public final class CreateConfig extends Task {
         // Generate the list of resource bundles
         if (resourceBundles.size() > 0) {
             // Locate the resource bundles on the file system
-            Vector bundleList = null;
+            Vector<String> bundleList = null;
             try {
                 bundleList = getResourceBundleNames();
             } catch (IOException ioex) {
@@ -290,8 +276,8 @@ public final class CreateConfig extends Task {
      *
      * @return Vector list of file names
      */
-    private Vector getFilenames(AbstractFileSet fileset) throws IOException {
-        Vector files = new Vector();
+    private Vector<String> getFilenames(AbstractFileSet fileset) throws IOException {
+        Vector<String> files = new Vector<String>();
 
         DirectoryScanner scanner = fileset.getDirectoryScanner(getProject());
         File basedir = scanner.getBasedir();
@@ -338,9 +324,9 @@ public final class CreateConfig extends Task {
      * 
      * @return Vector list of resource bundle names
      */
-    private Vector getResourceBundleNames() throws IOException {
+    private Vector<String> getResourceBundleNames() throws IOException {
         // Iterate through each fileset to build the list of resource bundles
-        Vector files = new Vector();
+        Vector<String> files = new Vector<String>();
         for (int idx = 0; idx < resourceBundles.size(); idx++) {
             FileSet current = (FileSet) resourceBundles.get(idx);
             DirectoryScanner scanner = current.getDirectoryScanner(getProject());

@@ -11,9 +11,7 @@ package com.modeln.build.ant;
 
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.types.FileSet;
 
 import java.util.Vector;
@@ -26,7 +24,7 @@ import java.util.Vector;
 public final class FileCount extends Task {
 
     /** The fileset is used to specify the list of files to count */
-    protected Vector filesets = new Vector();
+    protected Vector<FileSet> filesets = new Vector<FileSet>();
 
     /** The project property that will store the file count value */
     protected String property;

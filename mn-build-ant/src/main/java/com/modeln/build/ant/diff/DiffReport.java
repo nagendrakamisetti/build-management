@@ -32,9 +32,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.types.PatternSet;
 import org.apache.tools.ant.types.selectors.SelectorUtils;
 
@@ -77,7 +75,7 @@ private int modified_to_unchanged=0;
     private static final int COUNT_MODIFIED= 4;
 
     /** List of file patterns that should be included or excluded from processing */
-    private Vector patternsets = new Vector();
+    private Vector<PatternSet> patternsets = new Vector<PatternSet>();
 
     /** Name of the directory where the report files will be generated */
     private File reportDir = null;
@@ -144,7 +142,7 @@ private int modified_to_unchanged=0;
 
     /** Save the status summary of the Jar file analysis */ 
     private String _statusSummary = null;
-    private List _statusCounts = new ArrayList();
+    private List<String> _statusCounts = new ArrayList<String>();
 
     /**
      * Set the maximum number of lines that a file can contain if processed
@@ -379,7 +377,7 @@ private int modified_to_unchanged=0;
 
 
         try {
-            Hashtable files = compareJars();
+            Hashtable<String, String> files = compareJars();
             if (reportDir != null) {
                 writeStatusSummary(); 
                 if (alwaysReport) {
@@ -415,17 +413,17 @@ private int modified_to_unchanged=0;
      *
      * @return Hashtable of files and their diff status
      */
-    private Hashtable compareJars() throws BuildException {
-    Hashtable allFiles = null;
+    private Hashtable<String, String> compareJars() throws BuildException {
+    Hashtable<String, String> allFiles = null;
         System.out.println("Comparing contents of " + oldFile.getName() + " with " + newFile.getName() + "...");
         try {
             JarFile oldJar = new JarFile(oldFile);
             JarFile newJar = new JarFile(newFile);
 
             // Get one big list of Jar file entries from both jars
-            Enumeration oldFiles = oldJar.entries();
-            Enumeration newFiles = newJar.entries();
-            allFiles = new Hashtable();
+            Enumeration<JarEntry> oldFiles = oldJar.entries();
+            Enumeration<JarEntry> newFiles = newJar.entries();
+            allFiles = new Hashtable<String, String>();
             JarEntry currentEntry = null;
             String currentName = null;
             // First add all the old files and assume they've been deleted
@@ -451,7 +449,7 @@ private int modified_to_unchanged=0;
 
             // Determine whether existing files have changed based on 
             // first the Jar CRC values and then the diff algorithm
-            Enumeration keys = allFiles.keys();
+            Enumeration<String> keys = allFiles.keys();
             String currentKey = null;
             String currentValue = null;
 
@@ -513,14 +511,14 @@ private int modified_to_unchanged=0;
      * @param  files  List of files analyzed
      * @return Summary information about the file analysis
      */
-    private void setStatusSummary(Hashtable files) {
+    private void setStatusSummary(Hashtable<String, String> files) {
         setStatusCounts(files);
         _statusSummary = _statusCounts.get(COUNT_TOTAL)+ " files analyzed, " + _statusCounts.get(COUNT_MODIFIED) + " modified, " + _statusCounts.get(COUNT_ADDED) + " added, " + _statusCounts.get(COUNT_DELETED) + " deleted, " + _statusCounts.get(COUNT_UNCHANGED) + " unchanged";
     }
-    private void setStatusCounts(Hashtable files) {
+    private void setStatusCounts(Hashtable<String, String> files) {
         // Summarize the results of the Jar analysis
-        Collection allValues = files.values();
-        Iterator valueIter = allValues.iterator();
+        Collection<String> allValues = files.values();
+        Iterator<String> valueIter = allValues.iterator();
         int total = 0;
         int unchanged = 0;
         int added = 0;
@@ -554,10 +552,10 @@ private int modified_to_unchanged=0;
      * @param   status  Status to be tallied
      * @return  Number of files matching the given status
      */
-    private int getStatusCount(Hashtable files, String status) {
+    private int getStatusCount(Hashtable<String, String> files, String status) {
         // Summarize the results of the Jar analysis
-        Collection allValues = files.values();
-        Iterator valueIter = allValues.iterator();
+        Collection<String> allValues = files.values();
+        Iterator<String> valueIter = allValues.iterator();
         int total = 0;
         while (valueIter.hasNext()) {
             String value = (String) valueIter.next();
@@ -574,8 +572,8 @@ private int modified_to_unchanged=0;
      *
      * @param   files   Hashtable containing the list of files and status
      */
-    private void generateTextReport(Hashtable files) {
-        Enumeration keys = files.keys();
+    private void generateTextReport(Hashtable<String, String> files) {
+        Enumeration<String> keys = files.keys();
 
         String currentKey = null;
         String currentValue = null;
@@ -592,10 +590,10 @@ private int modified_to_unchanged=0;
      *
      * @param   files   Hashtable containing the list of files and status
      */
-    private void generateHtmlReport(Hashtable files) throws IOException {
+    private void generateHtmlReport(Hashtable<String, String> files) throws IOException {
         int fileIndex = 0;
 
-        Enumeration keys = files.keys();
+        Enumeration<String> keys = files.keys();
         String reportName = reportDir.getAbsolutePath() + File.separator + "index.html";
 
         FileWriter writer = null;
@@ -721,11 +719,11 @@ private int modified_to_unchanged=0;
      *
      * @return True if there are entries to be displayed
      */
-    private boolean hasAnythingToShow(Hashtable files) {
+    private boolean hasAnythingToShow(Hashtable<String, String> files) {
         boolean hasThingsToShow=false;
         String currentValue=null;
-        Collection allValues = files.values();
-        Iterator it = allValues.iterator();
+        Collection<String> allValues = files.values();
+        Iterator<String> it = allValues.iterator();
         while(it.hasNext()) {
             currentValue = (String) it.next();
             if (showStatus(currentValue)) {
@@ -801,7 +799,6 @@ private int modified_to_unchanged=0;
     private void extract(JarFile jar, File file, File dest) throws IOException {
         InputStream jarInputStream = null;
         OutputStream outputStream = null;
-        FileWriter writer = null;
         int BUFFER = 2048;
         int count = 0;
         byte data[] = new byte[BUFFER];
@@ -853,7 +850,7 @@ private int modified_to_unchanged=0;
         extract(jar, input, oldDir);
 
         // Construct a list of command-line arguments for javap
-        Vector argList = new Vector();
+        Vector<String> argList = new Vector<String>();
         argList.add(disassembler.getAbsolutePath());
         if (showBytecode) {
             argList.add("-c");
@@ -866,7 +863,6 @@ private int modified_to_unchanged=0;
             args[idx] = (String) argList.get(idx);
         }
 
-        int exitValue = 0;
         FileOutputStream outputStream = null;
         InputStream procOut = null;
         InputStream procErr = null;
@@ -889,7 +885,7 @@ private int modified_to_unchanged=0;
                 currentByte = procErr.read();
                 System.err.print((char)currentByte);
             }
-            exitValue = proc.waitFor();
+            proc.waitFor();
             proc.destroy();
         } catch (InterruptedException intex) {
             System.err.println("Abnormal process termination: " + intex.getMessage());

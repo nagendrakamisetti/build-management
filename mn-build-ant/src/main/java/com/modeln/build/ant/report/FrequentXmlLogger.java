@@ -90,14 +90,14 @@ public class FrequentXmlLogger implements BuildLogger {
     /** The complete log document for this build. */
     private Document doc = builder.newDocument();
     /** Mapping for when tasks started (Task to TimedElement). */
-    private Hashtable tasks = new Hashtable();
+    private Hashtable<Task, TimedElement> tasks = new Hashtable<Task, TimedElement>();
     /** Mapping for when targets started (Task to TimedElement). */
-    private Hashtable targets = new Hashtable();
+    private Hashtable<Target, TimedElement> targets = new Hashtable<Target, TimedElement>();
     /**
      * Mapping of threads to stacks of elements
      * (Thread to Stack of TimedElement).
      */
-    private Hashtable threadStacks = new Hashtable();
+    private Hashtable<Thread, Stack<TimedElement>> threadStacks = new Hashtable<Thread, Stack<TimedElement>>();
     /**
      * When the build started.
      */
@@ -211,10 +211,10 @@ public class FrequentXmlLogger implements BuildLogger {
      * Returns the stack of timed elements for the current thread.
      * @return the stack of timed elements for the current thread
      */
-    private Stack getStack() {
-        Stack threadStack = (Stack) threadStacks.get(Thread.currentThread());
+    private Stack<TimedElement> getStack() {
+        Stack<TimedElement> threadStack = (Stack<TimedElement>) threadStacks.get(Thread.currentThread());
         if (threadStack == null) {
-            threadStack = new Stack();
+            threadStack = new Stack<TimedElement>();
             threadStacks.put(Thread.currentThread(), threadStack);
         }
         return threadStack;
@@ -255,7 +255,7 @@ public class FrequentXmlLogger implements BuildLogger {
                     DateUtils.formatElapsedTime(totalTime));
 
             TimedElement parentElement = null;
-            Stack threadStack = getStack();
+            Stack<TimedElement> threadStack = getStack();
             if (!threadStack.empty()) {
                 TimedElement poppedStack = (TimedElement) threadStack.pop();
                 if (poppedStack != targetElement) {
@@ -322,7 +322,7 @@ public class FrequentXmlLogger implements BuildLogger {
             } else {
                 targetElement.element.appendChild(taskElement.element);
             }
-            Stack threadStack = getStack();
+            Stack<TimedElement> threadStack = getStack();
             if (!threadStack.empty()) {
                 TimedElement poppedStack = (TimedElement) threadStack.pop();
                 if (poppedStack != taskElement) {
@@ -347,7 +347,7 @@ public class FrequentXmlLogger implements BuildLogger {
             return element;
         }
 
-        for (Enumeration e = tasks.keys(); e.hasMoreElements();) {
+        for (Enumeration<Task> e = tasks.keys(); e.hasMoreElements();) {
             Task key = (Task) e.nextElement();
             if (key instanceof UnknownElement) {
                 if (((UnknownElement) key).getTask() == task) {

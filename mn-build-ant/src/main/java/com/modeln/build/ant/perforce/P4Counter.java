@@ -10,12 +10,8 @@
 package com.modeln.build.ant.perforce;
 
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildEvent;
-import org.apache.tools.ant.BuildListener;
 
-import com.modeln.build.perforce.Common;
 import com.modeln.build.perforce.Counter;
 
 /**
@@ -102,7 +98,7 @@ public final class P4Counter extends Task {
                 getProject().setProperty(property,  "" + num);
             }
         } else if (shouldSetValue) {
-            boolean success = Counter.setCounter(counter, value);
+            Counter.setCounter(counter, value);
         } else {
             Counter result = Counter.getCounter(counter);
             if (result != null) {

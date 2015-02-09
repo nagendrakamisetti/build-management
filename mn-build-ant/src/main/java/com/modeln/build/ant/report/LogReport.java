@@ -10,12 +10,9 @@
 package com.modeln.build.ant.report;
 
 import org.apache.tools.ant.BuildEvent;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildException;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -32,7 +29,7 @@ public final class LogReport extends Report {
     private ReportListener listener;
 
     /** List of log files to be parsed and the parse targets that will be used */
-    private Hashtable logfiles = new Hashtable();
+    private Hashtable<String, Vector<ReportParseTarget>> logfiles = new Hashtable<String, Vector<ReportParseTarget>>();
 
     /**
      * Perform the task parsing and generate the report.
@@ -43,7 +40,7 @@ public final class LogReport extends Report {
 
         // Iterate through each parse target to obtain a list of all possible files
         ReportParseTarget currentTarget = null;
-        Enumeration targets = parseTargets.elements();
+        Enumeration<ReportParseTarget> targets = parseTargets.elements();
         while (targets.hasMoreElements()) {
             currentTarget = (ReportParseTarget) targets.nextElement();
             String[] filelist = currentTarget.getTargetFiles();
@@ -53,7 +50,7 @@ public final class LogReport extends Report {
         }
 
         // Parse the log files
-        Enumeration files = logfiles.keys();
+        Enumeration<String> files = logfiles.keys();
         String currentFile = null;
         while (files.hasMoreElements()) {
             currentFile = (String) files.nextElement();
@@ -74,16 +71,16 @@ public final class LogReport extends Report {
      * @param   target      Target that should be used to parse the file
      */
     private void addLogFile(String file, ReportParseTarget target) {
-        Vector targetList = null;
+        Vector<ReportParseTarget> targetList = null;
 
         // Determine if the file already exists in the list
         if (logfiles.contains(file)) {
             // Add the target to an existing file entry
-            targetList = (Vector) logfiles.get(file);
+            targetList = (Vector<ReportParseTarget>) logfiles.get(file);
             targetList.add(target);
         } else {
             // Create a new file and an associated target list
-            targetList = new Vector();
+        	targetList = new Vector<ReportParseTarget>();
             targetList.add(target);
             logfiles.put(file, targetList);
         }
@@ -99,7 +96,6 @@ public final class LogReport extends Report {
      */
     public void parseFile(String filename) {
         // List of parse targets associated with the file
-        Vector targets = (Vector) logfiles.get(filename);
         String currentLine = null;
 
         // Open the file

@@ -10,9 +10,7 @@
 package com.modeln.build.ant.math;
 
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildEvent;
 
 /**
  * Increments the value of a property.  The property must be a valid 

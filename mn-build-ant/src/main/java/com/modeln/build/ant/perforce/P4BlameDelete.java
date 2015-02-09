@@ -12,11 +12,9 @@ package com.modeln.build.ant.perforce;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.taskdefs.email.EmailAddress;
-import org.apache.tools.ant.types.Reference;
 
 /**
  * This task removes all P4BlameListeners from the build. 
@@ -66,13 +64,15 @@ public class P4BlameDelete extends Task {
     /**
      * Disable all blame listeners in the current project.
      */
-    private void disableAll() {
+	@SuppressWarnings("deprecation")
+	private void disableAll() {
         int count = 0;
 
         // Obtain a list of listeners in the project
-        Vector listeners = project.getBuildListeners();
+        @SuppressWarnings("unchecked")
+		Vector<BuildListener> listeners = project.getBuildListeners();
         Object current = null;
-        for (Enumeration e = listeners.elements(); e.hasMoreElements(); ) {
+        for (Enumeration<BuildListener> e = listeners.elements(); e.hasMoreElements(); ) {
             current = e.nextElement();
             if (current instanceof P4BlameListener) {
                 P4BlameListener blame = (P4BlameListener) current;
@@ -83,31 +83,6 @@ public class P4BlameDelete extends Task {
         }
 
         log("Disabled " + count + " P4BlameListeners in the current project.");
-    }
-
-    /**
-     * Disable the listener which matches the specified refid.
-     */
-    private void disableByRefId() {
-        // Obtain a list of listeners in the project
-        Vector listeners = project.getBuildListeners();
-        Object current = null;
-        for (Enumeration e = listeners.elements(); e.hasMoreElements(); ) {
-            current = e.nextElement();
-            if (current instanceof P4BlameListener) {
-                P4BlameListener blame = (P4BlameListener) current;
-                project.removeBuildListener(blame);
-                //The getRefid() method only appears to be available in Ant 1.7+
-                //Reference ref = blame.getRefid();
-                Reference ref = null;
-                if ((ref != null) && (refid.equals(ref.getRefId()))) {
-                    log("Disabling P4BlameListener by refid: " + refid);
-                    blame.disable();
-                } else if (ref == null) {
-                    log("Unable to determine refid of P4BlameListener.  Listener will remain active.");
-                }
-            }
-        }
-    }
+	}
 
 }

@@ -17,17 +17,11 @@ import com.modeln.build.perforce.User;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Properties;
-import java.util.StringTokenizer;
 import java.util.Vector;
 
 import org.apache.tools.ant.BuildEvent;
@@ -35,12 +29,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.email.EmailAddress;
-import org.apache.tools.ant.taskdefs.email.Message;
-import org.apache.tools.ant.taskdefs.email.Mailer;
 import org.apache.tools.ant.types.DataType;
-import org.apache.tools.ant.util.DateUtils;
-import org.apache.tools.ant.util.StringUtils;
-import org.apache.tools.mail.MailMessage;
 
 /**
  *  Buffers log messages from DefaultLogger, and sends an e-mail with the
@@ -60,7 +49,7 @@ public class P4BlameListener extends DataType implements BuildListener {
     private static final String BGCOLOR_WARN = "#FFFFCC";
 
     /** List of errors encountered during the build. */
-    private Vector events = new Vector();
+    private Vector<BuildEvent> events = new Vector<BuildEvent>();
 
     /** Logging level being monitored by the listener */
     private int logLevel = Project.MSG_INFO;
@@ -174,9 +163,9 @@ public class P4BlameListener extends DataType implements BuildListener {
                 User[] uniqueUsers = getUniqueUsers(users);
 
                 // Iterate through the list of messages that must be sent
-                Vector msgList = parent.getEmailMessages();
+                Vector<EmailMessage> msgList = parent.getEmailMessages();
                 if (msgList.size() > 0) {
-                    Iterator msgIterator = msgList.iterator();
+                    Iterator<EmailMessage> msgIterator = msgList.iterator();
                     while (msgIterator.hasNext()) {
                         EmailMessage current = (EmailMessage) msgIterator.next();
                         if ((uniqueUsers != null) && (uniqueUsers.length > 0)) {
@@ -239,25 +228,6 @@ public class P4BlameListener extends DataType implements BuildListener {
 
         return enabled;
     }
-
-    /**
-     * Convert a list of email address objects to a string.
-     * 
-     * @param  list   List of email address objects
-     * @return String of addresses
-     */
-    private String getAddressList(Vector list) {
-        StringBuffer addrList = new StringBuffer();
-        if (list != null) {
-            Iterator addrIterator = list.iterator();
-            while (addrIterator.hasNext()) {
-                EmailAddress current = (EmailAddress) addrIterator.next();
-                addrList.append(current.toString());
-            }
-        }
-        return addrList.toString();
-    }
-
 
     /**
      * Signals that a build has started. This event
@@ -386,7 +356,7 @@ public class P4BlameListener extends DataType implements BuildListener {
 
         // Collect users in a hashtable to avoid the overhead of
         // fetching duplicates from Perforce
-        Hashtable users = new Hashtable();
+        Hashtable<String, User> users = new Hashtable<String, User>();
 
         // Get the user of each changelist
         String username = null;
@@ -416,7 +386,7 @@ public class P4BlameListener extends DataType implements BuildListener {
 
         if (users.length > 0) {
             // Collect users in a hashtable to remove duplicate usernames
-            Hashtable userHash = new Hashtable();
+            Hashtable<String, User> userHash = new Hashtable<String, User>();
 
             // Examine each user in the list
             String username = null;
@@ -430,8 +400,8 @@ public class P4BlameListener extends DataType implements BuildListener {
             // Return an array of unique users
             int idx = 0;
             uniqueList = new User[userHash.size()];
-            Collection values = userHash.values();
-            Iterator userIterator = values.iterator();
+            Collection<User> values = userHash.values();
+            Iterator<User> userIterator = values.iterator();
             while (userIterator.hasNext()) {
                 uniqueList[idx] = (User) userIterator.next();
                 idx++;

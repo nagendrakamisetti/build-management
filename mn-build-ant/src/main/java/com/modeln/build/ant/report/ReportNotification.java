@@ -9,13 +9,8 @@
  */
 package com.modeln.build.ant.report;
 
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.taskdefs.email.EmailAddress;
-import org.apache.tools.ant.taskdefs.email.EmailTask;
-import org.apache.tools.mail.MailMessage;
 
 import com.modeln.build.ant.Notification;
 

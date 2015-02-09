@@ -10,15 +10,11 @@
 package com.modeln.build.ant;
 
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildEvent;
-import org.apache.tools.ant.BuildListener;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 
 /**
  * Obtains file information about a specific file and stores the 

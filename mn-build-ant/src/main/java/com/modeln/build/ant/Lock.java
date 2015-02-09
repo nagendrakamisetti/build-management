@@ -18,7 +18,6 @@ import org.apache.tools.ant.BuildListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
@@ -207,7 +206,8 @@ public final class Lock extends Task implements BuildListener {
      *
      * @throws  BuildException if the lock file cannot be created
      */
-    private synchronized void acquire() throws BuildException {
+    @SuppressWarnings("deprecation")
+	private synchronized void acquire() throws BuildException {
         boolean success = false;
 
         // Construct the lock information
@@ -293,6 +293,7 @@ public final class Lock extends Task implements BuildListener {
      *
      * @throws  BuildException if the lock cannot be released
      */
+    @SuppressWarnings("deprecation")
     private synchronized void release() throws BuildException {
         boolean success = false;
         if (hasValidKey()) {

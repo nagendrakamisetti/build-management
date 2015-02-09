@@ -20,13 +20,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-
-
 
 /**
  * Provides methods for merging XML documents. 
@@ -71,11 +67,6 @@ public final class XmlMergeUtil {
     private int nodeMode = OVERWRITE;
 
     /**
-     * Type of merge action to perform when matching node attributes are found. 
-     */
-    private int attrMode = OVERWRITE;
-
-    /**
      * Type of merge action to perform when combining node content. 
      */
     private int contentMode = OVERWRITE;
@@ -85,12 +76,10 @@ public final class XmlMergeUtil {
      * Construct the merge utility.
      * 
      * @param  node     Action to perform when merging nodes
-     * @param  attr     Action to perform when merging node attributes
      * @param  content  Action to perform when merging node content
      */
-    public XmlMergeUtil(int node, int attr, int content) {
+    public XmlMergeUtil(int node, int content) {
         nodeMode = node;
-        attrMode = attr;
         contentMode = content;
     }
 
@@ -185,7 +174,6 @@ public final class XmlMergeUtil {
         }
 
         // Iterate through each child to determine if it should be merged in the list
-        boolean matchFound = false;
         for (int idx1 = 0; idx1 < list1.getLength(); idx1++) {
             currentNode1 = list1.item(idx1);
             for (int idx2 = 0; idx2 < list2.getLength(); idx2++) {
@@ -274,29 +262,6 @@ public final class XmlMergeUtil {
 
         // Merge the node attributes
 
-
-        return merged;
-    }
-
-
-    /**
-     * Merges two DOM nodes into a combined node by appending the contents
-     * of the second node to the contents of the first node.  For example,
-     * if each node has 3 children, the nodes will be combined into a single
-     * node containing 6 children.
-     *
-     * <pre>
-     * Node 1:  a b c
-     * Node 2:  d e f
-     * Result:  a b c d e f
-     * </pre>
-     *
-     * @param  node1  Document node
-     * @param  node2  Document node
-     * @return Merged node contents
-     */
-    private Node appendNode(Node node1, Node node2) {
-        Node merged = node1.cloneNode(true);
 
         return merged;
     }

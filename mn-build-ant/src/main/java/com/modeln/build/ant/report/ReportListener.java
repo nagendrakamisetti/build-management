@@ -10,7 +10,6 @@
 package com.modeln.build.ant.report;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Stack;
 import java.util.Vector;
@@ -30,10 +29,10 @@ import org.apache.tools.ant.Target;
 public class ReportListener implements BuildListener {
 
     /** List of report entries recieved so far */
-    private Vector targets;
+    private Vector<ReportParseTarget> targets;
 
     /** List of parse events that should be considered in the report */
-    private Vector matches;
+    private Vector<ReportParseEvent> matches;
 
     /** Maintain a reference to the report which constructed this listner */
     protected Report parent;
@@ -42,7 +41,7 @@ public class ReportListener implements BuildListener {
     protected ReportComposer composer;
 
     /** Target execution stack */
-    private Stack executionStack = new Stack();
+    private Stack<BuildEvent> executionStack = new Stack<BuildEvent>();
 
     /**
      * Construct the listener and watch for the specified warning and error
@@ -50,10 +49,10 @@ public class ReportListener implements BuildListener {
      *
      * @param   list    List of build targets to scan for text
      */
-    public ReportListener(Report report, Vector list) {
+    public ReportListener(Report report, Vector<ReportParseTarget> list) {
         parent = report;
         targets = list;
-        matches = new Vector();
+        matches = new Vector<ReportParseEvent>();
         composer = new ReportComposer(targets, matches, null);
     }
 
@@ -83,7 +82,7 @@ public class ReportListener implements BuildListener {
         showMatches(event);
 
         // Determine if a build notification should be sent
-        Vector notifications = parent.getNotifications();
+        Vector<ReportNotification> notifications = parent.getNotifications();
         if (notifications != null) {
             ReportNotification current = null;
             event.getProject().log("Build complete.  Processing report notifications...");
@@ -184,7 +183,7 @@ public class ReportListener implements BuildListener {
      */
     public void messageLogged(BuildEvent event) {
         ReportParseTarget currentTarget = null;
-        Vector localMatches = null;
+        Vector<ReportParseCriteria> localMatches = null;
 
         // Cycle through the list of targets to search for matching criteria
         for (int idx = 0; idx < targets.size(); idx++) {

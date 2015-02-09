@@ -9,10 +9,6 @@
  */
 package com.modeln.build.ant.report;
 
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.BuildException;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;

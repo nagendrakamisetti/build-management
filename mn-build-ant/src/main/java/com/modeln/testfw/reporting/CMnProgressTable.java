@@ -10,8 +10,6 @@
 package com.modeln.testfw.reporting;
 
 import com.modeln.build.ant.report.ProgressTarget;
-import com.modeln.build.ant.report.ReportParseEvent;
-import com.modeln.build.ant.report.ReportParseTarget;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -19,11 +17,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.StringTokenizer;
 import java.util.Vector;
-import org.apache.tools.ant.BuildEvent;
-import org.apache.tools.ant.Location;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 
 
@@ -178,15 +172,8 @@ public class CMnProgressTable {
             int gid, 
             ProgressTarget indicator, 
             Target target)
-        throws SQLException
-    {
-        Location targetLocation = target.getLocation();
+        throws SQLException {
 
-        String file = targetLocation.getFileName();
-        int line = targetLocation.getLineNumber();
-        int hash = targetLocation.hashCode();
-
-        String targetName = target.getName();
         String startDate = DATETIME.format(new Date());
         int progressId = 0; 
 
@@ -234,7 +221,6 @@ public class CMnProgressTable {
         throws SQLException
     {
         String endDate = DATETIME.format(new Date());
-        int progressId = 0;
 
         StringBuffer sql = new StringBuffer();
         sql.append("UPDATE " + progressTable + " ");
@@ -242,7 +228,6 @@ public class CMnProgressTable {
         sql.append("WHERE  " + PROGRESS_ID + " = \"" + id + "\" ");
 
         Statement st = conn.createStatement();
-        ResultSet rs = null;
         try {
             st.execute(sql.toString());
         } catch (SQLException ex) {
@@ -260,10 +245,10 @@ public class CMnProgressTable {
      *
      * @return  List of progress entries
      */
-    public synchronized Vector getProgressList(Connection conn, int gid)
+    public synchronized Vector<CMnDbProgressData> getProgressList(Connection conn, int gid)
         throws SQLException
     {
-        Vector list = new Vector();
+        Vector<CMnDbProgressData> list = new Vector<CMnDbProgressData>();
 
         StringBuffer sql = new StringBuffer();
         sql.append(
@@ -299,10 +284,10 @@ public class CMnProgressTable {
      *
      * @return  List of progress groups 
      */
-    public synchronized Vector getLatestProgressByHost(Connection conn, String host)
+    public synchronized Vector<CMnDbProgressData> getLatestProgressByHost(Connection conn, String host)
         throws SQLException
     {
-        Vector list = null;
+        Vector<CMnDbProgressData> list = null;
 
         StringBuffer sql = new StringBuffer();
         sql.append(

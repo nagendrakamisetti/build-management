@@ -24,7 +24,7 @@ public final class LiveReportListener extends ReportListener {
      *
      * @param   list    List of build targets to scan for text
      */
-    public LiveReportListener(Report report, Vector list) {
+    public LiveReportListener(Report report, Vector<ReportParseTarget> list) {
         super(report, list);
     }
 }

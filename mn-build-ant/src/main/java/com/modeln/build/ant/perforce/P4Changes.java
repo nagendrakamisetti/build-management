@@ -10,10 +10,7 @@
 package com.modeln.build.ant.perforce;
 
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildEvent;
-import org.apache.tools.ant.BuildListener;
 
 import java.util.Date;
 import com.modeln.build.perforce.Changelist;

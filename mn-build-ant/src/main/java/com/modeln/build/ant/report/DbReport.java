@@ -11,18 +11,12 @@ package com.modeln.build.ant.report;
 
 import com.modeln.testfw.reporting.CMnReportTable;
 
-import org.apache.tools.ant.Task;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildException;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Vector;
 
 /**
  * Parses the Ant logging events and generates a report to summarize the
@@ -299,7 +293,8 @@ public final class DbReport extends Report {
      * Perform the task parsing and generate the report.  This method 
      * performs the event listener registration.
      */
-    public void execute() throws BuildException {
+    @SuppressWarnings("deprecation")
+	public void execute() throws BuildException {
         // Obtain the build version
         String version = getProject().getProperty("com.modeln.App.version");
 

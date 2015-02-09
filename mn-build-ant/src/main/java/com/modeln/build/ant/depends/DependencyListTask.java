@@ -12,9 +12,8 @@ package com.modeln.build.ant.depends;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.taskdefs.MatchingTask;
+import org.apache.tools.ant.types.DataType;
 import org.apache.tools.ant.types.FileList;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.Path;
@@ -59,12 +58,12 @@ public final class DependencyListTask extends Task {
     /**
      * Stores the list of classes to be checked for dependencies.
      */
-    private Vector classes = new Vector();
+    private Vector<DataType> classes = new Vector<DataType>();
 
     /**
      * List of resources that have dependencies.
      */
-    private Hashtable dependencies = new Hashtable();
+    private Hashtable<String, MatchingResource> dependencies = new Hashtable<String, MatchingResource>();
 
     /**
      * Only track dependencies at the Jar level.
@@ -74,22 +73,22 @@ public final class DependencyListTask extends Task {
     /**
      * List of packages to be included for processing.
      */
-    private Vector packageNames = new Vector();
+    private Vector<PackageName> packageNames = new Vector<PackageName>();
 
     /**
      * List of packages to be excluded during processing.
      */
-    private Vector excludePackageNames = new Vector();
+    private Vector<PackageName> excludePackageNames = new Vector<PackageName>();
 
     /**
      * List of resource locations to consider.
      */
-    private Vector resourceRoots = new Vector();
+    private Vector<FileResource> resourceRoots = new Vector<FileResource>();
 
     /** 
      * List of resource locations to exclude.
      */
-    private Vector excludeResourceRoots = new Vector();
+    private Vector<FileResource> excludeResourceRoots = new Vector<FileResource>();
 
     /**
      * Enable the output of progress indicators when processing files.
@@ -333,7 +332,7 @@ public final class DependencyListTask extends Task {
             // must be explicitly allowed
             includePackage = false;
 
-            Enumeration e = packageNames.elements();
+            Enumeration<PackageName> e = packageNames.elements();
             while (e.hasMoreElements()) {
                 PackageName currentInclude = (PackageName) e.nextElement();
                 if (pn.matches(currentInclude.toString())) {
@@ -344,7 +343,7 @@ public final class DependencyListTask extends Task {
 
         // Iterate through the explicitly excluded packages
         if ((excludePackageNames != null) && (excludePackageNames.size() > 0)) {
-            Enumeration e = excludePackageNames.elements();
+            Enumeration<PackageName> e = excludePackageNames.elements();
             while (e.hasMoreElements()) {
                 PackageName currentExclude = (PackageName) e.nextElement();
                 if (pn.matches(currentExclude.toString())) {
@@ -379,7 +378,7 @@ public final class DependencyListTask extends Task {
             // must be explicitly allowed
             includeResource = false;
 
-            Enumeration e = resourceRoots.elements();
+            Enumeration<FileResource> e = resourceRoots.elements();
             while (e.hasMoreElements()) {
                 FileResource currentRoot = (FileResource) e.nextElement();
                 String rootPath = currentRoot.getPath();
@@ -391,7 +390,7 @@ public final class DependencyListTask extends Task {
 
         // Iterate through the explicitly excluded packages
         if ((excludeResourceRoots != null) && (excludeResourceRoots.size() > 0)) {
-            Enumeration e = excludeResourceRoots.elements();
+            Enumeration<FileResource> e = excludeResourceRoots.elements();
             while (e.hasMoreElements()) {
                 FileResource currentRoot = (FileResource) e.nextElement();
                 String rootPath = currentRoot.getPath();
@@ -419,7 +418,7 @@ public final class DependencyListTask extends Task {
         printClasspath();
 
         // Iterate through the list of classes
-        for (Enumeration e = classes.elements(); e.hasMoreElements(); ) {
+        for (Enumeration<DataType> e = classes.elements(); e.hasMoreElements(); ) {
             Object o = e.nextElement();
             if (o instanceof Path) {
                 Path path = (Path) o;
@@ -465,11 +464,11 @@ public final class DependencyListTask extends Task {
      * Generate an HTML report by sending output to the specified output stream.
      */
     private void writeTextReport(PrintStream out) {
-        for (Enumeration keys = dependencies.keys(); keys.hasMoreElements(); ) {
+        for (Enumeration<String> keys = dependencies.keys(); keys.hasMoreElements(); ) {
             Object key = keys.nextElement();
             out.println(key);
             MatchingResource match = (MatchingResource) dependencies.get(key);
-            Iterator classIterator = match.getAllSources().iterator();
+            Iterator<File> classIterator = match.getAllSources().iterator();
             while (classIterator.hasNext()) {
                 out.println("   " + classIterator.next());
             }
@@ -489,30 +488,30 @@ public final class DependencyListTask extends Task {
         // Display a table of contents
         out.println("<h1>Dependencies</h1>");
         out.println("<ul>");
-        for (Enumeration keys = dependencies.keys(); keys.hasMoreElements(); ) {
-            Object key = keys.nextElement();
+        for (Enumeration<String> keys = dependencies.keys(); keys.hasMoreElements(); ) {
+            String key = keys.nextElement();
             out.println("<li><a href=\"#" + key + "\">" + key + "</a></li>");
         }
         out.println("</ul>");
 
         // Display the dependency information details
         out.println("<h1>Details</h1>");
-        for (Enumeration keys = dependencies.keys(); keys.hasMoreElements(); ) {
-            Object key = keys.nextElement();
+        for (Enumeration<String> keys = dependencies.keys(); keys.hasMoreElements(); ) {
+        	String key = keys.nextElement();
             MatchingResource match = (MatchingResource) dependencies.get(key);
 
             out.println("<a name=\"" + key + "\"><b>" + key + "</b></a><br>");
             out.println("  <blockquote>");
 
             // Display the fallback resource
-            Iterator fallbackList = match.getFallback().iterator();
+            Iterator<String> fallbackList = match.getFallback().iterator();
             while (fallbackList.hasNext()) {
                 out.println("<font color=\"#FF0000\">Fallback resource: " + fallbackList.next() + "</font><br>");
             }
 
             // Display the list of source files referencing the resource
             out.println("  <pre>");
-            Iterator classIterator = match.getAllSources().iterator();
+            Iterator<File> classIterator = match.getAllSources().iterator();
             while (classIterator.hasNext()) {
                 out.println(classIterator.next());
             }
@@ -615,7 +614,7 @@ public final class DependencyListTask extends Task {
             DependencyListTask.class.getClassLoader();
 
         try {
-            Enumeration resources = loader.getResources(resourceName);
+            Enumeration<URL> resources = loader.getResources(resourceName);
             URL prev = null;
             URL current = null;
             while (resources.hasMoreElements()) {
@@ -712,10 +711,10 @@ public final class DependencyListTask extends Task {
         private URL resource;
 
         /** List of source files that import the resource */
-        private HashSet sources = new HashSet();
+        private HashSet<File> sources = new HashSet<File>();
 
         /** Resources that would be loaded if the current resource is removed */
-        private HashSet fallback = new HashSet();
+        private HashSet<String> fallback = new HashSet<String>();
 
         public void setResource(URL resource) {
             this.resource = resource;
@@ -732,7 +731,7 @@ public final class DependencyListTask extends Task {
          * Returns a collection of URLs that would be used if the current
          * resource were removed.
          */
-        public Collection getFallback() {
+        public Collection<String> getFallback() {
             return fallback;
         }
 
@@ -743,7 +742,7 @@ public final class DependencyListTask extends Task {
         /**
          * Returns a collection of files that import the resource.
          */
-        public Collection getAllSources() {
+        public Collection<File> getAllSources() {
             return sources;
         }
     }

@@ -11,7 +11,6 @@ package com.modeln.build.ant.security;
 
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildEvent;
 
 
 /**

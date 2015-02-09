@@ -12,16 +12,11 @@ package com.modeln.build.ant.report;
 import com.modeln.testfw.reporting.CMnProgressTable;
 
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildException;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Vector;
 
 /**
@@ -62,7 +57,7 @@ public final class DbProgress extends Task {
     private CMnProgressTable dbTable = new CMnProgressTable();
 
     /** List of ant targets should be used as progress indicators */
-    protected Vector progressTargets = new Vector();
+    protected Vector<ProgressTarget> progressTargets = new Vector<ProgressTarget>();
 
 
     /**
@@ -232,7 +227,7 @@ public final class DbProgress extends Task {
     /**
      * Return a list of ant targets to be used as progress indicators. 
      */
-    public Vector getProgressTargets() {
+    public Vector<ProgressTarget> getProgressTargets() {
         return progressTargets;
     }
 
@@ -241,7 +236,8 @@ public final class DbProgress extends Task {
      * Perform the task parsing and generate the report.  This method 
      * performs the event listener registration.
      */
-    public void execute() throws BuildException {
+    @SuppressWarnings("deprecation")
+	public void execute() throws BuildException {
         // Create a new build listener for parsing events
         Connection conn = getConnection();
         DbProgressListener listener = new DbProgressListener(conn, buildId, getProgressTargets(), dbTable);

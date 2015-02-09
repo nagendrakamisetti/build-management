@@ -10,22 +10,7 @@
  */
 package com.modeln.build.ant;
 
-import java.io.File;
-import java.util.Enumeration;
-import java.util.StringTokenizer;
-import java.util.Vector;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.types.EnumeratedAttribute;
-import org.apache.tools.ant.types.FileSet;
-
-import org.apache.tools.ant.taskdefs.email.EmailAddress;
 import org.apache.tools.ant.taskdefs.email.EmailTask;
-import org.apache.tools.ant.taskdefs.email.Mailer;
-import org.apache.tools.ant.taskdefs.email.Message;
-import org.apache.tools.ant.taskdefs.email.MimeMailer;
 
 /**
  * This task serves as a data object for managing a mail message.

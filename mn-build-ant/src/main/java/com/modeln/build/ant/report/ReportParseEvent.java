@@ -10,9 +10,6 @@
 package com.modeln.build.ant.report;
 
 import org.apache.tools.ant.BuildEvent;
-import org.apache.tools.ant.Target;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -42,7 +39,7 @@ public class ReportParseEvent {
     private BuildEvent buildEvent;
 
     /** List of parse criteria that match the current event */
-    private Vector matches;
+    private Vector<ReportParseCriteria> matches;
 
     /** References the parse target that generated the event */
     private ReportParseTarget owner;
@@ -57,7 +54,7 @@ public class ReportParseEvent {
      * Construct an empty parse event.
      */
     public ReportParseEvent() {
-        matches = new Vector();
+        matches = new Vector<ReportParseCriteria>();
     }
 
     /**
@@ -65,14 +62,14 @@ public class ReportParseEvent {
      */
     public ReportParseEvent(BuildEvent event) {
         buildEvent = event;
-        matches = new Vector();
+        matches = new Vector<ReportParseCriteria>();
     }
 
     /**
      * Construct a parse event from an existing event and set the matching
      * search criteria.
      */
-    public ReportParseEvent(BuildEvent event, Vector criteria) {
+    public ReportParseEvent(BuildEvent event, Vector<ReportParseCriteria> criteria) {
         buildEvent = event;
         matches = criteria;
     }
@@ -177,7 +174,7 @@ public class ReportParseEvent {
      *
      * @return  Vector containing the matching parse criteria
      */
-    public Vector getCriteria() {
+    public Vector<ReportParseCriteria> getCriteria() {
         return matches;
     }
 

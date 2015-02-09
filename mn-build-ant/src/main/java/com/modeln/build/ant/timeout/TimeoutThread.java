@@ -12,8 +12,6 @@ package com.modeln.build.ant.timeout;
 import java.util.Date;
 
 import org.apache.tools.ant.BuildEvent;
-import org.apache.tools.ant.Project;
-
 
 /**
  * The timeout listener is designed to monitor an Ant process and
@@ -40,9 +38,6 @@ public class TimeoutThread extends Thread {
     /** Determines whether the thread is currently running */
     private boolean running = true;
 
-    /** Determine whether the timeout should execute only once or monitor continuously */
-    private boolean continuous = false;
-
 
     /**
      * Construct the timout thread to expire after the specified amount of time.
@@ -59,16 +54,6 @@ public class TimeoutThread extends Thread {
      */
     public void reset() {
         startDate = new Date();
-    }
-
-    /**
-     * Set the timout listener to continue indefinitely or execute only once 
-     * and then terminate.
-     *
-     * @param   enable      TRUE if the timeout loop should continually execute
-     */
-    public void setContinuous(boolean enable) {
-        continuous = enable;
     }
 
     /**

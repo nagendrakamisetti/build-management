@@ -10,7 +10,6 @@
 package com.modeln.testfw.reporting;
 
 import com.modeln.build.ant.report.BuildEventUtil;
-import com.modeln.build.ant.report.ProgressTarget;
 import com.modeln.build.ant.report.ReportParseCriteria;
 import com.modeln.build.ant.report.ReportParseEvent;
 import com.modeln.build.ant.report.ReportParseTarget;
@@ -21,7 +20,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.StringTokenizer;
 import java.util.Vector;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Project;
@@ -168,7 +166,7 @@ public class CMnReportTable {
         throws SQLException
     {
         String targetName = target.getTargetName();
-        Vector criteriaList = target.getAllCriteria();
+        Vector<ReportParseCriteria> criteriaList = target.getAllCriteria();
         ReportParseCriteria currentCriteria = null;
         for (int idx = 0; idx < criteriaList.size(); idx++) {
             currentCriteria = (ReportParseCriteria) criteriaList.get(idx);
@@ -253,7 +251,6 @@ public class CMnReportTable {
         sql.append(", \"" + escapeQueryText(event.getBuildEvent().getMessage()) + "\")");
 
         Statement st = conn.createStatement();
-        ResultSet rs = null;
         try {
             st.execute(sql.toString());
         } catch (SQLException ex) {
@@ -275,12 +272,12 @@ public class CMnReportTable {
      *
      * @return  List of build event objects
      */
-    public synchronized Vector getEventList(
+    public synchronized Vector<ReportParseEvent> getEventList(
             Connection conn, 
             String version)
         throws SQLException
     {
-        Vector list = null;
+        Vector<ReportParseEvent> list = null;
 
         StringBuffer sql = new StringBuffer();
         sql.append(
@@ -358,13 +355,13 @@ public class CMnReportTable {
      *
      * @return  List of build event objects
      */
-    public synchronized Vector getEventContext(
+    public synchronized Vector<ReportParseEvent> getEventContext(
             Connection conn, 
             int eventId,
             int size)
         throws SQLException
     {
-        Vector list = null;
+        Vector<ReportParseEvent> list = null;
         String version = getBuildVersion(conn, eventId);
 
         int idMin = eventId - (size / 2);
@@ -409,12 +406,12 @@ public class CMnReportTable {
      *
      * @return  List of build event objects
      */
-    public synchronized Vector getEventSummary(
+    public synchronized Vector<ReportParseEvent> getEventSummary(
             Connection conn,
             String version)
         throws SQLException
     {
-        Vector list = null;
+        Vector<ReportParseEvent> list = null;
 
         StringBuffer sql = new StringBuffer();
         sql.append(
@@ -525,27 +522,27 @@ public class CMnReportTable {
      *
      * @return  List of events 
      */
-    public Vector parseEventList(Connection conn, ResultSet rs)
+    public Vector<ReportParseEvent> parseEventList(Connection conn, ResultSet rs)
         throws SQLException
     {
-        Vector list = new Vector();
+        Vector<ReportParseEvent> list = new Vector<ReportParseEvent>();
 
         ReportParseEvent event = null;
         ReportParseCriteria criteria = null;
         while (rs.next()) {
             event = parseEventData(rs);
-            Vector criteriaList = event.getCriteria();
+            Vector<ReportParseCriteria> criteriaList = event.getCriteria();
             for (int idx = 0; idx < criteriaList.size(); idx++) {
                 criteria = (ReportParseCriteria) criteriaList.get(idx);
                 if (criteria != null) {
                     // The assumption here is that the getCriteria call will always return
                     // a valid target containing only a single criteria object
                     ReportParseTarget newTarget = getCriteria(conn, criteria.getId());
-                    Vector allCriteria = newTarget.getAllCriteria();
+                    Vector<ReportParseCriteria> allCriteria = newTarget.getAllCriteria();
                     if ((allCriteria != null) && (allCriteria.size() > 0)) {
                         ReportParseCriteria newCriteria = (ReportParseCriteria) allCriteria.get(0);
                         newCriteria.setParent(newTarget);
-                        boolean status = event.replaceCriteria(criteria, newCriteria);
+                        event.replaceCriteria(criteria, newCriteria);
                     }
                 }
             }
@@ -619,9 +616,6 @@ public class CMnReportTable {
 
         int criteriaId = rs.getInt(criteriaTable + "." + CRITERIA_ID);
         data.setId(criteriaId);
-
-        String version = rs.getString(criteriaTable + "." + BUILD_VERSION);
-        //data.setBuildVersion(version);
 
         String severity = rs.getString(criteriaTable + "." + EVENT_SEVERITY);
         data.setType(severity);

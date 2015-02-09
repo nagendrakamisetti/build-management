@@ -10,13 +10,7 @@
 package com.modeln.build.ant.report;
 
 import org.apache.tools.ant.BuildEvent;
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.MatchingTask;
-import org.apache.tools.ant.types.FileSet;
 
 import java.util.Date;
 import java.util.Vector;
@@ -46,7 +40,7 @@ public final class ReportParseTarget extends MatchingTask {
     private String excludeTarget;
 
     /** List of search criteria that will be used for the current target */
-    private Vector criteria;
+    private Vector<ReportParseCriteria> criteria;
 
     /** Execution status of the target */
     private String status = PENDING;
@@ -56,9 +50,6 @@ public final class ReportParseTarget extends MatchingTask {
 
     /** Date and time when the target completed */
     private Date endDate;
-
-    /** Name of the parent target */
-    private String parent;
 
     /** File to be processed */
     private String filename;
@@ -94,7 +85,7 @@ public final class ReportParseTarget extends MatchingTask {
      */
     public void setTarget(String task) {
         target = task;
-        criteria = new Vector();
+        criteria = new Vector<ReportParseCriteria>();
     }
 
     /**
@@ -140,7 +131,7 @@ public final class ReportParseTarget extends MatchingTask {
      *
      * @return  List of all ReportParseCriteria entries
      */
-    public Vector getAllCriteria() {
+    public Vector<ReportParseCriteria> getAllCriteria() {
         return criteria;
     }
 
@@ -188,8 +179,8 @@ public final class ReportParseTarget extends MatchingTask {
      *
      * @return  List of matching criteria
      */
-    public Vector getMatchingCriteria(BuildEvent event) {
-        Vector matchingCriteria = new Vector();
+    public Vector<ReportParseCriteria> getMatchingCriteria(BuildEvent event) {
+        Vector<ReportParseCriteria> matchingCriteria = new Vector<ReportParseCriteria>();
 
         ReportParseCriteria currentCriteria = null;
         for (int idx = 0; idx < criteria.size(); idx++) {
@@ -213,7 +204,7 @@ public final class ReportParseTarget extends MatchingTask {
         ReportParseCriteria highest = null;
         ReportParseCriteria current = null;
 
-        Vector matchingCriteria = getMatchingCriteria(event);
+        Vector<ReportParseCriteria> matchingCriteria = getMatchingCriteria(event);
         for (int idx = 0; idx < matchingCriteria.size(); idx++) {
             current = (ReportParseCriteria) matchingCriteria.get(idx);
             if ((highest != null) && (current != null)) {
@@ -299,7 +290,7 @@ public final class ReportParseTarget extends MatchingTask {
      * @return  List of files that correspond to matching files
      */
     public String[] getTargetFiles() {
-        Vector files = new Vector();
+        Vector<String> files = new Vector<String>();
         
         // Using a single filename because I couldn't get the fileset to work
         files.add(filename);

@@ -9,7 +9,6 @@
  */
 package com.modeln.build.ant.timeout;
 
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
 

@@ -10,10 +10,7 @@
 package com.modeln.build.ant;
 
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildEvent;
-import org.apache.tools.ant.BuildListener;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

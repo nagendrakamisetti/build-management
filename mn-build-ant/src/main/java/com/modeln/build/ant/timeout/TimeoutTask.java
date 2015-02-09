@@ -10,7 +10,6 @@
 package com.modeln.build.ant.timeout;
 
 import org.apache.tools.ant.Task;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildEvent;
 
@@ -27,7 +26,7 @@ import com.modeln.build.ant.Notification;
 public final class TimeoutTask extends Task {
 
     /** List of notifications that must be sent as a result of a timeout */
-    private Vector notificationList = new Vector();
+    private Vector<Notification> notificationList = new Vector<Notification>();
 
     /** Length of time that the build can remain idle */
     private TimeoutThread timer;
@@ -97,7 +96,7 @@ public final class TimeoutTask extends Task {
     /**
      * Return a list of notification tasks.
      */
-    public Vector getNotifications() {
+    public Vector<Notification> getNotifications() {
         return notificationList;
     }
 
@@ -118,7 +117,8 @@ public final class TimeoutTask extends Task {
     /**
      * Perform the task parsing and generate the report.
      */
-    public void execute() throws BuildException {
+    @SuppressWarnings("deprecation")
+	public void execute() throws BuildException {
         // Create a new build listener for monitoring the build
         TimeoutListener listener = new TimeoutListener(this);
         project.addBuildListener(listener);
@@ -131,7 +131,8 @@ public final class TimeoutTask extends Task {
      *
      * @param   timeoutEvent    Event that generated the notification
      */
-    public void sendNotifications(BuildEvent timeoutEvent) throws BuildException {
+    @SuppressWarnings("deprecation")
+	public void sendNotifications(BuildEvent timeoutEvent) throws BuildException {
 
         // Send the list of notifications
         for (int idx = 0; idx < notificationList.size(); idx++) {
@@ -146,7 +147,7 @@ public final class TimeoutTask extends Task {
             StringBuffer info = new StringBuffer();
 
             // Construct a list of threads that need to be terminated
-            Vector staleThreads = new Vector();
+            Vector<Thread> staleThreads = new Vector<Thread>();
 
             // Obtain some information about the threads
             Thread current = Thread.currentThread();
@@ -194,7 +195,8 @@ public final class TimeoutTask extends Task {
      *
      * @param   threads     List of threads that should be killed
      */
-    private void performGracefulStop(Vector threads) {
+    @SuppressWarnings("deprecation")
+	private void performGracefulStop(Vector<Thread> threads) {
         // Determine how forcefully we should attempt to kill the threads
         switch (timeoutAttempts) {
             case 0:   // Gently interrupt
@@ -230,7 +232,8 @@ public final class TimeoutTask extends Task {
      *
      * @param   threads     List of threads that should be killed
      */
-    private void interrupt(Vector threads) {
+    @SuppressWarnings("deprecation")
+	private void interrupt(Vector<Thread> threads) {
         Thread staleThread = null;
         Task staleTask = null;
 
@@ -251,7 +254,8 @@ public final class TimeoutTask extends Task {
      *
      * @param   threads     List of threads that should be killed
      */
-    private void stop(Vector threads) {
+    @SuppressWarnings("deprecation")
+	private void stop(Vector<Thread> threads) {
         Thread staleThread = null;
         Task staleTask = null;
 
