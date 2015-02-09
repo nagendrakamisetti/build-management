@@ -4,7 +4,7 @@
  * Copyright 2002 by Shawn Stafford (sstafford@modeln.com)
  * All rights reserved.
  */
-package com.modeln.build.web.database;
+package com.modeln.build.web.db;
 
 /**
  * The JndiRepository class contains information required to connect to a 
