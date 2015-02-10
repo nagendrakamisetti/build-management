@@ -28,13 +28,13 @@ import org.apache.tools.ant.Target;
  */
 public class ReportListener implements BuildListener {
 
-    /** List of report entries recieved so far */
+    /** List of report entries received so far */
     private Vector<ReportParseTarget> targets;
 
     /** List of parse events that should be considered in the report */
     private Vector<ReportParseEvent> matches;
 
-    /** Maintain a reference to the report which constructed this listner */
+    /** Maintain a reference to the report which constructed this listener */
     protected Report parent;
 
     /** Generates the report */
@@ -49,11 +49,11 @@ public class ReportListener implements BuildListener {
      *
      * @param   list    List of build targets to scan for text
      */
-    public ReportListener(Report report, Vector<ReportParseTarget> list) {
-        parent = report;
-        targets = list;
-        matches = new Vector<ReportParseEvent>();
-        composer = new ReportComposer(targets, matches, null);
+    public ReportListener(Report report, Vector<ReportParseTarget> targets) {
+    	this.parent = report;
+        this.targets = targets;
+        this.matches = new Vector<ReportParseEvent>();
+        this.composer = new ReportComposer(targets, matches, null);
     }
 
     /**
@@ -105,7 +105,6 @@ public class ReportListener implements BuildListener {
      */
     public void targetStarted(BuildEvent event) {
         push(event);
-
 
         // Cycle through the list of targets
         ReportParseTarget currentTarget = null;

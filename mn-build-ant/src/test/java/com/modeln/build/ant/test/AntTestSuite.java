@@ -1,6 +1,6 @@
 package com.modeln.build.ant.test;
 
-import com.modeln.build.ant.ReportTest;
+import com.modeln.build.ant.test.ReportTest;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;

@@ -27,10 +27,8 @@ public class ReportParseEvent {
     /** Format of the date string prepended to each log line */
     protected static String DATE_FORMAT = "MM/dd/yy HH:mm:ss";
 
-
-    /** Date formatter used to print and parse the log timestamps */
+    /** Date formatter used to print and parse the log timestamp */
     private static DateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
-
 
     /** Unique key value used to identify an event */
     private int eventId;

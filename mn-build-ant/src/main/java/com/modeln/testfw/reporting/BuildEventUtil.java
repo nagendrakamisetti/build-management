@@ -7,7 +7,7 @@
  * in accordance with the terms of the license agreement you
  * entered into with Model N, Inc.
  */
-package com.modeln.build.ant.report;
+package com.modeln.testfw.reporting;
 
 import java.util.StringTokenizer;
 import org.apache.tools.ant.BuildEvent;

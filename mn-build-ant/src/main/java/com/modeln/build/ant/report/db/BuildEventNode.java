@@ -7,7 +7,7 @@
  * in accordance with the terms of the license agreement you
  * entered into with Model N, Inc.
  */
-package com.modeln.build.ant.report;
+package com.modeln.build.ant.report.db;
 
 import java.util.ArrayList;
 
@@ -62,7 +62,7 @@ public class BuildEventNode {
      *
      * @return  Parent of the current node
      */
-    protected BuildEventNode getParent() {
+    public BuildEventNode getParent() {
         return parent;
     }
 
@@ -71,7 +71,7 @@ public class BuildEventNode {
      *
      * @return  List of child nodes
      */
-    protected ArrayList<BuildEventNode> getChildren() {
+    public ArrayList<BuildEventNode> getChildren() {
         return children;
     }
 

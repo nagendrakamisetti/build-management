@@ -7,7 +7,7 @@
  * in accordance with the terms of the license agreement you
  * entered into with Model N, Inc.
  */
-package com.modeln.build.ant.report;
+package com.modeln.build.ant.report.log;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,6 +20,7 @@ import org.apache.tools.ant.DefaultLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.Target;
+
 
 /**
  */

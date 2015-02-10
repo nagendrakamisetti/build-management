@@ -7,9 +7,12 @@
  * in accordance with the terms of the license agreement you
  * entered into with Model N, Inc.
  */
-package com.modeln.build.ant.report;
+package com.modeln.build.ant.report.live;
 
 import org.apache.tools.ant.BuildException;
+
+import com.modeln.build.ant.report.Report;
+import com.modeln.build.ant.report.ReportListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

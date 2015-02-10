@@ -7,8 +7,9 @@
  * in accordance with the terms of the license agreement you
  * entered into with Model N, Inc.
  */
-package com.modeln.build.ant.report;
+package com.modeln.build.ant.report.db;
 
+import com.modeln.build.ant.report.Report;
 import com.modeln.testfw.reporting.CMnReportTable;
 
 import org.apache.tools.ant.Project;

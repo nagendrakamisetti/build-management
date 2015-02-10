@@ -1,18 +1,13 @@
-package com.modeln.build.ant;
+package com.modeln.build.ant.test;
 
 import com.modeln.build.ant.report.ReportParseCriteria;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.apache.tools.ant.Target;
-import org.apache.tools.ant.Task;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.BuildEvent;
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Echo;
-import org.apache.tools.ant.taskdefs.Echo.EchoLevel;
 
 /**
  * Test methods for verifying the reporting methods.

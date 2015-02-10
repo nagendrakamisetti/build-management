@@ -9,7 +9,7 @@
  */
 package com.modeln.testfw.reporting;
 
-import com.modeln.build.ant.report.ProgressTarget;
+import com.modeln.build.ant.progress.ProgressTarget;
 
 import java.sql.Connection;
 import java.sql.ResultSet;

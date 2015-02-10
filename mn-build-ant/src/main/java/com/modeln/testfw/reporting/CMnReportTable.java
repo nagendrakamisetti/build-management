@@ -9,7 +9,6 @@
  */
 package com.modeln.testfw.reporting;
 
-import com.modeln.build.ant.report.BuildEventUtil;
 import com.modeln.build.ant.report.ReportParseCriteria;
 import com.modeln.build.ant.report.ReportParseEvent;
 import com.modeln.build.ant.report.ReportParseTarget;
