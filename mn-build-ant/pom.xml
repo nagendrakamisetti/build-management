@@ -27,6 +27,11 @@
       <artifactId>mn-build-core</artifactId>
       <version>1.0</version>
     </dependency>
+    <dependency>
+		<groupId>com.modeln.batam</groupId>
+		<artifactId>java-connector</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
 
     <!-- External 3rd Party modules -->
     <dependency>
