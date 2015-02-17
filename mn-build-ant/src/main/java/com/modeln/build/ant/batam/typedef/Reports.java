@@ -4,14 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Reports {
-	private List<PairType> reports = new ArrayList<PairType>();
+	private List<Report> reports = new ArrayList<Report>();
+
+	public Reports() {
+		super();
+	}
 	
-	public void add(PairType report){
+	public Report createReport() {                              
+		Report report = new Report();
 		reports.add(report);
+        return report;
+    }
+
+	public List<Report> getReports() {
+		return reports;
 	}
 
-	public List<PairType> get() {
-		return reports;
-	}	
-	
 }

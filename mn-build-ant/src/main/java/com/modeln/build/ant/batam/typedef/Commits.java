@@ -4,15 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Commits {
-	private List<CommitType> commits = new ArrayList<CommitType>();
-	
-	public void add(CommitType commit){
-		commits.add(commit);
-	}
+	private List<Commit> commits = new ArrayList<Commit>();
 
-	public List<CommitType> get() {
+	public Commits() {
+		super();
+	}
+	
+	public Commit createCommit() {                              
+		Commit commit = new Commit();
+		commits.add(commit);
+        return commit;
+    }
+
+	public List<Commit> getCommits() {
 		return commits;
 	}
-	
-	
+
 }

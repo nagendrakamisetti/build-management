@@ -1,17 +1,11 @@
 package com.modeln.build.ant.batam.typedef;
 
-public class PairType {
-	
-	private String name;
+public class Log {
 	
 	private String value;
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+	public Log() {
+		super();
 	}
 
 	public String getValue() {
@@ -21,6 +15,5 @@ public class PairType {
 	public void setValue(String value) {
 		this.value = value;
 	}
-	
-	
+
 }

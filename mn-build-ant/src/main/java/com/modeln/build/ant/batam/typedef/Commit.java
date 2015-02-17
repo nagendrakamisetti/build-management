@@ -1,10 +1,6 @@
 package com.modeln.build.ant.batam.typedef;
 
-public class CommitType {
-	
-	private String buildId;
-	
-	private String buildName;
+public class Commit {
 	
 	private String commitId;
 	
@@ -14,20 +10,8 @@ public class CommitType {
 	
 	private String dateCommitted;
 
-	public String getBuildId() {
-		return buildId;
-	}
-
-	public void setBuildId(String buildId) {
-		this.buildId = buildId;
-	}
-
-	public String getBuildName() {
-		return buildName;
-	}
-
-	public void setBuildName(String buildName) {
-		this.buildName = buildName;
+	public Commit() {
+		super();
 	}
 
 	public String getCommitId() {

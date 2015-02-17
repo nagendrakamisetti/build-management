@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.modeln.batam.connector.SimplePublisher;
 import com.modeln.batam.connector.wrapper.TestReport;
+import com.modeln.build.ant.batam.typedef.Logs;
 
 public abstract class AbstractReportTask extends AbstractBatamTask {
 	private String id;
@@ -28,11 +29,13 @@ public abstract class AbstractReportTask extends AbstractBatamTask {
 	
 	private String status;
 	
-	private List<String> logs;
+	private List<Logs> logs = new ArrayList<Logs>();
 	
-	public void add(String log){
-		logs.add(log);
-	}
+	public Logs createLogs() {                                
+		Logs log = new Logs();
+        logs.add(log);
+        return log;
+    }
 	
 	public String getId() {
 		return id;
@@ -106,14 +109,6 @@ public abstract class AbstractReportTask extends AbstractBatamTask {
 		this.status = status;
 	}
 
-	public List<String> getLogs() {
-		return logs;
-	}
-
-	public void setLogs(List<String> logs) {
-		this.logs = logs;
-	}
-
 	@Override
 	public void execute(){
 		//Check params.
@@ -129,8 +124,12 @@ public abstract class AbstractReportTask extends AbstractBatamTask {
 		report.setStatus(status);
 		SimpleDateFormat formatter = new SimpleDateFormat(dateFormat == null? DEFAULT_DATE_FORMAT: dateFormat);
 		try {
-			report.setStartDate(formatter.parse(startDate));
-			report.setEndDate(formatter.parse(endDate));
+			if(startDate != null){
+				report.setStartDate(formatter.parse(startDate));
+			}
+			if(endDate != null){
+				report.setEndDate(formatter.parse(endDate));
+			}
 		} catch (ParseException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -138,8 +137,8 @@ public abstract class AbstractReportTask extends AbstractBatamTask {
 		//Add logs to report.
 		List<String> reportLogs = new ArrayList<String>();
 		if(!logs.isEmpty()){
-			for(int i = 0; i < logs.size(); i++){
-				String log = logs.get(i);
+			for(int i = 0; i < logs.get(0).getLogs().size(); i++){
+				String log = logs.get(0).getLogs().get(i).getValue();
 				reportLogs.add(log);
 			}
 		}

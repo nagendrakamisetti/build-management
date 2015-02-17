@@ -1,11 +1,15 @@
 package com.modeln.build.ant.batam.typedef;
 
-public class StepType {
+public class Step {
 	private String name;
 	
 	private String startDate;
 	
 	private String endDate;
+    
+	public Step() {
+		super();
+	}
 
 	public String getName() {
 		return name;

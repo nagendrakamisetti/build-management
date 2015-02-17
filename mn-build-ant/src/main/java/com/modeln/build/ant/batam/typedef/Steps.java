@@ -4,16 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Steps {
-	private List<StepType> steps = new ArrayList<StepType>();
-	
-	public void add(StepType step){
-		steps.add(step);
-	}
+	private List<Step> steps = new ArrayList<Step>();
 
-	public List<StepType> get() {
+	public Steps() {
+		super();
+	}
+	
+	public Step createStep() {                              
+		Step step = new Step();
+		steps.add(step);
+        return step;
+    }
+
+	public List<Step> getSteps() {
 		return steps;
 	}
-	
-	
-	
+
 }

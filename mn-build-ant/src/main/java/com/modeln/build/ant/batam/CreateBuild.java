@@ -6,7 +6,7 @@ import com.modeln.batam.connector.SimplePublisher;
 import com.modeln.batam.connector.wrapper.Build;
 
 public class CreateBuild extends AbstractBuildTask {
-
+	
 	@Override
 	protected void operation(SimplePublisher connector, Object object) {
 		try {

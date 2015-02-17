@@ -4,14 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Infos {
-	private List<PairType> infos = new ArrayList<PairType>();
+	private List<Info> infos = new ArrayList<Info>();
+
+	public Infos() {
+		super();
+	}
 	
-	public void add(PairType info){
+	public Info createInfo() {                              
+		Info info = new Info();
 		infos.add(info);
+        return info;
+    }
+
+	public List<Info> getInfos() {
+		return infos;
 	}
 
-	public List<PairType> get() {
-		return infos;
-	}	
-	
 }
