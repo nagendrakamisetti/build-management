@@ -1,13 +1,14 @@
 package com.modeln.build.ant.batam;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.modeln.batam.connector.SimplePublisher;
-import com.modeln.batam.connector.wrapper.Build;
+import org.apache.tools.ant.BuildException;
+
+import com.modeln.batam.connector.Connector;
+import com.modeln.batam.connector.wrapper.BuildEntry;
 import com.modeln.batam.connector.wrapper.Pair;
 import com.modeln.build.ant.batam.typedef.Commit;
 import com.modeln.build.ant.batam.typedef.Commits;
@@ -152,7 +153,7 @@ public abstract class AbstractBuildTask extends AbstractBatamTask {
 		checkUnaryList(commits);
 		
 		//Build build object.
-		Build build = new Build();
+		BuildEntry build = new BuildEntry();
 		build.setId(id);
 		build.setName(name);
 		build.setDescription(description);
@@ -166,8 +167,7 @@ public abstract class AbstractBuildTask extends AbstractBatamTask {
 				build.setEndDate(formatter.parse(endDate));
 			}
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new BuildException("Task failed", e);
 		}
 		build.setStatus(status);
 		//Add criterias to build.
@@ -205,8 +205,7 @@ public abstract class AbstractBuildTask extends AbstractBatamTask {
 				try {
 					buildSteps.add(new com.modeln.batam.connector.wrapper.Step(step.getName(), formatter.parse(step.getStartDate()), formatter.parse(step.getEndDate())));
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					throw new BuildException("Task failed", e);
 				}
 			}
 		}
@@ -219,24 +218,18 @@ public abstract class AbstractBuildTask extends AbstractBatamTask {
 				try {
 					buildCommits.add(new com.modeln.batam.connector.wrapper.Commit(id, name, commit.getCommitId(), commit.getUrl(), commit.getAuthor(), formatter.parse(commit.getDateCommitted())));
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					throw new BuildException("Task failed", e);
 				}
 			}
 		}
 		build.setCommits(buildCommits);
 		
-		SimplePublisher publisher = SimplePublisher.getInstance();
+		setConnector(Connector.getInstance());
 
-		try {
-			publisher.beginConnection(getHost(), getUsername(), getPassword(), getPort(), getVhost(), getQueue(), getMode());
-			
-			operation(publisher, build);
-			
-			publisher.endConnection();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		beginConnection();
+		
+		operation(build);
+		
+		endConnection();
 	}
 }

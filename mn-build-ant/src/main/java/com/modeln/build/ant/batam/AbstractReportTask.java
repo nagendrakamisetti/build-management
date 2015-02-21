@@ -1,13 +1,14 @@
 package com.modeln.build.ant.batam;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.modeln.batam.connector.SimplePublisher;
-import com.modeln.batam.connector.wrapper.TestReport;
+import org.apache.tools.ant.BuildException;
+
+import com.modeln.batam.connector.Connector;
+import com.modeln.batam.connector.wrapper.ReportEntry;
 import com.modeln.build.ant.batam.typedef.Logs;
 
 public abstract class AbstractReportTask extends AbstractBatamTask {
@@ -115,7 +116,7 @@ public abstract class AbstractReportTask extends AbstractBatamTask {
 		checkUnaryList(logs);
 		
 		//Build report object.
-		TestReport report = new TestReport();
+		ReportEntry report = new ReportEntry();
 		report.setBuildId(buildId);
 		report.setBuildName(buildName);
 		report.setDescription(description);
@@ -130,9 +131,8 @@ public abstract class AbstractReportTask extends AbstractBatamTask {
 			if(endDate != null){
 				report.setEndDate(formatter.parse(endDate));
 			}
-		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (ParseException e) {
+			throw new BuildException("Task failed", e);
 		}
 		//Add logs to report.
 		List<String> reportLogs = new ArrayList<String>();
@@ -144,17 +144,12 @@ public abstract class AbstractReportTask extends AbstractBatamTask {
 		}
 		report.setLogs(reportLogs);
 		
-		SimplePublisher publisher = SimplePublisher.getInstance();
+		setConnector(Connector.getInstance());
 
-		try {
-			publisher.beginConnection(getHost(), getUsername(), getPassword(), getPort(), getVhost(), getQueue(), getMode());
-			
-			operation(publisher, report);
-			
-			publisher.endConnection();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		beginConnection();
+		
+		operation(report);
+		
+		endConnection();
 	}
 }

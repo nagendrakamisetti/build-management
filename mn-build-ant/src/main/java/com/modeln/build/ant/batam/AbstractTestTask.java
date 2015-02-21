@@ -1,14 +1,15 @@
 package com.modeln.build.ant.batam;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.modeln.batam.connector.SimplePublisher;
+import org.apache.tools.ant.BuildException;
+
+import com.modeln.batam.connector.Connector;
 import com.modeln.batam.connector.wrapper.Pair;
-import com.modeln.batam.connector.wrapper.TestInstance;
+import com.modeln.batam.connector.wrapper.TestEntry;
 import com.modeln.build.ant.batam.typedef.Criteria;
 import com.modeln.build.ant.batam.typedef.Criterias;
 
@@ -128,7 +129,7 @@ public abstract class AbstractTestTask extends AbstractBatamTask {
 		checkUnaryList(criterias);
 		
 		//Build test object.
-		TestInstance test = new TestInstance();
+		TestEntry test = new TestEntry();
 		test.setReportId(reportId);
 		test.setReportName(reportName);
 		test.setName(name);
@@ -142,9 +143,8 @@ public abstract class AbstractTestTask extends AbstractBatamTask {
 			if(endDate != null){
 				test.setEndDate(formatter.parse(endDate));
 			}
-		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (ParseException e) {
+			throw new BuildException("Task failed", e);
 		}
 		test.setStatus(status);
 		test.setLog(log);
@@ -158,17 +158,13 @@ public abstract class AbstractTestTask extends AbstractBatamTask {
 		}
 		test.setCriterias(testCriterias);
 		
-		SimplePublisher publisher = SimplePublisher.getInstance();
+		setConnector(Connector.getInstance());
 
-		try {
-			publisher.beginConnection(getHost(), getUsername(), getPassword(), getPort(), getVhost(), getQueue(), getMode());
-			
-			operation(publisher, test);
-			
-			publisher.endConnection();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		beginConnection();
+		
+		operation(test);
+		
+		endConnection();
+		
 	}
 }

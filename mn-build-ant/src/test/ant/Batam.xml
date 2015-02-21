@@ -21,9 +21,17 @@
   	<tstamp>
     	<format property="current_date" pattern="yyyy-MM-dd'T'HH:mm:ss.SSSZ" locale="en,GB"/>
   	</tstamp>
-    
+  	
     <!-- Run Create Build ant task -->
-    <batamcreatebuild id="id"
+    <batamcreatebuild
+    	host="localhost"
+    	username="batam" 
+    	password="batam"
+    	port="2345"
+    	vhost="batam"
+    	queue="batam"
+    	publisher="off"
+    	id="id"
     	name="name"
     	startDate="${current_date}" 
     	endDate="${current_date}" 
@@ -60,7 +68,15 @@
     </batamcreatebuild>
     
     <!-- Run Create Build ant task -->
-    <batamupdatebuild id="id2"
+    <batamupdatebuild 
+    	host="localhost"
+    	username="batam" 
+    	password="batam"
+    	port="2345"
+    	vhost="batam"
+    	queue="batam"
+    	publisher="off"
+    	id="id2"
     	name="name"
     	startDate="${current_date}" 
     	endDate="${current_date}" 
@@ -95,7 +111,15 @@
       
     </batamupdatebuild>
     
-    <batamcreatereport id="id3" 
+    <batamcreatereport 
+    	host="localhost"
+       	username="batam" 
+       	password="batam"
+       	port="2345"
+       	vhost="batam"
+       	queue="batam"
+       	publisher="off"
+    	id="id3" 
     	buildId="buildid" 
     	buildName="buildname" 
     	name="name" 
@@ -111,6 +135,13 @@
     </batamcreatereport>
     
     <batamupdatereport 
+    	host="localhost"
+       	username="batam" 
+       	password="batam"
+       	port="2345"
+       	vhost="batam"
+       	queue="batam"
+       	publisher="off"
     	id="id4" 
     	buildId="buildid" 
     	buildName="buildname" 
@@ -126,12 +157,28 @@
     	</logs>
     </batamupdatereport>
     
-    <batamrun id="id5"
+    <batamrun 
+    	host="localhost"
+       	username="batam" 
+       	password="batam"
+       	port="2345"
+       	vhost="batam"
+       	queue="batam"
+       	publisher="off"
+    	id="id5"
     	name="name"
     	override="true">
     </batamrun>
     
-    <batamcreatetest reportId="id6" 
+    <batamcreatetest 
+    	host="localhost"
+       	username="batam" 
+       	password="batam"
+       	port="2345"
+       	vhost="batam"
+       	queue="batam"
+       	publisher="off"
+    	reportId="id6" 
 	    reportName="reportname" 
 	    name="name" 
 	    description="description" 
@@ -147,7 +194,15 @@
 		</criterias>
     </batamcreatetest>
     
-    <batamupdatetest reportId="id7" 
+    <batamupdatetest 
+    	host="localhost"
+       	username="batam" 
+       	password="batam"
+       	port="2345"
+       	vhost="batam"
+       	queue="batam"
+       	publisher="off"
+    	reportId="id7" 
 	    reportName="reportname" 
 	    name="name" 
 	    description="description" 

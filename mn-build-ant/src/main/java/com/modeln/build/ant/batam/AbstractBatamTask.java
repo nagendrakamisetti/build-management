@@ -3,28 +3,29 @@ package com.modeln.build.ant.batam;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
-import com.modeln.batam.connector.SimplePublisher;
+import com.modeln.batam.connector.Connector;
 
 public abstract class AbstractBatamTask extends Task {
 	protected static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 	
-	private String host;
+	protected String host;
 	
-	private String username; 
+	protected String username; 
 	
-	private String password;
+	protected String password;
 	
-	private Integer port;
+	protected Integer port;
 	
-	private String vhost;
+	protected String vhost;
 	
-	private String queue; 
+	protected String queue; 
 	
-	private String mode;
+	protected String publisher;
 	
-	private SimplePublisher connector = SimplePublisher.getInstance();
+	protected Connector connector = Connector.getInstance();
 
 	public String getHost() {
 		return host;
@@ -74,19 +75,19 @@ public abstract class AbstractBatamTask extends Task {
 		this.queue = queue;
 	}
 
-	public String getMode() {
-		return mode;
+	public String getPublisher() {
+		return publisher;
 	}
 
-	public void setMode(String mode) {
-		this.mode = mode;
+	public void setPublisher(String publisher) {
+		this.publisher = publisher;
 	}
 
-	public SimplePublisher getConnector() {
+	public Connector getConnector() {
 		return connector;
 	}
 
-	public void setConnector(SimplePublisher connector) {
+	public void setConnector(Connector connector) {
 		this.connector = connector;
 	}
 	
@@ -100,10 +101,9 @@ public abstract class AbstractBatamTask extends Task {
 	
 	public void beginConnection(){
 		try {
-			connector.beginConnection(host, username, password, port, vhost, queue, mode);
+			connector.beginConnection(host, username, password, port, vhost, queue, publisher);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new BuildException("Task failed", e);
 		}
 	}
 	
@@ -111,11 +111,10 @@ public abstract class AbstractBatamTask extends Task {
 		try {
 			connector.endConnection();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new BuildException("Task failed", e);
 		}
 	}
 	
-	protected abstract void operation(SimplePublisher connector, Object object);
+	protected abstract void operation(Object object);
 	
 }

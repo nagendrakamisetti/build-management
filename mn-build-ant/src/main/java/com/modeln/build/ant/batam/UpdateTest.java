@@ -2,17 +2,17 @@ package com.modeln.build.ant.batam;
 
 import java.io.IOException;
 
-import com.modeln.batam.connector.SimplePublisher;
-import com.modeln.batam.connector.wrapper.TestInstance;
+import org.apache.tools.ant.BuildException;
+
+import com.modeln.batam.connector.wrapper.TestEntry;
 
 public class UpdateTest extends AbstractTestTask {
 	@Override
-	protected void operation(SimplePublisher connector, Object object) {
+	protected void operation(Object object) {
 		try {
-			connector.updateTest((TestInstance) object);
+			connector.updateTest((TestEntry) object);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new BuildException("Task failed", e);
 		}
 	}
 	
